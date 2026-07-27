@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.title }} - YN Export India</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f1f3f6; margin: 0; padding: 15px; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .img-container { text-align: center; overflow: hidden; border-radius: 6px; border: 1px solid #ddd; background: #fff; margin-bottom: 15px; }
+        .product-img { width: 100%; max-height: 350px; object-fit: contain; transition: transform 0.3s ease; cursor: zoom-in; }
+        .product-img.zoomed { transform: scale(1.6); cursor: zoom-out; }
+        h2 { color: #2874f0; margin: 10px 0; }
+        .price { font-size: 22px; color: #388e3c; font-weight: bold; margin-bottom: 10px; }
+        .desc { color: #555; line-height: 1.5; margin-bottom: 20px; font-size: 14px; }
+        .btn { display: block; width: 100%; padding: 12px; background: #fb641b; color: white; text-align: center; text-decoration: none; font-weight: bold; border-radius: 4px; box-sizing: border-box; }
+        .back-link { display: block; text-align: center; margin-top: 15px; color: #2874f0; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="img-container">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.title }}" class="product-img" id="zoomImg" onclick="toggleZoom()">
+            {% else %}
+                <div style="height: 250px; display:flex; align-items:center; justify-content:center; font-size:50px;">📦</div>
+            {% endif %}
+        </div>
+        <p style="text-align:center; font-size:12px; color:#666; margin-bottom:10px;">🔍 Tap image to Zoom In/Out</p>
+        
+        <h2>{{ product.title }}</h2>
+        <div class="price">₹ {{ product.price }}</div>
+        <div class="desc">{{ product.description }}</div>
+        
+        <a href="{% url 'order_product' product.pk %}" class="btn">🛒 Order Now</a>
+        <a href="{% url 'home' %}" class="back-link">← Back to Home</a>
+    </div>
+
+    <script>
+        function toggleZoom() {
+            const img = document.getElementById('zoomImg');
+            img.classList.toggle('zoomed');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+.shortcuts import render, redirect, get_object_or_404from django.contrib.auth import login, get_user_model
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
+from .models import (
+    CustomUser,
+    Product,
+    Order,
+    Wa
+    ReferralIncome,
+    Notification,
+)
+
+from .forms import (
+    CustomUserRegistrationForm,
+    ProductForm
+)
+
+User = get_user_model()
+
+
+def hiew(request):
+    query = request.GET.get("q",
+    if query:
+        productsts.filter(title__icontains=query)
+    else:
+        products = Product.objects.all().order_by("-id")
+
+    return render(
+        request,
+        "accounts/home.html",
+        {
+            "products": products,
+            ery": query,
+        },
+    )
+
+
+def register_step1(request):
+
+    if request.user.is_authenticated:
+        return redirect("dashboard")
+
+
+        if form.is_valid():
+
+            user = form.save()
+
+            Wallet.objects.get_or_create(user=user)
+
+            Notification.objects.create(
+                user=user,
+                message="Welcome to YN Export Indi          
+            login(request, user)
+
+            messages.success(
+                request,
+                            )
+
+            return redirect("dashboard")
+    else:
+
+        form = CustomUserRegistrationForm()
+
+    return render(
+        request,
+        "accounts/register.html",
+    
+            "for
+    )
+
+def register_verify_otp(request):
+    return render(request, "accounts/verify_otp.html")
+
+
+def register_complete(request):
+    return redirect("dashboar
+@login_required
+def usrequest):
+
+    wallet, created = Wallet.objects.get_or_create(
+        user=request.user
+    )
+
+    referral_count = User.objects.filter(
+   upline=request.user
+    ).count()
+
+    income = ReferralIncome.objects.filter(
+        user=request.user
+    )
+
+    total_income = sum(
+     item.commission_amount
+        for item inincome
+    
+
+    orders = Order.objects.filter(
+       user=request.user
+    ).order_by("-ordered_at")
+
+    context = {
+        : wallet,
+        "orders": orders,
+      eferral_count": referral_count,
+        "total

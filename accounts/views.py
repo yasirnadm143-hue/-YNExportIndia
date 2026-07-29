@@ -1,15 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
+from django.contrib import messages
 
 from .models import (
+    CustomUser,
     Product,
     Order,
     Wallet,
-    RechargeRequest,
     ReferralIncome,
+    Notification,
 )
 
 from .forms import (
@@ -26,7 +27,7 @@ def home_view(request):
     if query:
         products = Product.objects.filter(title__icontains=query)
     else:
-        products = Product.objects.all()
+        products = Product.objects.all().order_by("-id")
 
     return render(
         request,
@@ -40,28 +41,26 @@ def home_view(request):
 
 def register_step1(request):
 
-    ref = request.GET.get("ref")
+    if request.user.is_authenticated:
+        return redirect("dashboard")
 
     if request.method == "POST":
 
         form = CustomUserRegistrationForm(
             request.POST,
-            request.FILES
+            request.FILES,
         )
 
         if form.is_valid():
 
-            user = form.save(commit=False)
+            user = form.save()
 
-            if ref:
-                try:
-                    user.upline = User.objects.get(referral_id=ref)
-                except User.DoesNotExist:
-                    pass
+            Wallet.objects.get_or_create(user=user)
 
-            user.save()
-
-            Wallet.objects.create(user=user)
+            Notification.objects.create(
+                user=user,
+                message="Welcome to YN Export India!"
+            )
 
             login(request, user)
 
@@ -73,6 +72,7 @@ def register_step1(request):
             return redirect("dashboard")
 
     else:
+
         form = CustomUserRegistrationForm()
 
     return render(
@@ -82,67 +82,55 @@ def register_step1(request):
             "form": form,
         },
     )
+
+
+def register_verify_otp(request):
+    return render(request, "accounts/verify_otp.html")
+
+
+def register_complete(request):
+    return redirect("dashboard")
+
+
 @login_required
 def user_dashboard(request):
-
-    orders = Order.objects.filter(user=request.user)
-
-    referral_count = User.objects.filter(
-        upline=request.user
-    ).count()
 
     wallet, created = Wallet.objects.get_or_create(
         user=request.user
     )
 
-    referral_income = ReferralIncome.objects.filter(
+    referral_count = User.objects.filter(
+        upline=request.user
+    ).count()
+
+    income = ReferralIncome.objects.filter(
         user=request.user
     )
 
     total_income = sum(
-        i.commission_amount
-        for i in referral_income
+        item.commission_amount
+        for item in income
     )
 
-    if referral_count == 0:
-        rank = "Starter"
-
-    elif referral_count >= 1:
-        rank = "Rank 20"
-
-    elif referral_count >= 2:
-        rank = "Rank 30"
-
-    elif referral_count >= 5:
-        rank = "Silver"
-
-    elif referral_count >= 10:
-        rank = "Gold"
-
-    elif referral_count >= 20:
-        rank = "Diamond"
-
-    else:
-        rank = "Starter"
+    orders = Order.objects.filter(
+        user=request.user
+    ).order_by("-ordered_at")
 
     context = {
-        "orders": orders,
         "wallet": wallet,
-        "rank": rank,
+        "orders": orders,
         "referral_count": referral_count,
-        "referral_income": total_income,
-        "referral_id": request.user.referral_id,
-        "referral_link": request.user.referral_link,
-        "upline": request.user.upline,
+        "total_income": total_income,
+        "notifications": Notification.objects.filter(
+            user=request.user
+        ).order_by("-created_at")[:10],
     }
 
     return render(
         request,
         "accounts/dashboard.html",
-        context
+        context,
     )
-
-
 @login_required
 def wallet_view(request):
 
@@ -150,7 +138,7 @@ def wallet_view(request):
         user=request.user
     )
 
-    recharges = RechargeRequest.objects.filter(
+    incomes = ReferralIncome.objects.filter(
         user=request.user
     ).order_by("-created_at")
 
@@ -159,8 +147,8 @@ def wallet_view(request):
         "accounts/wallet.html",
         {
             "wallet": wallet,
-            "recharges": recharges,
-        }
+            "incomes": incomes,
+        },
     )
 
 
@@ -174,6 +162,11 @@ def user_settings(request):
     return render(request, "accounts/settings.html")
 
 
+@login_required
+def user_profile(request):
+    return redirect("dashboard")
+
+
 def product_detail(request, pk):
 
     product = get_object_or_404(Product, pk=pk)
@@ -185,6 +178,8 @@ def product_detail(request, pk):
             "product": product,
         },
     )
+
+
 @login_required
 def order_product(request, pk):
 
@@ -193,9 +188,10 @@ def order_product(request, pk):
     if request.method == "POST":
 
         quantity = int(request.POST.get("quantity", 1))
+
         total_price = product.price * quantity
 
-        order = Order.objects.create(
+        Order.objects.create(
             user=request.user,
             product=product,
             quantity=quantity,
@@ -214,10 +210,7 @@ def order_product(request, pk):
             "Order placed successfully."
         )
 
-        return redirect(
-            "payment_success",
-            order_id=order.id
-        )
+        return redirect("dashboard")
 
     return render(
         request,
@@ -234,7 +227,7 @@ def payment_success(request, order_id):
     order = get_object_or_404(
         Order,
         id=order_id,
-        user=request.user
+        user=request.user,
     )
 
     return render(
@@ -252,7 +245,7 @@ def track_order(request, order_id):
     order = get_object_or_404(
         Order,
         id=order_id,
-        user=request.user
+        user=request.user,
     )
 
     return render(
@@ -268,13 +261,14 @@ def track_order(request, order_id):
 def upload_product(request):
 
     if not request.user.is_staff:
+        messages.error(request, "Permission denied.")
         return redirect("home")
 
     if request.method == "POST":
 
         form = ProductForm(
             request.POST,
-            request.FILES
+            request.FILES,
         )
 
         if form.is_valid():
@@ -296,18 +290,3 @@ def upload_product(request):
         },
     )
 
-
-def register_verify_otp(request):
-    return render(
-        request,
-        "accounts/verify_otp.html"
-    )
-
-
-def register_complete(request):
-    return redirect("dashboard")
-
-
-@login_required
-def user_profile(request):
-    return redirect("dashboard")

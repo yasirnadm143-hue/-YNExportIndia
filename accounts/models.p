@@ -11,6 +11,7 @@ class CustomUser(AbstractUser):
 
     def save(self, *args, **kwargs):
         if not self.referral_id:
+            # ऑटोमैटिक यूनीक रेफरल आईडी जनरेट करना
             self.referral_id = 'YN' + ''.join(random.choices('0123456789', k=6))
         super().save(*args, **kwargs)
 
@@ -22,3 +23,4 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+

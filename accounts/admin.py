@@ -1,14 +1,13 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, Product
 
 class CustomUserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'mobile_number', 'upline_id', 'is_staff', 'date_joined')
-    search_fields = ('username', 'mobile_number', 'upline_id', 'email')
-    list_filter = ('is_staff', 'is_superuser', 'is_active')
-    
+    model = CustomUser
+    list_display = ['username', 'email', 'referral_id', 'upline', 'wallet_balance', 'is_staff']
     fieldsets = UserAdmin.fieldsets + (
-        ('MLM & Extra Info', {'fields': ('mobile_number', 'upline_id', 'pan_card', 'aadhaar_card')}),
+        ('MLM & Wallet Info', {'fields': ('phone_number', 'referral_id', 'upline', 'wallet_balance', 'rank')}),
     )
 
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(Product)

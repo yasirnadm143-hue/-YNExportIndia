@@ -5,45 +5,36 @@ echo "======================================"
 echo "       YN EXPORT INDIA START"
 echo "======================================"
 
-echo "===== 1. DATABASE MIGRATIONS ====="
+echo "===== 1. APPLYING ALL MIGRATIONS ====="
 python manage.py migrate --noinput
 
-echo "===== 2. CHECKING PRODUCT TABLE ====="
+echo "===== 2. FINAL PRODUCT TABLE SAFETY CHECK ====="
 
-PRODUCT_TABLE=$(python manage.py shell -c "
+python manage.py shell <<'PY'
 from django.db import connection
+from accounts.models import Product
+
+table_name = Product._meta.db_table
 tables = connection.introspection.table_names()
-print('YES' if 'accounts_product' in tables else 'NO')
-" | tail -n 1)
 
-echo "accounts_product table: $PRODUCT_TABLE"
+print("Product table:", table_name)
 
-if [ "$PRODUCT_TABLE" = "NO" ]; then
-    echo "===== PRODUCT TABLE MISSING ====="
-    echo "===== REPAIRING MIGRATION 0007 ====="
+if table_name not in tables:
+    print("WARNING: Product table is still missing.")
+    print("Creating it directly with Django schema editor...")
 
-    python manage.py migrate accounts 0006 --fake
-    python manage.py migrate accounts 0007 --noinput
+    with connection.schema_editor() as schema_editor:
+        schema_editor.create_model(Product)
 
-    echo "===== VERIFYING PRODUCT TABLE ====="
+    tables = connection.introspection.table_names()
 
-    PRODUCT_TABLE=$(python manage.py shell -c "
-from django.db import connection
-tables = connection.introspection.table_names()
-print('YES' if 'accounts_product' in tables else 'NO')
-" | tail -n 1)
+if table_name not in tables:
+    raise RuntimeError("FATAL: accounts_product could not be created")
 
-    if [ "$PRODUCT_TABLE" != "YES" ]; then
-        echo "ERROR: accounts_product table could not be created."
-        exit 1
-    fi
+print("SUCCESS: accounts_product exists")
+PY
 
-    echo "SUCCESS: accounts_product table exists."
-else
-    echo "SUCCESS: accounts_product table already exists."
-fi
-
-echo "===== 3. COLLECT STATIC ====="
+echo "===== 3. COLLECTING STATIC FILES ====="
 python manage.py collectstatic --noinput
 
 echo "===== 4. ADMIN SETUP ====="
@@ -54,7 +45,7 @@ else
     echo "ADMIN ENV NOT SET - SKIPPING ADMIN SETUP"
 fi
 
-echo "===== 5. FINAL DATABASE CHECK ====="
+echo "===== 5. DJANGO SYSTEM CHECK ====="
 python manage.py check
 
 echo "===== 6. STARTING GUNICORN ====="

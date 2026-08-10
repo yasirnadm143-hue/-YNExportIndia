@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile - YN Export India</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: center; }
+        .profile-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid #007bff; }
+        h2 { color: #333; }
+        .info-box { background: #e9ecef; padding: 12px; margin: 10px 0; border-radius: 5px; font-size: 16px; text-align: left; }
+        .btn { display: inline-block; width: 48%; padding: 10px; background: #007bff; color: white; text-align: center; text-decoration: none; border-radius: 5px; margin-top: 20px; box-sizing: border-box; font-weight: bold; }
+        .btn-home { background: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>👤 User Profile</h2>
+        
+        {% if request.user.profile_picture %}
+            <img src="{{ request.user.profile_picture.url }}" alt="Profile Picture" class="profile-img">
+        {% else %}
+            <div style="width: 100px; height: 100px; border-radius: 50%; background: #ccc; display: inline-flex; align-items: center; justify-content: center; font-size: 30px; margin-bottom: 15px;">👤</div>
+        {% endif %}
+
+        <div class="info-box"><strong>Username:</strong> {{ request.user.username }}</div>
+        <div class="info-box"><strong>Full Name:</strong> {{ request.user.first_name }} {{ request.user.last_name }}</div>
+        <div class="info-box"><strong>Email:</strong> {{ request.user.email|default:"N/A" }}</div>
+        <div class="info-box"><strong>Mobile Number:</strong> {{ request.user.mobile_number|default:"N/A" }}</div>
+        <div class="info-box"><strong>PAN Card:</strong> {{ request.user.pan_card|default:"N/A" }}</div>
+        <div class="info-box"><strong>Aadhaar Card:</strong> {{ request.user.aadhaar_card|default:"N/A" }}</div>
+        <div class="info-box"><strong>Upline ID:</strong> {% if request.user.upline %}{{ request.user.upline.username }}{% else %}Direct{% endif %}</div>
+        
+        <a href="{% url 'dashboard' %}" class="btn">Dashboard</a>
+        <a href="{% url 'home' %}" class="btn btn-home">Home</a>
+    </div>
+</body>
+</html>

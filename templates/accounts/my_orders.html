@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My Orders - YN Export India</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#eef6ff,#f7fbff,#edf8f6);
+    color: #172033;
+}
+
+.container {
+    max-width: 680px;
+    margin: auto;
+    padding: 20px 14px 40px;
+}
+
+.header {
+    background: linear-gradient(135deg,#006fc9,#00a88f);
+    color: white;
+    padding: 22px;
+    border-radius: 24px;
+    margin-bottom: 18px;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.order {
+    background: white;
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 24px rgba(30,70,100,.08);
+}
+
+.order h3 {
+    margin-top: 0;
+}
+
+.info {
+    color: #5b6575;
+    line-height: 1.7;
+}
+
+.btn {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    background: #0878c9;
+    color: white;
+    padding: 13px;
+    border-radius: 13px;
+    font-weight: bold;
+    margin-top: 12px;
+}
+
+.empty {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.back {
+    display: inline-block;
+    margin-bottom: 15px;
+    text-decoration: none;
+    color: #0878c9;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<a class="back" href="{% url 'dashboard' %}">← Back to Dashboard</a>
+
+<div class="header">
+    <h1>📦 My Orders</h1>
+</div>
+
+{% if orders %}
+
+    {% for order in orders %}
+
+    <div class="order">
+
+        <h3>
+            {{ order.product.title }}
+        </h3>
+
+        <div class="info">
+            <b>Order ID:</b> #{{ order.id }}<br>
+
+            <b>Tracking ID:</b>
+            {{ order.tracking_id|default:"Not generated" }}<br>
+
+            <b>Status:</b>
+            {{ order.status|default:"Pending" }}<br>
+
+            <b>Date:</b>
+            {{ order.created_at|date:"d M Y, h:i A" }}
+        </div>
+
+        <a class="btn"
+           href="{% url 'order_details' order.id %}">
+            View Order Details →
+        </a>
+
+    </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <div class="empty">
+        <h2>📦 No Orders Yet</h2>
+        <p>You have not placed any orders yet.</p>
+
+        <a class="btn" href="{% url 'home' %}">
+            Continue Shopping
+        </a>
+    </div>
+
+{% endif %}
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,255 @@
+/* =========================================
+   YN EXPORT INDIA - ADMIN PANEL
+   ========================================= */
+
+:root {
+    --yn-blue: #1769e0;
+    --yn-blue-dark: #0d47a1;
+    --yn-orange: #ff9800;
+    --yn-bg: #f4f7fb;
+    --yn-card: #ffffff;
+    --yn-text: #172033;
+    --yn-muted: #6b7280;
+}
+
+/* Main page */
+body {
+    background: var(--yn-bg) !important;
+    color: var(--yn-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 Roboto, Arial, sans-serif;
+}
+
+/* Header */
+#header {
+    background: linear-gradient(135deg, var(--yn-blue), var(--yn-blue-dark)) !important;
+    min-height: 72px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 3px 15px rgba(0,0,0,.12);
+}
+
+/* Logo / branding */
+#branding {
+    display: flex;
+    align-items: center;
+}
+
+#site-name {
+    margin: 0;
+}
+
+.yn-admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.yn-logo {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    color: var(--yn-blue);
+    font-size: 21px;
+    font-weight: 900;
+    box-shadow: 0 3px 10px rgba(0,0,0,.18);
+}
+
+.yn-brand-text {
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.yn-brand-text small {
+    display: block;
+    margin-top: 4px;
+    font-size: 10px;
+    letter-spacing: 1.8px;
+    opacity: .8;
+}
+
+/* User links */
+#user-tools {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+#user-tools a {
+    color: white !important;
+    text-decoration: none;
+}
+
+#user-tools a:hover {
+    text-decoration: underline;
+}
+
+/* Content */
+#content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 28px;
+}
+
+#content h1 {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--yn-text);
+    margin-bottom: 25px;
+}
+
+/* Module cards */
+.module {
+    background: var(--yn-card) !important;
+    border: 0 !important;
+    border-radius: 16px !important;
+    overflow: hidden;
+    box-shadow: 0 5px 22px rgba(20,40,80,.08);
+    margin-bottom: 24px;
+}
+
+.module caption,
+.module h2 {
+    background: linear-gradient(135deg, var(--yn-blue), var(--yn-blue-dark)) !important;
+    color: white !important;
+    padding: 15px 18px !important;
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    border: 0 !important;
+}
+
+/* Links */
+a:link,
+a:visited {
+    color: var(--yn-blue);
+}
+
+a:hover {
+    color: var(--yn-blue-dark);
+}
+
+/* Add / change buttons */
+.addlink,
+.changelink,
+.deletelink {
+    font-weight: 700;
+}
+
+.addlink {
+    color: #16803c !important;
+}
+
+.changelink {
+    color: var(--yn-blue) !important;
+}
+
+.deletelink {
+    color: #dc2626 !important;
+}
+
+/* Tables */
+#result_list {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 0 !important;
+    box-shadow: 0 4px 18px rgba(0,0,0,.06);
+}
+
+#result_list thead th {
+    background: #eef4ff !important;
+    color: #243b64 !important;
+    font-weight: 800;
+    border-bottom: 2px solid #d9e5fa;
+}
+
+#result_list tbody tr:hover {
+    background: #f5f9ff !important;
+}
+
+/* Form pages */
+fieldset {
+    border: 0 !important;
+    border-radius: 16px !important;
+    background: white !important;
+    box-shadow: 0 4px 18px rgba(0,0,0,.06);
+    margin-bottom: 20px !important;
+}
+
+fieldset h2 {
+    border-radius: 12px 12px 0 0;
+}
+
+/* Inputs */
+input,
+textarea,
+select {
+    border-radius: 9px !important;
+    border: 1px solid #d5dce8 !important;
+    padding: 9px 11px !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--yn-blue) !important;
+    box-shadow: 0 0 0 3px rgba(23,105,224,.12) !important;
+    outline: none !important;
+}
+
+/* Primary buttons */
+input[type="submit"],
+.submit-row input,
+.button {
+    border-radius: 9px !important;
+    font-weight: 700 !important;
+}
+
+/* Dashboard recent actions */
+#content-main {
+    min-width: 0;
+}
+
+#content-related {
+    border-radius: 16px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+
+    #header {
+        min-height: 64px;
+        padding: 8px 14px;
+    }
+
+    .yn-logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    .yn-brand-text {
+        font-size: 16px;
+    }
+
+    #content {
+        padding: 16px 12px;
+    }
+
+    #content h1 {
+        font-size: 24px;
+    }
+
+    #user-tools {
+        font-size: 11px;
+    }
+
+    .module {
+        border-radius: 12px !important;
+    }
+}

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Notifications - YN Export India</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#eef6ff,#f7fbff,#edf8f6);
+    color: #172033;
+}
+
+.container {
+    max-width: 680px;
+    margin: auto;
+    padding: 20px 14px 40px;
+}
+
+.back {
+    text-decoration: none;
+    color: #0878c9;
+    font-weight: bold;
+}
+
+.header {
+    margin: 18px 0;
+    background: linear-gradient(135deg,#006fc9,#00a88f);
+    color: white;
+    padding: 22px;
+    border-radius: 24px;
+}
+
+.notification {
+    background: white;
+    padding: 18px;
+    border-radius: 18px;
+    margin-bottom: 12px;
+    box-shadow: 0 8px 24px rgba(30,70,100,.08);
+}
+
+.notification h3 {
+    margin-top: 0;
+}
+
+.message {
+    color: #5b6575;
+    line-height: 1.6;
+}
+
+.date {
+    margin-top: 10px;
+    color: #8993a3;
+    font-size: 13px;
+}
+
+.order-btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #0878c9;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.empty {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<a class="back" href="{% url 'dashboard' %}">
+← Back to Dashboard
+</a>
+
+<div class="header">
+    <h1>🔔 Notifications</h1>
+</div>
+
+{% if notifications %}
+
+    {% for notification in notifications %}
+
+    <div class="notification">
+
+        <h3>{{ notification.title }}</h3>
+
+        <div class="message">
+            {{ notification.message }}
+        </div>
+
+        <div class="date">
+            {{ notification.created_at|date:"d M Y, h:i A" }}
+        </div>
+
+        {% if notification.order %}
+        <a class="order-btn"
+           href="{% url 'order_details' notification.order.id %}">
+            View Order
+        </a>
+        {% endif %}
+
+    </div>
+
+    {% endfor %}
+
+{% else %}
+
+    <div class="empty">
+        <h2>🔔 No Notifications</h2>
+        <p>You don't have any notifications yet.</p>
+    </div>
+
+{% endif %}
+
+</div>
+
+</body>
+</html>

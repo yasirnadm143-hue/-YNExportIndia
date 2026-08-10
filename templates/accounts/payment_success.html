@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Successful - YN Export India</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial,sans-serif;
+        }
+
+        body{
+            background:linear-gradient(135deg,#00b09b,#96c93d);
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+
+        .card{
+            width:90%;
+            max-width:500px;
+            background:#fff;
+            border-radius:20px;
+            padding:35px;
+            text-align:center;
+            box-shadow:0 15px 35px rgba(0,0,0,.25);
+        }
+
+        .icon{
+            font-size:80px;
+            margin-bottom:15px;
+        }
+
+        h1{
+            color:#28a745;
+            margin-bottom:10px;
+        }
+
+        p{
+            color:#555;
+            font-size:18px;
+            margin:10px 0;
+        }
+
+        .orderid{
+            background:#f2f2f2;
+            padding:15px;
+            border-radius:10px;
+            font-size:22px;
+            font-weight:bold;
+            color:#0d6efd;
+            margin:20px 0;
+        }
+
+        .btn{
+            display:block;
+            width:100%;
+            padding:15px;
+            margin-top:15px;
+            border-radius:10px;
+            text-decoration:none;
+            font-size:18px;
+            font-weight:bold;
+        }
+
+        .track{
+            background:#0d6efd;
+            color:white;
+        }
+
+        .track:hover{
+            background:#084298;
+        }
+
+        .home{
+            background:#28a745;
+            color:white;
+        }
+
+        .home:hover{
+            background:#1f7d33;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <div class="icon">🎉✅</div>
+
+    <h1>Order Placed Successfully!</h1>
+
+    <p>Your order has been received successfully.</p>
+
+    <div class="orderid">
+        Order ID : #{{ order.id }}
+    </div>
+
+    <p>Thank you for choosing <b>YN Export India</b>.</p>
+
+    <a href="{% url 'track_order' order.id %}" class="btn track">
+        📦 Track Order
+    </a>
+
+    <a href="{% url 'home' %}" class="btn home">
+        🏠 Back to Home
+    </a>
+
+</div>
+
+</body>
+</html>

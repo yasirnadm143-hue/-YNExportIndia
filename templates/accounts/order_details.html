@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Order Details - YN Export India</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#eef6ff,#f7fbff,#edf8f6);
+    color: #172033;
+}
+
+.container {
+    max-width: 680px;
+    margin: auto;
+    padding: 20px 14px 40px;
+}
+
+.back {
+    text-decoration: none;
+    color: #0878c9;
+    font-weight: bold;
+}
+
+.card {
+    background: white;
+    margin-top: 18px;
+    padding: 22px;
+    border-radius: 22px;
+    box-shadow: 0 8px 25px rgba(30,70,100,.08);
+}
+
+.row {
+    padding: 12px 0;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.label {
+    color: #687386;
+    font-size: 13px;
+}
+
+.value {
+    font-weight: bold;
+    margin-top: 4px;
+}
+
+.status {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 20px;
+    background: #eaf7ff;
+    color: #0878c9;
+    font-weight: bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<a class="back" href="{% url 'my_orders' %}">
+← Back to My Orders
+</a>
+
+<div class="card">
+
+<h1>📦 Order Details</h1>
+
+<div class="row">
+    <div class="label">Order ID</div>
+    <div class="value">#{{ order.id }}</div>
+</div>
+
+<div class="row">
+    <div class="label">Product</div>
+    <div class="value">{{ order.product.title }}</div>
+</div>
+
+<div class="row">
+    <div class="label">Price</div>
+    <div class="value">₹{{ order.product.price }}</div>
+</div>
+
+<div class="row">
+    <div class="label">Tracking ID</div>
+    <div class="value">
+        {{ order.tracking_id|default:"Not generated" }}
+    </div>
+</div>
+
+<div class="row">
+    <div class="label">Status</div>
+    <div class="value">
+        <span class="status">
+            {{ order.status|default:"Pending" }}
+        </span>
+    </div>
+</div>
+
+<div class="row">
+    <div class="label">Order Date</div>
+    <div class="value">
+        {{ order.created_at|date:"d M Y, h:i A" }}
+    </div>
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

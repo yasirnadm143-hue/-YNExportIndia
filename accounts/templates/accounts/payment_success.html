@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Success - YN Export India</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f1f3f6; margin: 0; padding: 20px; text-align: center; }
+        .container { max-width: 450px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h2 { color: #388e3c; }
+        .btn { display: inline-block; padding: 10px 20px; background: #2874f0; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🎉 Payment Successful!</h2>
+        <p>Your payment for <strong>{{ order.product.title }}</strong> was completed successfully.</p>
+        <p><strong>Order ID:</strong> #{{ order.id }}</p>
+        <p><strong>Total Paid:</strong> ₹ {{ order.total_price }}</p>
+        <a href="{% url 'dashboard' %}" class="btn">Go to Dashboard</a>
+    </div>
+</body>
+</html>

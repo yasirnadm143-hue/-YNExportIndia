@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account | YN Export India</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e8f1ff, #f5f9ff);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 22px;
+            padding: 28px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        }
+
+        .logo {
+            width: 75px;
+            height: 75px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            background: #ffffff;
+            color: #075ca8;
+            font-size: 28px;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+        }
+
+        h1 {
+            text-align: center;
+            color: #075ca8;
+            margin: 5px 0;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        .message {
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            background: #fff3cd;
+            color: #664d03;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 7px;
+            font-weight: bold;
+            color: #222;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #d5dce5;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #0878d1;
+            box-shadow: 0 0 0 3px rgba(8,120,209,0.10);
+        }
+
+        .info {
+            margin-top: 18px;
+            padding: 15px;
+            border-radius: 12px;
+            background: #eef8ff;
+            color: #345;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #0878d1, #075ca8);
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 22px;
+            line-height: 2;
+        }
+
+        .links a {
+            color: #0878d1;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .errorlist {
+            color: #d32f2f;
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+
+        .required {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">YN</div>
+
+    <h1>YN Export India</h1>
+
+    <div class="subtitle">
+        Create your account
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            {{ form.non_field_errors }}
+        {% endif %}
+
+        <label>
+            Username <span class="required">*</span>
+        </label>
+        {{ form.username }}
+        {{ form.username.errors }}
+
+        <label>
+            First Name <span class="required">*</span>
+        </label>
+        {{ form.first_name }}
+        {{ form.first_name.errors }}
+
+        <label>
+            Last Name
+        </label>
+        {{ form.last_name }}
+        {{ form.last_name.errors }}
+
+        <label>
+            Email
+        </label>
+        {{ form.email }}
+        {{ form.email.errors }}
+
+        <label>
+            Mobile Number <span class="required">*</span>
+        </label>
+        {{ form.phone_number }}
+        {{ form.phone_number.errors }}
+
+        <label>
+            Referral ID
+        </label>
+        {{ form.referral_id }}
+        {{ form.referral_id.errors }}
+
+        <label>
+            Password <span class="required">*</span>
+        </label>
+        {{ form.password1 }}
+        {{ form.password1.errors }}
+
+        <label>
+            Confirm Password <span class="required">*</span>
+        </label>
+        {{ form.password2 }}
+        {{ form.password2.errors }}
+
+        <div class="info">
+            🔐 आपका password सुरक्षित तरीके से save किया जाएगा।<br>
+            👥 Referral ID होने पर उसे दर्ज करें।<br>
+            ⭐ Referral ID नहीं है तो खाली छोड़ सकते हैं।
+        </div>
+
+        <button type="submit">
+            Create Account
+        </button>
+
+    </form>
+
+    <div class="links">
+        Already have an account?
+        <br>
+        <a href="{% url 'login' %}">Login Here</a>
+
+        <br>
+
+        <a href="{% url 'home' %}">🏠 Back to Home</a>
+    </div>
+
+</div>
+
+</body>
+</html>

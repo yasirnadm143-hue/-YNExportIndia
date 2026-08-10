@@ -1,0 +1,99 @@
+from decimal import Decimal, ROUND_DOWN
+
+from django.db import transaction
+
+from .models import CustomUser, CommissionTransaction
+
+
+COMMISSION_RATES = {
+    1: Decimal("0.04"),
+    2: Decimal("0.02"),
+    3: Decimal("0.01"),
+    4: Decimal("0.01"),
+    5: Decimal("0.01"),
+    6: Decimal("0.005"),
+    7: Decimal("0.005"),
+    8: Decimal("0.005"),
+    9: Decimal("0.005"),
+    10: Decimal("0.005"),
+    11: Decimal("0.0025"),
+    12: Decimal("0.0025"),
+    13: Decimal("0.0025"),
+    14: Decimal("0.0025"),
+    15: Decimal("0.0025"),
+    16: Decimal("0.0025"),
+    17: Decimal("0.0025"),
+    18: Decimal("0.0025"),
+    19: Decimal("0.0025"),
+    20: Decimal("0.0025"),
+}
+
+
+@transaction.atomic
+def distribute_commission(order):
+    """
+    Distribute commission to maximum 20 upline levels.
+
+    Commission is created only for a confirmed order.
+    Duplicate commission for the same order/upline/level
+    is prevented by the database constraint.
+    """
+
+    if order.status != "CONFIRMED":
+        return []
+
+    source_user = order.user
+    order_amount = Decimal(order.product.price)
+
+    commissions = []
+
+    current_user = source_user
+
+    for level in range(1, 21):
+
+        upline_id = current_user.upline_id
+
+        if not upline_id:
+            break
+
+        upline = CustomUser.objects.select_for_update().get(
+            id=upline_id
+        )
+
+        rate = COMMISSION_RATES[level]
+
+        amount = (
+            order_amount * rate
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_DOWN
+        )
+
+        if amount > Decimal("0.00"):
+
+            commission, created = (
+                CommissionTransaction.objects.get_or_create(
+                    order=order,
+                    beneficiary=upline,
+                    level=level,
+                    defaults={
+                        "source_user": source_user,
+                        "rate": rate,
+                        "order_amount": order_amount,
+                        "amount": amount,
+                    }
+                )
+            )
+
+            if created:
+
+                upline.wallet_balance += amount
+                upline.save(
+                    update_fields=["wallet_balance"]
+                )
+
+                commissions.append(commission)
+
+        current_user = upline
+
+    return commissions

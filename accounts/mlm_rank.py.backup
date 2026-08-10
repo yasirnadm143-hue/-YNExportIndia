@@ -1,0 +1,139 @@
+from django.db import transaction
+
+from .models import CustomUser
+
+
+# ==========================================================
+# RANK REQUIREMENTS
+# ==========================================================
+
+RANK_REQUIREMENTS = {
+    20: 3,
+    30: 5,
+    40: 8,
+
+    # इनको बाद में तुम्हारे final rules के अनुसार भरेंगे
+    # 50: ...,
+    # 60: ...,
+    # 70: ...,
+    # 80: ...,
+}
+
+
+RANK_SEQUENCE = [
+    20,
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90,
+]
+
+
+def get_next_rank(current_rank):
+    """
+    Current rank से अगला rank निकालता है.
+    """
+
+    current_rank = int(current_rank)
+
+    for rank in RANK_SEQUENCE:
+
+        if rank > current_rank:
+            return rank
+
+    return 90
+
+
+def get_active_direct_downline_count(user):
+    """
+    Direct downlines में से कितने users ने
+    कम से कम एक qualifying order पूरा किया है।
+
+    केवल referral बनना पर्याप्त नहीं है।
+    Order CONFIRMED/DELIVERED होना चाहिए।
+    """
+
+    from .models import Order
+
+    direct_downlines = CustomUser.objects.filter(
+        upline=user
+    )
+
+    count = 0
+
+    for member in direct_downlines:
+
+        has_active_order = Order.objects.filter(
+            user=member,
+            status__in=[
+                "CONFIRMED",
+                "PACKED",
+                "SHIPPED",
+                "OUT_FOR_DELIVERY",
+                "DELIVERED",
+            ]
+        ).exists()
+
+        if has_active_order:
+            count += 1
+
+    return count
+
+
+@transaction.atomic
+def update_user_rank(user):
+    """
+    User के active direct downlines देखकर rank update करता है।
+
+    Example:
+        Rank 20 + 3 active direct downlines = Rank 30
+        Rank 30 + 5 active direct downlines = Rank 40
+        Rank 40 + 8 active direct downlines = Rank 50
+    """
+
+    user = CustomUser.objects.select_for_update().get(
+        pk=user.pk
+    )
+
+    active_count = get_active_direct_downline_count(user)
+
+    user.active_downline_count = active_count
+
+    current_rank = int(user.mlm_level)
+
+    # एक ही order के बाद जितने rank qualify हों,
+    # उतने rank आगे बढ़ सकते हैं।
+    while True:
+
+        next_rank = get_next_rank(current_rank)
+
+        if next_rank == current_rank:
+            break
+
+        required = RANK_REQUIREMENTS.get(
+            current_rank
+        )
+
+        if required is None:
+            break
+
+        if active_count < required:
+            break
+
+        current_rank = next_rank
+
+    user.mlm_level = current_rank
+    user.rank = f"Level {current_rank}"
+
+    user.save(
+        update_fields=[
+            "active_downline_count",
+            "mlm_level",
+            "rank",
+        ]
+    )
+
+    return user

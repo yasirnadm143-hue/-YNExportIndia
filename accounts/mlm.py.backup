@@ -1,0 +1,187 @@
+from decimal import Decimal, ROUND_DOWN
+
+from django.db import transaction
+
+from .models import CustomUser, CommissionTransaction
+from .mlm_rank import update_user_rank
+
+
+# ==========================================================
+# BASE LEVEL COMMISSION
+# ==========================================================
+
+COMMISSION_RATES = {
+    1: Decimal("0.04"),
+    2: Decimal("0.02"),
+    3: Decimal("0.01"),
+    4: Decimal("0.01"),
+    5: Decimal("0.01"),
+
+    6: Decimal("0.005"),
+    7: Decimal("0.005"),
+    8: Decimal("0.005"),
+    9: Decimal("0.005"),
+    10: Decimal("0.005"),
+
+    11: Decimal("0.0025"),
+    12: Decimal("0.0025"),
+    13: Decimal("0.0025"),
+    14: Decimal("0.0025"),
+    15: Decimal("0.0025"),
+    16: Decimal("0.0025"),
+    17: Decimal("0.0025"),
+    18: Decimal("0.0025"),
+    19: Decimal("0.0025"),
+    20: Decimal("0.0025"),
+}
+
+
+# ==========================================================
+# RANK COMMISSION POOL
+# ==========================================================
+
+RANK_COMMISSION_POOL = {
+    20: Decimal("0.20"),
+    30: Decimal("0.25"),
+    40: Decimal("0.28"),
+    50: Decimal("0.32"),
+    60: Decimal("0.35"),
+    70: Decimal("0.40"),
+    80: Decimal("0.43"),
+    90: Decimal("0.46"),
+}
+
+
+def get_rank_pool(rank):
+    return RANK_COMMISSION_POOL.get(
+        int(rank),
+        Decimal("0.20")
+    )
+
+
+def calculate_level_commission(
+    order_amount,
+    level,
+    beneficiary_rank
+):
+    """
+    Rank के अनुसार maximum commission pool check करता है।
+
+    अभी base level rates वही रखे गए हैं जो
+    तुम्हारे पहले MLM design में बनाए गए थे।
+    """
+
+    base_rate = COMMISSION_RATES.get(
+        level,
+        Decimal("0.00")
+    )
+
+    rank_pool = get_rank_pool(
+        beneficiary_rank
+    )
+
+    # किसी individual beneficiary को उसकी
+    # calculated base rate से ज्यादा नहीं मिलेगा।
+    rate = min(
+        base_rate,
+        rank_pool
+    )
+
+    amount = (
+        Decimal(order_amount) * rate
+    ).quantize(
+        Decimal("0.01"),
+        rounding=ROUND_DOWN
+    )
+
+    return rate, amount
+
+
+# ==========================================================
+# COMMISSION DISTRIBUTION
+# ==========================================================
+
+@transaction.atomic
+def distribute_commission(order):
+    """
+    Commission केवल qualifying order पर।
+
+    Order status CONFIRMED या DELIVERED होना चाहिए।
+    Maximum 20 upline levels.
+    """
+
+    if order.status not in [
+        "CONFIRMED",
+        "DELIVERED",
+    ]:
+        return []
+
+    source_user = order.user
+
+    order_amount = Decimal(
+        order.product.price
+    )
+
+    commissions = []
+
+    current_user = source_user
+
+    for level in range(1, 21):
+
+        upline_id = current_user.upline_id
+
+        if not upline_id:
+            break
+
+        upline = (
+            CustomUser.objects
+            .select_for_update()
+            .get(id=upline_id)
+        )
+
+        # Rank ensure करें
+        update_user_rank(upline)
+
+        beneficiary_rank = upline.mlm_level
+
+        rate, amount = calculate_level_commission(
+            order_amount,
+            level,
+            beneficiary_rank
+        )
+
+        if amount <= Decimal("0.00"):
+            current_user = upline
+            continue
+
+        commission, created = (
+            CommissionTransaction.objects.get_or_create(
+                order=order,
+                beneficiary=upline,
+                level=level,
+                defaults={
+                    "source_user": source_user,
+                    "rate": rate,
+                    "order_amount": order_amount,
+                    "amount": amount,
+                }
+            )
+        )
+
+        if created:
+
+            upline.wallet_balance += amount
+
+            upline.save(
+                update_fields=[
+                    "wallet_balance"
+                ]
+            )
+
+            commissions.append(
+                commission
+            )
+
+        current_user = upline
+
+    return commissions

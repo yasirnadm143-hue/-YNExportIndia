@@ -1,0 +1,21 @@
+{% load static %}
+{% extends "admin/base.html" %}
+
+{% block title %}YN Export India Admin{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+    <a href="{% url 'admin:index' %}">
+        <span class="yn-logo">YN</span>
+        <span class="yn-brand">
+            YN Export India
+            <small>ADMIN PANEL</small>
+        </span>
+    </a>
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'admin/css/custom_admin.css' %}">
+{% endblock %}

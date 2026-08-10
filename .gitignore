@@ -1,23 +1,32 @@
-db.sqlite3
-*.pyc
 __pycache__/
+*.py[cod]
 *.pyo
 *.pyd
-.Python
-.venv/
-venv/
-env/
+
 .env
 .env.*
 !.env.example
 
-media/
-staticfiles/
+db.sqlite3
+*.sqlite3
 
 *.log
 
-.vscode/
-.idea/
+media/
+staticfiles/
+
+*.bak
+*.backup
+*_backup.py
+*.save
 
 ngrok
-ngrok-*
+ngrok-*.tgz
+ngrok-*.tgz.*
+
+.DS_Store
+.idea/
+.vscode/
+
+*.tmp
+*.swp

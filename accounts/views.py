@@ -2,10 +2,101 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
+from django.contrib.auth import get_user_model
+from django.views.decorators.http import require_http_methods
+import os
 
 from .models import Product, Order, CustomUser, Notification
 from .forms import ProductForm, OrderForm
 
+
+
+# ==========================
+# ONE-TIME ADMIN SETUP
+# ==========================
+
+@require_http_methods(["GET", "POST"])
+def one_time_admin_setup(request):
+
+    User = get_user_model()
+    setup_key = os.environ.get("ADMIN_SETUP_KEY")
+
+    if not setup_key:
+        return render(
+            request,
+            "accounts/admin_setup.html",
+            {"error": "Admin setup is disabled."},
+            status=404,
+        )
+
+    # Permanently lock this page after the first superuser exists.
+    if User.objects.filter(is_superuser=True).exists():
+        return render(
+            request,
+            "accounts/admin_setup.html",
+            {"locked": True},
+            status=403,
+        )
+
+    if request.method == "POST":
+
+        submitted_key = request.POST.get("setup_key", "")
+        username = request.POST.get("username", "").strip()
+        password = request.POST.get("password", "")
+        password2 = request.POST.get("password2", "")
+
+        if submitted_key != setup_key:
+            return render(
+                request,
+                "accounts/admin_setup.html",
+                {"error": "Invalid setup key."},
+                status=403,
+            )
+
+        if not username or not password:
+            return render(
+                request,
+                "accounts/admin_setup.html",
+                {"error": "Username and password are required."},
+            )
+
+        if password != password2:
+            return render(
+                request,
+                "accounts/admin_setup.html",
+                {"error": "Passwords do not match."},
+            )
+
+        if User.objects.filter(username=username).exists():
+            return render(
+                request,
+                "accounts/admin_setup.html",
+                {"error": "Username already exists."},
+            )
+
+        user = User(
+            username=username,
+            is_active=True,
+            is_staff=True,
+            is_superuser=True,
+        )
+
+        user.set_password(password)
+        user.save()
+
+        return render(
+            request,
+            "accounts/admin_setup.html",
+            {
+                "success": True,
+                "username": username,
+            },
+        )
+
+    return render(
+        request,
+        "accounts/admin_setup.html",
+    )
 
 # ==========================
 # HOME

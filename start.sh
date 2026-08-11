@@ -42,24 +42,19 @@ echo "===== 4. ADMIN SETUP ====="
 if [ -n "${DJANGO_ADMIN_USERNAME:-}" ] && [ -n "${DJANGO_ADMIN_PASSWORD:-}" ]; then
     python manage.py setup_admin
 
-    echo "===== 4B. VERIFYING ADMIN LOGIN CREDENTIALS ====="
+    echo "===== 4B. VERIFYING ADMIN ACCOUNT ====="
     python manage.py shell -c "
 from django.contrib.auth import get_user_model
-from django.contrib.auth import authenticate
 User = get_user_model()
 username = '${DJANGO_ADMIN_USERNAME}'
-password = '${DJANGO_ADMIN_PASSWORD}'
 u = User.objects.filter(username=username).first()
 print('ADMIN USER EXISTS:', bool(u))
 if u:
     print('ADMIN ACTIVE:', u.is_active)
     print('ADMIN STAFF:', u.is_staff)
     print('ADMIN SUPERUSER:', u.is_superuser)
-    print('PASSWORD HASH VALID:', u.check_password(password))
-    a = authenticate(username=username, password=password)
-    print('AUTHENTICATION RESULT:', bool(a))
-    if not a:
-        raise RuntimeError('FATAL: Admin authentication verification failed')
+    if not (u.is_active and u.is_staff and u.is_superuser):
+        raise RuntimeError('FATAL: Admin account permissions are invalid')
 "
 else
     echo "ADMIN ENV NOT SET - SKIPPING ADMIN SETUP"

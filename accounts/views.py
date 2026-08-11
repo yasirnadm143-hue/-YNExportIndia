@@ -153,6 +153,20 @@ def user_dashboard(request):
 
         current_level = next_level
 
+    # MLM commission income
+    from django.db.models import Sum
+    from .models import CommissionTransaction
+
+    total_income = CommissionTransaction.objects.filter(
+        beneficiary=user
+    ).aggregate(
+        total=Sum("amount")
+    )["total"] or 0
+
+    referral_link = request.build_absolute_uri(
+        "/register/"
+    ) + "?ref=" + str(user.referral_id)
+
     return render(
         request,
         "accounts/dashboard.html",
@@ -160,6 +174,9 @@ def user_dashboard(request):
             "user": user,
             "direct_team": direct_team,
             "total_team": total_team,
+            "referral_count": total_team,
+            "total_income": total_income,
+            "referral_link": referral_link,
         }
     )
 

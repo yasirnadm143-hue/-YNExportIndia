@@ -3,186 +3,749 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YN Export India - Global E-Commerce & MLM Platform</title>
+
+    <title>YN Export India</title>
+
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f1f3f6; color: #333; padding-bottom: 70px; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
 
-        /* Professional Header */
-        .navbar { background: linear-gradient(135deg, #2874f0, #1251b8); color: white; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.2); position: sticky; top: 0; z-index: 1000; gap: 8px; flex-wrap: wrap; }
-        
-        .logo-area { display: flex; align-items: center; }
-        .logo-area h2 a { color: white; text-decoration: none; font-size: 18px; font-weight: 800; letter-spacing: 0.5px; }
-        .logo-area span { font-size: 9px; background: #ff9f00; padding: 2px 5px; border-radius: 3px; color: #000; font-weight: bold; margin-left: 4px; vertical-align: top; }
+        body {
+            background: #f7f8fa;
+            color: #182033;
+            padding-bottom: 82px;
+        }
 
-        /* Search Bar */
-        .search-container { flex: 1; max-width: 400px; min-width: 160px; display: flex; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .search-input { width: 100%; padding: 8px 12px; border: none; outline: none; font-size: 13px; color: #333; }
-        .search-btn { background: #ff9f00; border: none; color: #000; padding: 0 14px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
-        /* 3-Dots Menu */
-        .menu-wrapper { position: relative; display: inline-block; }
-        .dots-btn { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 20px; cursor: pointer; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        
-        .dropdown-menu { display: none; position: absolute; right: 0; top: 44px; background: white; color: #333; min-width: 210px; box-shadow: 0px 8px 20px rgba(0,0,0,0.25); z-index: 1100; border-radius: 6px; overflow: hidden; }
-        .dropdown-menu a, .dropdown-menu button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 16px; text-decoration: none; color: #333; border-bottom: 1px solid #f0f0f0; font-size: 13px; text-align: left; background: none; border: none; cursor: pointer; font-weight: 500; }
-        .dropdown-menu a:hover, .dropdown-menu button:hover { background-color: #f5f8ff; color: #2874f0; }
-        .logout-btn { color: #d9534f !important; font-weight: bold; }
+        /* =========================
+           TOP HEADER
+        ========================== */
 
-        /* Bottom Fixed Navigation Bar */
-        .categories-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 8px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.08); z-index: 1000; border-top: 1px solid #eaeaec; }
-        .cat-item { text-align: center; text-decoration: none; color: #666; font-size: 11px; font-weight: 600; flex: 1; }
-        .cat-item div { font-size: 17px; margin-bottom: 2px; }
-        .cat-item:hover, .cat-item.active { color: #2874f0; }
+        .top-header {
+            background: white;
+            padding: 16px 16px 10px;
+        }
 
-        /* Container */
-        .container { max-width: 1000px; margin: 0 auto; padding: 15px 12px; }
+        .top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-        /* Modern Slider Banner */
-        .promo-banner { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; border-radius: 10px; padding: 25px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.1); gap: 10px; }
-        .promo-text h1 { font-size: 17px; margin-bottom: 5px; font-weight: 700; }
-        .promo-text p { font-size: 12px; opacity: 0.9; }
-        
-        /* Interactive Working Button */
-        .promo-btn { background: #ff9f00; color: #000; font-size: 11px; font-weight: bold; padding: 8px 14px; border-radius: 20px; text-decoration: none; display: inline-block; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: background 0.2s; }
-        .promo-btn:hover { background: #f39600; }
+        .welcome small {
+            display: block;
+            color: #9aa1ad;
+            font-size: 13px;
+            margin-bottom: 3px;
+        }
 
-        /* Section Title */
-        .section-header { font-size: 15px; font-weight: 700; color: #222; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #2874f0; padding-left: 8px; }
+        .welcome h2 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #182033;
+        }
 
-        /* Product Grid */
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
-        .product-card { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #eaeaec; position: relative; }
-        .product-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
-        
-        .badge { position: absolute; top: 8px; left: 8px; background: #388e3c; color: white; font-size: 9px; padding: 2px 6px; border-radius: 3px; font-weight: bold; z-index: 2; }
+        .profile-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1688ff, #16c7b7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 21px;
+            box-shadow: 0 5px 14px rgba(20,130,220,.2);
+        }
 
-        .product-img-box { width: 100%; height: 160px; background: #fafafa; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .product-card img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .product-info { padding: 12px; text-align: left; }
-        .product-info h4 { font-size: 13px; color: #333; margin-bottom: 6px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .product-price { color: #388e3c; font-size: 15px; font-weight: 700; margin-bottom: 10px; }
-        
-        .btn-buy { display: block; width: 100%; text-align: center; padding: 8px 0; background: #fb641b; color: white; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 12px; }
-        .btn-buy:hover { background: #e25512; }
+        /* =========================
+           SEARCH
+        ========================== */
 
-        .alert-box { background: #e8f5e9; color: #2e7d32; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; font-weight: bold; border: 1px solid #c8e6c9; }
-        .empty-box { background: white; padding: 30px; text-align: center; border-radius: 6px; color: #666; font-size: 13px; grid-column: 1 / -1; }
+        .search-box {
+            margin-top: 16px;
+            display: flex;
+            background: #f1f3f6;
+            border-radius: 15px;
+            height: 48px;
+            overflow: hidden;
+            border: 1px solid #eceef2;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            padding: 0 16px;
+            font-size: 14px;
+            color: #222;
+        }
+
+        .search-box button {
+            width: 52px;
+            border: 0;
+            background: #ffb400;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* =========================
+           MAIN
+        ========================== */
+
+        .container {
+            max-width: 1050px;
+            margin: auto;
+            padding: 12px 14px 30px;
+        }
+
+        /* =========================
+           HERO
+        ========================== */
+
+        .hero {
+            min-height: 170px;
+            border-radius: 22px;
+            padding: 25px 22px;
+            background:
+                linear-gradient(135deg, #ffe33d, #ffd01a);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .hero-content {
+            max-width: 63%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero small {
+            font-size: 12px;
+            font-weight: 700;
+            color: #665600;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .hero h1 {
+            font-size: 25px;
+            line-height: 1.1;
+            margin: 7px 0 9px;
+            color: #171717;
+        }
+
+        .hero p {
+            font-size: 13px;
+            line-height: 1.4;
+            color: #4d4300;
+            margin-bottom: 14px;
+        }
+
+        .hero-btn {
+            display: inline-block;
+            background: #171717;
+            color: white;
+            padding: 10px 17px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .hero-icon {
+            font-size: 72px;
+            transform: rotate(-8deg);
+            position: relative;
+            z-index: 1;
+            opacity: .95;
+        }
+
+        /* =========================
+           CATEGORY
+        ========================== */
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 2px 12px;
+        }
+
+        .section-title h3 {
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+        .section-title a {
+            font-size: 12px;
+            color: #1681dc;
+            font-weight: 600;
+        }
+
+        .categories {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding: 2px 2px 8px;
+            scrollbar-width: none;
+        }
+
+        .categories::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category {
+            min-width: 76px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .category-icon {
+            width: 62px;
+            height: 62px;
+            margin: auto;
+            border-radius: 50%;
+            background: white;
+            border: 1px solid #e8e9ed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 27px;
+            box-shadow: 0 3px 10px rgba(0,0,0,.04);
+        }
+
+        .category span {
+            display: block;
+            margin-top: 7px;
+            font-size: 11px;
+            color: #686f7d;
+            font-weight: 600;
+        }
+
+        .category.active .category-icon {
+            background: #ffbd00;
+            border-color: #ffbd00;
+        }
+
+        .category.active span {
+            color: #111;
+        }
+
+        /* =========================
+           MESSAGE
+        ========================== */
+
+        .alert-box {
+            background: #eaf8ed;
+            color: #26733a;
+            border: 1px solid #c9ebd0;
+            padding: 11px 13px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* =========================
+           PRODUCTS
+        ========================== */
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 17px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #eceef2;
+            box-shadow: 0 4px 13px rgba(20,30,50,.055);
+            transition: .2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(20,30,50,.10);
+        }
+
+        .product-image {
+            height: 175px;
+            background: #f4f5f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .top-badge {
+            position: absolute;
+            top: 9px;
+            left: 9px;
+            background: #1f8b4c;
+            color: white;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 4px 7px;
+            border-radius: 6px;
+            z-index: 2;
+        }
+
+        .heart {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 31px;
+            height: 31px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
+            z-index: 2;
+        }
+
+        .product-info {
+            padding: 12px;
+        }
+
+        .product-info h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #252a35;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 7px;
+        }
+
+        .price {
+            font-size: 17px;
+            color: #168c48;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .view-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: #ff6b18;
+            color: white;
+            border-radius: 10px;
+            padding: 10px 5px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .empty-box {
+            grid-column: 1 / -1;
+            background: white;
+            border-radius: 16px;
+            padding: 35px 20px;
+            text-align: center;
+            color: #777;
+        }
+
+        /* =========================
+           BOTTOM NAV
+        ========================== */
+
+        .bottom-nav {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 72px;
+            background: rgba(255,255,255,.98);
+            border-top: 1px solid #e7e9ed;
+            box-shadow: 0 -5px 20px rgba(0,0,0,.07);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            z-index: 9999;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            color: #7b818c;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .nav-icon {
+            font-size: 22px;
+            line-height: 25px;
+            margin-bottom: 2px;
+        }
+
+        .nav-item.active {
+            color: #1681dc;
+        }
+
+        /* =========================
+           DESKTOP
+        ========================== */
+
+        @media (min-width: 700px) {
+
+            .top-header {
+                padding: 18px calc((100% - 1050px)/2 + 14px);
+            }
+
+            .container {
+                padding-top: 20px;
+            }
+
+            .hero {
+                min-height: 220px;
+                padding: 35px;
+            }
+
+            .hero h1 {
+                font-size: 34px;
+            }
+
+            .hero-icon {
+                font-size: 105px;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+
+            .product-image {
+                height: 220px;
+            }
+        }
+
     </style>
 </head>
+
 <body>
 
-    <header class="navbar">
-        <div class="logo-area">
-            <h2><a href="{% url 'home' %}">YN Export India</a><span>PRO</span></h2>
-        </div>
-        
-        <form method="GET" action="{% url 'home' %}" class="search-container">
-            <input type="text" name="q" placeholder="Search products, global trade..." value="{{ query }}" class="search-input">
-            <button type="submit" class="search-btn">🔍</button>
-        </form>
-        
-        <div class="menu-wrapper">
-            <button class="dots-btn" onclick="toggleMenu()">⋮</button>
-            
-            <div id="dropdownMenu" class="dropdown-menu">
-                {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}">👤 Profile & Dashboard</a>
-                    <a href="{% url 'wallet_view' %}">💰 Wallet (₹{{ user.wallet_balance|default:"0.00" }})</a>
-                    <a href="{% url 'customer_support' %}">🛠️ Customer Support</a>
-                    <a href="{% url 'user_settings' %}">⚙️ Account Settings</a>
-                    {% if user.is_staff or user.is_superuser %}
-                        <a href="{% url 'upload_product' %}">📦 Upload Product (Admin)</a>
-                    {% endif %}
-                    <form action="{% url 'logout' %}" method="post" style="margin: 0;">
-                        {% csrf_token %}
-                        <button type="submit" class="logout-btn">🚪 Logout</button>
-                    </form>
-                {% else %}
-                    <a href="{% url 'login' %}">🔑 Login Account</a>
-                    <a href="{% url 'register' %}">📝 Register Now</a>
-                    <a href="{% url 'customer_support' %}">🛠️ Customer Support</a>
-                {% endif %}
-            </div>
-        </div>
-    </header>
+<!-- =========================
+     HEADER
+========================== -->
 
-    <div class="container">
-        <div class="promo-banner">
-            <div class="promo-text">
-                <h1>Global B2B & E-Commerce Hub</h1>
-                <p>Explore trusted items & build your global business network.</p>
-            </div>
-            <div>
-                <a href="{% url 'home' %}" class="promo-btn">EXPLORE NOW</a>
-            </div>
+<header class="top-header">
+
+    <div class="top-row">
+
+        <div class="welcome">
+
+            {% if user.is_authenticated %}
+                <small>Hi,</small>
+                <h2>{{ user.username }} 👋</h2>
+            {% else %}
+                <small>Welcome to</small>
+                <h2>YN Export India 👋</h2>
+            {% endif %}
+
         </div>
 
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert-box">✨ {{ message }}</div>
-            {% endfor %}
+        {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="profile-btn">
+                👤
+            </a>
+        {% else %}
+            <a href="{% url 'login' %}" class="profile-btn">
+                🔑
+            </a>
         {% endif %}
 
-        <div class="section-header">
-            <span>{% if query %} Search Results for "{{ query }}" {% else %} 🔥 Trending Products & Services {% endif %}</span>
-            <span style="font-size: 11px; color: #2874f0; font-weight: normal;">100% Verified</span>
+    </div>
+
+    <form method="GET"
+          action="{% url 'home' %}"
+          class="search-box">
+
+        <input
+            type="text"
+            name="q"
+            placeholder="Search products, export..."
+            value="{{ query }}"
+        >
+
+        <button type="submit">🔍</button>
+
+    </form>
+
+</header>
+
+
+<!-- =========================
+     MAIN
+========================== -->
+
+<main class="container">
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="alert-box">
+                ✨ {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <small>YN EXPORT INDIA</small>
+
+            <h1>
+                Shop The<br>
+                New Products
+            </h1>
+
+            <p>
+                Discover trusted products and
+                grow your business with YN Export India.
+            </p>
+
+            <a href="#products" class="hero-btn">
+                SHOP NOW →
+            </a>
+
         </div>
 
-        <div class="product-grid">
-            {% if products %}
-                {% for product in products %}
-                    <div class="product-card">
-                        <span class="badge">TOP</span>
-                        <div class="product-img-box">
-                            {% if product.image %}
-                                <img src="{{ product.image.url }}" alt="{{ product.title }}">
-                            {% else %}
-                                <span style="color: #aaa; font-size: 12px;">No Image</span>
-                            {% endif %}
-                        </div>
-                        <div class="product-info">
-                            <h4>{{ product.title }}</h4>
-                            <div class="product-price">₹ {{ product.price }}</div>
-                            <a href="{% url 'product_detail' product.id %}" class="btn-buy">View Details</a>
-                        </div>
-                    </div>
-                {% endfor %}
+        <div class="hero-icon">
+            🛍️
+        </div>
+
+    </section>
+
+
+    <!-- CATEGORIES -->
+
+    <div class="section-title">
+
+        <h3>Categories</h3>
+
+        <a href="{% url 'home' %}">
+            View all
+        </a>
+
+    </div>
+
+
+    <div class="categories">
+
+        <a href="{% url 'home' %}" class="category active">
+            <div class="category-icon">🛍️</div>
+            <span>All</span>
+        </a>
+
+        <a href="{% url 'home' %}?q=Shirt" class="category">
+            <div class="category-icon">👕</div>
+            <span>Fashion</span>
+        </a>
+
+        <a href="{% url 'home' %}?q=Earphone" class="category">
+            <div class="category-icon">🎧</div>
+            <span>Electronics</span>
+        </a>
+
+        <a href="{% url 'home' %}?q=Bag" class="category">
+            <div class="category-icon">🎒</div>
+            <span>Bags</span>
+        </a>
+
+        <a href="{% url 'home' %}?q=Beauty" class="category">
+            <div class="category-icon">💄</div>
+            <span>Beauty</span>
+        </a>
+
+        <a href="{% url 'home' %}?q=Export" class="category">
+            <div class="category-icon">🚢</div>
+            <span>Export</span>
+        </a>
+
+    </div>
+
+
+    <!-- PRODUCTS -->
+
+    <div class="section-title" id="products">
+
+        <h3>
+            {% if query %}
+                Search Results
             {% else %}
-                <div class="empty-box">
-                    <p>No products found matching your search. Try another keyword!</p>
-                </div>
+                New Arrivals
             {% endif %}
-        </div>
+        </h3>
+
+        <a href="{% url 'home' %}">
+            View all
+        </a>
+
     </div>
 
-    <div class="categories-bar">
-        <a href="{% url 'home' %}" class="cat-item active"><div>🌐</div>Home</a>
-        <a href="{% url 'home' %}?q=Export" class="cat-item"><div>🚢</div>Export</a>
-        <a href="{% url 'wallet_view' %}" class="cat-item"><div>💰</div>Wallet</a>
-        <a href="{% url 'dashboard' %}" class="cat-item"><div>📦</div>Orders</a>
-        <a href="{% url 'customer_support' %}" class="cat-item"><div>🛠️</div>Support</a>
+
+    <div class="product-grid">
+
+        {% if products %}
+
+            {% for product in products %}
+
+                <article class="product-card">
+
+                    <span class="top-badge">
+                        TOP
+                    </span>
+
+                    <div class="heart">
+                        ♡
+                    </div>
+
+                    <div class="product-image">
+
+                        {% if product.image %}
+
+                            <img
+                                src="{{ product.image.url }}"
+                                alt="{{ product.title }}"
+                                loading="lazy"
+                            >
+
+                        {% else %}
+
+                            <span style="color:#aaa;">
+                                No Image
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="product-info">
+
+                        <h4>
+                            {{ product.title }}
+                        </h4>
+
+                        <div class="price">
+                            ₹ {{ product.price }}
+                        </div>
+
+                        <a
+                            href="{% url 'product_detail' product.id %}"
+                            class="view-btn"
+                        >
+                            View Details
+                        </a>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-box">
+
+                <h3>No Products Found</h3>
+
+                <p style="margin-top:8px;">
+                    Try another search keyword.
+                </p>
+
+            </div>
+
+        {% endif %}
+
     </div>
 
-    <script>
-        function toggleMenu() {
-            var menu = document.getElementById("dropdownMenu");
-            if (menu.style.display === "block") {
-                menu.style.display = "none";
-            } else {
-                menu.style.display = "block";
-            }
-        }
+</main>
 
-        window.onclick = function(event) {
-            if (!event.target.matches('.dots-btn') && !event.target.closest('.dots-btn')) {
-                var menu = document.getElementById("dropdownMenu");
-                if (menu && menu.style.display === "block") {
-                    menu.style.display = "none";
-                }
-            }
-        }
-    </script>
+
+<!-- =========================
+     BOTTOM NAVIGATION
+========================== -->
+
+<nav class="bottom-nav">
+
+    <a
+        href="{% url 'home' %}"
+        class="nav-item active"
+    >
+        <div class="nav-icon">🏠</div>
+        Home
+    </a>
+
+
+    <a
+        href="{% url 'home' %}?q=Export"
+        class="nav-item"
+    >
+        <div class="nav-icon">🚢</div>
+        Export
+    </a>
+
+
+    <a
+        href="{% url 'wallet_view' %}"
+        class="nav-item"
+    >
+        <div class="nav-icon">💰</div>
+        Wallet
+    </a>
+
+
+    <a
+        href="{% url 'dashboard' %}"
+        class="nav-item"
+    >
+        <div class="nav-icon">📦</div>
+        Orders
+    </a>
+
+
+    <a
+        href="{% url 'customer_support' %}"
+        class="nav-item"
+    >
+        <div class="nav-icon">🛠️</div>
+        Support
+    </a>
+
+</nav>
+
 </body>
 </html>

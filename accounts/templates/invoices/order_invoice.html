@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <style>
+        @page {
+            size: A4;
+            margin: 18mm;
+        }
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #222;
+            font-size: 12px;
+        }
+
+        .header {
+            border-bottom: 2px solid #222;
+            padding-bottom: 12px;
+            margin-bottom: 18px;
+        }
+
+        .company {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .invoice-title {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .info td {
+            vertical-align: top;
+            padding: 5px;
+        }
+
+        .items {
+            margin-top: 20px;
+        }
+
+        .items th,
+        .items td {
+            border: 1px solid #999;
+            padding: 8px;
+        }
+
+        .items th {
+            background: #eeeeee;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .summary {
+            margin-top: 18px;
+        }
+
+        .summary td {
+            padding: 7px;
+        }
+
+        .total {
+            font-size: 15px;
+            font-weight: bold;
+            border-top: 2px solid #222;
+        }
+
+        .payment {
+            margin-top: 20px;
+            padding: 12px;
+            border: 1px solid #999;
+        }
+
+        .footer {
+            margin-top: 35px;
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <table>
+            <tr>
+                <td>
+                    <div class="company">YN Exports India</div>
+                    <div>E-commerce &amp; Export Services</div>
+                </td>
+
+                <td class="invoice-title">
+                    ORDER INVOICE<br>
+                    <small>Order #{{ order.id }}</small>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+    <table class="info">
+        <tr>
+            <td width="50%">
+                <strong>Customer Details</strong><br><br>
+
+                {{ order.full_name }}<br>
+                Mobile: {{ order.mobile }}<br>
+                {% if order.father_name %}
+                    Father Name: {{ order.father_name }}<br>
+                {% endif %}
+            </td>
+
+            <td width="50%">
+                <strong>Delivery Address</strong><br><br>
+
+                {{ order.address }}<br>
+                {{ order.landmark }}<br>
+                {{ order.district }}, {{ order.state }}<br>
+                {{ order.country }} - {{ order.pincode }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <strong>Order ID:</strong> #{{ order.id }}<br>
+                <strong>Tracking ID:</strong> {{ order.tracking_id }}
+            </td>
+
+            <td>
+                <strong>Order Date:</strong>
+                {{ order.created_at|date:"d-m-Y H:i" }}<br>
+
+                <strong>Order Status:</strong>
+                {{ order.get_status_display }}
+            </td>
+        </tr>
+    </table>
+
+
+    <table class="items">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th class="right">Amount</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>{{ order.product.title }}</td>
+                <td class="right">
+                    ₹ {{ order.product_amount|floatformat:2 }}
+                </td>
+            </tr>
+
+            <tr>
+                <td>Delivery Charge</td>
+                <td class="right">
+                    ₹ {{ order.delivery_charge|floatformat:2 }}
+                </td>
+            </tr>
+
+            <tr>
+                <td>Shopping Charge</td>
+                <td class="right">
+                    ₹ {{ order.shopping_charge|floatformat:2 }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <table class="summary">
+
+        <tr>
+            <td>Product Price</td>
+            <td class="right">
+                ₹ {{ order.product_amount|floatformat:2 }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Delivery Charge</td>
+            <td class="right">
+                ₹ {{ order.delivery_charge|floatformat:2 }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Shopping Charge</td>
+            <td class="right">
+                ₹ {{ order.shopping_charge|floatformat:2 }}
+            </td>
+        </tr>
+
+        <tr class="total">
+            <td>Total Order Value</td>
+            <td class="right">
+                ₹ {{ order.total_amount|floatformat:2 }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Online Payment</td>
+            <td class="right">
+                ₹ {{ order.online_payment_amount|floatformat:2 }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Remaining COD</td>
+            <td class="right">
+                ₹ {{ order.cod_amount|floatformat:2 }}
+            </td>
+        </tr>
+
+    </table>
+
+
+    <div class="payment">
+        <strong>Payment Status:</strong>
+        {{ order.get_payment_status_display }}
+        <br><br>
+
+        <strong>Order Status:</strong>
+        {{ order.get_status_display }}
+    </div>
+
+
+    <div class="footer">
+        YN Exports India — Thank you for your order.
+        <br>
+        This is a computer-generated invoice.
+    </div>
+
+</body>
+</html>

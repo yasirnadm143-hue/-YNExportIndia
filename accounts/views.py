@@ -1,3 +1,7 @@
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from django.http import HttpResponse
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -643,22 +647,63 @@ def order_product(request, pk):
             order.product = product
             order.user = request.user
 
+            # ==========================
+            # ORDER PAYMENT CALCULATION
+            # ==========================
+
+            product_amount = product.price
+            delivery_charge = 85
+            shopping_charge = 15
+
+            total_amount = (
+                product_amount
+                + delivery_charge
+                + shopping_charge
+            )
+
+            # 50% of PRODUCT PRICE is paid online.
+            # Delivery + shopping charges remain in COD.
+            online_payment_amount = product_amount / 2
+            cod_amount = (
+                total_amount
+                - online_payment_amount
+            )
+
+            order.product_amount = product_amount
+            order.delivery_charge = delivery_charge
+            order.shopping_charge = shopping_charge
+            order.total_amount = total_amount
+            order.online_payment_amount = online_payment_amount
+            order.cod_amount = cod_amount
+
+            # Online payment is manually verified after
+            # customer sends payment proof.
+            order.payment_status = "PENDING"
+
             order.save()
 
-            # Create order notification
+            # ==========================
+            # PAYMENT PENDING NOTIFICATION
+            # ==========================
+
             Notification.objects.create(
                 user=request.user,
                 order=order,
-                title="🎉 Order Placed Successfully",
+                title="🧾 Order Created - Payment Pending",
                 message=(
-                    f"Your order #{order.id} has been placed successfully. "
-                    f"Tracking ID: {order.tracking_id}"
+                    f"Order #{order.id} has been created. "
+                    f"Tracking ID: {order.tracking_id}. "
+                    f"Please complete the 50% online payment of "
+                    f"₹{order.online_payment_amount:.2f} and send the "
+                    f"payment screenshot on WhatsApp. "
+                    f"Order confirmation is pending payment verification."
                 )
             )
 
             messages.success(
                 request,
-                "Order placed successfully."
+                "Order created. Please complete the online payment "
+                "and send the payment screenshot on WhatsApp."
             )
 
             return redirect(
@@ -670,12 +715,35 @@ def order_product(request, pk):
 
         form = OrderForm()
 
+    # ==========================
+    # PAYMENT PREVIEW FOR CUSTOMER
+    # ==========================
+
+    product_amount = product.price
+    delivery_charge = 85
+    shopping_charge = 15
+
+    total_amount = (
+        product_amount
+        + delivery_charge
+        + shopping_charge
+    )
+
+    online_payment_amount = product_amount / 2
+    cod_amount = total_amount - online_payment_amount
+
     return render(
         request,
         "accounts/order_product.html",
         {
             "product": product,
-            "form": form
+            "form": form,
+            "product_amount": product_amount,
+            "delivery_charge": delivery_charge,
+            "shopping_charge": shopping_charge,
+            "total_amount": total_amount,
+            "online_payment_amount": online_payment_amount,
+            "cod_amount": cod_amount,
         }
     )
 
@@ -685,6 +753,172 @@ def order_product(request, pk):
 # ==========================
 
 @login_required
+def download_invoice(request, order_id):
+
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        user=request.user
+    )
+
+    response = HttpResponse(
+        content_type="application/pdf"
+    )
+
+    response["Content-Disposition"] = (
+        f'attachment; filename="YN-Exports-Invoice-{order.id}.pdf"'
+    )
+
+    pdf = canvas.Canvas(
+        response,
+        pagesize=A4
+    )
+
+    width, height = A4
+
+    y = height - 50
+
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawString(
+        50,
+        y,
+        "YN EXPORTS INDIA"
+    )
+
+    y -= 35
+
+    pdf.setFont("Helvetica-Bold", 13)
+    pdf.drawString(
+        50,
+        y,
+        "ORDER INVOICE"
+    )
+
+    y -= 30
+
+    pdf.setFont("Helvetica", 10)
+
+    pdf.drawString(
+        50,
+        y,
+        f"Order ID: #{order.id}"
+    )
+
+    y -= 18
+
+    pdf.drawString(
+        50,
+        y,
+        f"Tracking ID: {order.tracking_id}"
+    )
+
+    y -= 18
+
+    pdf.drawString(
+        50,
+        y,
+        f"Order Date: {order.created_at.strftime('%d-%m-%Y %H:%M')}"
+    )
+
+    y -= 30
+
+    pdf.setFont("Helvetica-Bold", 11)
+    pdf.drawString(
+        50,
+        y,
+        "Customer Details"
+    )
+
+    y -= 20
+
+    pdf.setFont("Helvetica", 10)
+
+    customer_lines = [
+        f"Name: {order.full_name}",
+        f"Mobile: {order.mobile}",
+        f"Address: {order.address}",
+        f"Landmark: {order.landmark}",
+        f"District: {order.district}",
+        f"State: {order.state}",
+        f"Pincode: {order.pincode}",
+        f"Country: {order.country}",
+    ]
+
+    for line in customer_lines:
+        pdf.drawString(
+            50,
+            y,
+            line[:110]
+        )
+        y -= 17
+
+    y -= 15
+
+    pdf.setFont("Helvetica-Bold", 11)
+    pdf.drawString(
+        50,
+        y,
+        "Product & Payment Details"
+    )
+
+    y -= 22
+
+    pdf.setFont("Helvetica", 10)
+
+    lines = [
+        f"Product: {order.product.title}",
+        f"Product Price: Rs. {order.product_amount:.2f}",
+        f"Delivery Charge: Rs. {order.delivery_charge:.2f}",
+        f"Shopping Charge: Rs. {order.shopping_charge:.2f}",
+        f"Total Order Value: Rs. {order.total_amount:.2f}",
+        f"Online Payment: Rs. {order.online_payment_amount:.2f}",
+        f"COD Amount: Rs. {order.cod_amount:.2f}",
+        f"Payment Status: {order.get_payment_status_display()}",
+        f"Order Status: {order.get_status_display()}",
+    ]
+
+    for line in lines:
+        pdf.drawString(
+            50,
+            y,
+            line[:110]
+        )
+        y -= 18
+
+    y -= 20
+
+    pdf.setFont("Helvetica-Bold", 11)
+
+    pdf.drawString(
+        50,
+        y,
+        "Important: Attach this invoice with the package during dispatch."
+    )
+
+    y -= 35
+
+    pdf.setFont("Helvetica", 9)
+
+    pdf.drawString(
+        50,
+        y,
+        "YN Exports India — Thank you for your order."
+    )
+
+    y -= 15
+
+    pdf.drawString(
+        50,
+        y,
+        "This is a computer-generated invoice."
+    )
+
+    pdf.showPage()
+    pdf.save()
+
+    return response
+
+
 def payment_success(request, order_id):
 
     order = get_object_or_404(

@@ -31,4 +31,9 @@ urlpatterns = [
     # Product Edit/Delete
     path('edit-product/<int:pk>/', views.edit_product, name='edit_product'),
     path('delete-product/<int:pk>/', views.delete_product, name='delete_product'),
+    path(
+        "invoice/<int:order_id>/",
+        views.download_invoice,
+        name="download_invoice",
+    ),
 ]

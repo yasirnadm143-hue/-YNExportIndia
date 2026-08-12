@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.utils import timezone
 
 from .models import CustomUser, Product, Order
 
@@ -34,18 +35,28 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "price")
-    search_fields = ("title",)
+    list_display = (
+        "id",
+        "title",
+        "price",
+    )
+
+    search_fields = (
+        "title",
+    )
 
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+
     list_display = (
         "id",
         "full_name",
         "product",
-        "mobile",
-        "state",
+        "online_payment_amount",
+        "cod_amount",
+        "payment_status",
+        "status",
         "created_at",
     )
 
@@ -53,10 +64,145 @@ class OrderAdmin(admin.ModelAdmin):
         "full_name",
         "mobile",
         "pincode",
+        "tracking_id",
+        "user__username",
     )
 
     list_filter = (
+        "payment_status",
+        "status",
         "state",
         "country",
         "created_at",
     )
+
+    readonly_fields = (
+        "tracking_id",
+        "product_amount",
+        "delivery_charge",
+        "shopping_charge",
+        "total_amount",
+        "online_payment_amount",
+        "cod_amount",
+        "payment_verified_at",
+        "created_at",
+        "updated_at",
+    )
+
+    fieldsets = (
+        (
+            "Order Information",
+            {
+                "fields": (
+                    "product",
+                    "user",
+                    "tracking_id",
+                    "status",
+                    "created_at",
+                    "updated_at",
+                )
+            },
+        ),
+        (
+            "Customer / Delivery",
+            {
+                "fields": (
+                    "full_name",
+                    "first_name",
+                    "last_name",
+                    "father_name",
+                    "mobile",
+                    "pincode",
+                    "landmark",
+                    "district",
+                    "state",
+                    "country",
+                    "address",
+                )
+            },
+        ),
+        (
+            "Payment Calculation",
+            {
+                "fields": (
+                    "product_amount",
+                    "delivery_charge",
+                    "shopping_charge",
+                    "total_amount",
+                    "online_payment_amount",
+                    "cod_amount",
+                )
+            },
+        ),
+        (
+            "Payment Verification",
+            {
+                "fields": (
+                    "payment_status",
+                    "payment_screenshot",
+                    "payment_verified_at",
+                )
+            },
+        ),
+    )
+
+    actions = (
+        "verify_selected_payments",
+        "reject_selected_payments",
+    )
+
+    @admin.action(description="✅ Verify selected payments")
+    def verify_selected_payments(self, request, queryset):
+
+        updated = 0
+
+        for order in queryset:
+
+            if order.payment_status == "VERIFIED":
+                continue
+
+            order.payment_status = "VERIFIED"
+            order.payment_verified_at = timezone.now()
+            order.status = "CONFIRMED"
+
+            order.save(
+                update_fields=[
+                    "payment_status",
+                    "payment_verified_at",
+                    "status",
+                    "updated_at",
+                ]
+            )
+
+            updated += 1
+
+        self.message_user(
+            request,
+            f"{updated} payment(s) verified and order(s) confirmed."
+        )
+
+    @admin.action(description="❌ Reject selected payments")
+    def reject_selected_payments(self, request, queryset):
+
+        updated = 0
+
+        for order in queryset:
+
+            if order.payment_status == "VERIFIED":
+                continue
+
+            order.payment_status = "REJECTED"
+
+            order.save(
+                update_fields=[
+                    "payment_status",
+                    "updated_at",
+                ]
+            )
+
+            updated += 1
+
+        self.message_user(
+            request,
+            f"{updated} payment(s) rejected."
+        )

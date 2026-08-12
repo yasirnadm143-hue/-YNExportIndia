@@ -111,6 +111,70 @@ class Order(models.Model):
         default="PENDING"
     )
 
+    # ==========================
+    # PAYMENT & ORDER CHARGES
+    # ==========================
+
+    delivery_charge = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=85.00
+    )
+
+    shopping_charge = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=15.00
+    )
+
+    product_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00
+    )
+
+    total_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00
+    )
+
+    online_payment_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00
+    )
+
+    cod_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00
+    )
+
+    PAYMENT_STATUS_CHOICES = [
+        ("PENDING", "Payment Pending"),
+        ("AWAITING_VERIFICATION", "Awaiting Verification"),
+        ("VERIFIED", "Payment Verified"),
+        ("REJECTED", "Payment Rejected"),
+    ]
+
+    payment_status = models.CharField(
+        max_length=30,
+        choices=PAYMENT_STATUS_CHOICES,
+        default="PENDING"
+    )
+
+    payment_screenshot = models.ImageField(
+        upload_to="payment_screenshots/",
+        blank=True,
+        null=True
+    )
+
+    payment_verified_at = models.DateTimeField(
+        blank=True,
+        null=True
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True
     )

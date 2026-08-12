@@ -330,21 +330,156 @@
         </div>
 
         <div class="product-row">
-            <span>Price</span>
-            <strong>₹ {{ product.price }}</strong>
+            <span>Product Price</span>
+            <strong>₹ {{ product.price|floatformat:2 }}</strong>
+        </div>
+
+        <div class="product-row">
+            <span>Delivery Charge</span>
+            <strong>₹ 85.00</strong>
+        </div>
+
+        <div class="product-row">
+            <span>Shopping Charge</span>
+            <strong>₹ 15.00</strong>
+        </div>
+
+        <div class="product-row total-row">
+            <span>Total Order Value</span>
+            <strong>
+                ₹ {{ product.price|add:"100"|floatformat:2 }}
+            </strong>
         </div>
 
     </div>
 
 
+    <!-- ==========================
+         PAYMENT CALCULATION
+    =========================== -->
+
+    <div style="
+        margin:18px 0;
+        padding:18px;
+        background:#ffffff;
+        border:1px solid #e4e7ec;
+        border-radius:16px;
+        box-shadow:0 6px 18px rgba(0,0,0,.06);
+    ">
+
+        <h3 style="
+            margin:0 0 14px;
+            font-size:18px;
+            color:#182033;
+        ">
+            🧾 Order Payment Summary
+        </h3>
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            padding:9px 0;
+            border-bottom:1px solid #f0f1f3;
+        ">
+            <span>Product Price</span>
+            <strong>₹ {{ product.price|floatformat:2 }}</strong>
+        </div>
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            padding:9px 0;
+            border-bottom:1px solid #f0f1f3;
+        ">
+            <span>Delivery Charge</span>
+            <strong>₹ 85.00</strong>
+        </div>
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            padding:9px 0;
+            border-bottom:1px solid #f0f1f3;
+        ">
+            <span>Shopping Charge</span>
+            <strong>₹ 15.00</strong>
+        </div>
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            padding:12px 0;
+            font-size:17px;
+        ">
+            <strong>Total Order Value</strong>
+            <strong>₹ {{ product.price|add:"100"|floatformat:2 }}</strong>
+        </div>
+
+        <div style="
+            margin-top:8px;
+            padding:13px;
+            background:#eef8ff;
+            border-radius:12px;
+        ">
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                color:#075985;
+            ">
+                <span>50% Product Online Payment</span>
+                <strong>₹ {{ online_payment_amount|floatformat:2 }}</strong>
+            </div>
+        </div>
+
+        <div style="
+            margin-top:10px;
+            padding:13px;
+            background:#fff7e6;
+            border-radius:12px;
+        ">
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                color:#8a5200;
+            ">
+                <span>Remaining COD Amount</span>
+                <strong>₹ {{ cod_amount|floatformat:2 }}</strong>
+            </div>
+        </div>
+
+        <p style="
+            margin:14px 0 0;
+            font-size:12px;
+            color:#777;
+            line-height:1.5;
+        ">
+            50% of the product price is paid online for order confirmation.
+            Delivery charge ₹85 and shopping charge ₹15 are included in the
+            order total and the remaining amount is payable through COD.
+        </p>
+
+    </div>
+
     <div class="cod-message">
 
-        <h3>💵 COD Available</h3>
+        <h3>💳 Payment Plan — 50% Online + 50% COD</h3>
 
         <p>
-            आपको अभी कोई online payment करने की जरूरत नहीं है।
-            आपका payment product delivery के समय Cash on Delivery
-            के माध्यम से लिया जाएगा।
+            Order confirm करने के लिए Product Price का 50% online
+            payment करना होगा। बाकी amount delivery के समय
+            Cash on Delivery (COD) से लिया जाएगा।
+        </p>
+
+        <div class="product-row">
+            <span>50% Online Payment</span>
+            <strong>
+                ₹ {{ product.price|divisibleby:"2" }}
+            </strong>
+        </div>
+
+        <p style="margin-top:10px;">
+            <strong>Note:</strong>
+            ₹85 Delivery + ₹15 Shopping Charge COD amount में शामिल हैं।
         </p>
 
     </div>

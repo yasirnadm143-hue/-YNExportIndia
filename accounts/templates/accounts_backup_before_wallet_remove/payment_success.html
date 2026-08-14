@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Order Payment | YN Exports India</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #182033;
+        }
+
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 30px rgba(0,0,0,.08);
+            margin-bottom: 16px;
+        }
+
+        .success {
+            text-align: center;
+        }
+
+        .icon {
+            width: 68px;
+            height: 68px;
+            margin: 0 auto 12px;
+            border-radius: 50%;
+            background: #e8f7ed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+        }
+
+        h1 {
+            margin: 0;
+            color: #198754;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            color: #667085;
+            line-height: 1.5;
+        }
+
+        .order-info {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 15px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 9px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .row:last-child {
+            border-bottom: none;
+        }
+
+        .row strong {
+            text-align: right;
+        }
+
+        .online {
+            background: #eaf6ff;
+            border: 1px solid #b9e2ff;
+            border-radius: 16px;
+            padding: 18px;
+            margin-top: 16px;
+        }
+
+        .online h3 {
+            margin: 0 0 8px;
+            color: #075985;
+        }
+
+        .online-amount {
+            font-size: 27px;
+            font-weight: 800;
+            color: #075985;
+        }
+
+        .whatsapp {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 13px;
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .steps {
+            padding-left: 20px;
+            line-height: 1.7;
+        }
+
+        .warning {
+            margin-top: 15px;
+            padding: 13px;
+            border-radius: 12px;
+            background: #fff7e6;
+            color: #8a5200;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .cod {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 14px;
+            padding: 15px;
+        }
+
+        .invoice {
+            display: block;
+            text-align: center;
+            padding: 14px;
+            border-radius: 12px;
+            background: #198754;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .dashboard {
+            display: block;
+            text-align: center;
+            padding: 13px;
+            border-radius: 12px;
+            background: #2874f0;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .footer {
+            text-align: center;
+            color: #98a2b3;
+            font-size: 12px;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card success">
+
+        <div class="icon">🟡</div>
+
+        <h1>🟡 Order Received — Payment Pending</h1>
+
+        <p class="subtitle">
+            आपका order request successfully receive हो गया है।
+            अभी आपका payment verification pending है।
+            Order payment verify होने के बाद ही Confirm किया जाएगा।
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>📦 Order Details</h3>
+
+        <div class="order-info">
+
+            <div class="row">
+                <span>Order ID</span>
+                <strong>#{{ order.id }}</strong>
+            </div>
+
+            <div class="row">
+                <span>Tracking ID</span>
+                <strong>{{ order.tracking_id }}</strong>
+            </div>
+
+            <div class="row">
+                <span>Product</span>
+                <strong>{{ order.product.title }}</strong>
+            </div>
+
+            <div class="row">
+                <span>Product Price</span>
+                <strong>₹ {{ order.product_amount|floatformat:2 }}</strong>
+            </div>
+
+            <div class="row">
+                <span>Delivery Charge</span>
+                <strong>₹ {{ order.delivery_charge|floatformat:2 }}</strong>
+            </div>
+
+            <div class="row">
+                <span>Shopping Charge</span>
+                <strong>₹ {{ order.shopping_charge|floatformat:2 }}</strong>
+            </div>
+
+            <div class="row">
+                <span>Total Order Value</span>
+                <strong>₹ {{ order.total_amount|floatformat:2 }}</strong>
+            </div>
+
+        </div>
+
+
+        <div class="online">
+
+            <h3>💳 50% Online Payment</h3>
+
+            <div class="online-amount">
+                ₹ {{ order.online_payment_amount|floatformat:2 }}
+            </div>
+
+            <p>
+                यह amount केवल product price का 50% है।
+                Delivery और shopping charges remaining COD amount में शामिल हैं।
+            </p>
+
+        </div>
+
+
+        <div class="cod" style="margin-top:15px;">
+
+            <strong>💵 Remaining COD Amount</strong>
+
+            <div style="font-size:22px;font-weight:800;margin-top:5px;">
+                ₹ {{ order.cod_amount|floatformat:2 }}
+            </div>
+
+            <small>
+                यह amount delivery के समय Cash on Delivery के रूप में देना होगा।
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>📲 Payment कैसे करें?</h3>
+
+        <ol class="steps">
+
+            <li>
+                नीचे दिए गए WhatsApp button पर click करें।
+            </li>
+
+            <li>
+                WhatsApp पर अपना <strong>Order ID और पूरा delivery address</strong>
+                भेजें।
+            </li>
+
+            <li>
+                हम आपको इसी WhatsApp chat पर payment के लिए
+                <strong>QR Code</strong> भेजेंगे।
+            </li>
+
+            <li>
+                QR Code scan करके
+                <strong>₹ {{ order.online_payment_amount|floatformat:2 }}</strong>
+                का payment करें।
+            </li>
+
+            <li>
+                Payment के बाद उसी WhatsApp chat में
+                <strong>payment screenshot + Order ID + Tracking ID</strong>
+                भेजें।
+            </li>
+
+            <li>
+                Payment verify होने के बाद आपका order
+                <strong>Confirmed</strong> किया जाएगा।
+            </li>
+
+        </ol>
+
+
+        <a
+            class="whatsapp"
+            href="https://wa.me/9181886470?text=Hello%20YN%20Exports%20India%2C%20I%20want%20to%20confirm%20my%20order.%0A%0AOrder%20ID%3A%20%23{{ order.id }}%0ATracking%20ID%3A%20{{ order.tracking_id }}%0A%0AI%20will%20send%20my%20delivery%20address%20here."
+            target="_blank"
+            rel="noopener"
+        >
+            📲 WhatsApp पर Address भेजें
+        </a>
+
+
+        <div class="warning">
+            ⚠️ QR Code केवल WhatsApp पर आपसे प्राप्त करें।
+            Payment करने के बाद screenshot जरूर भेजें।
+            Payment verification से पहले order को confirmed न मानें।
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <a
+            href="{% url 'download_invoice' order.id %}"
+            class="invoice"
+            target="_blank"
+        >
+            📄 Download Invoice PDF
+        </a>
+
+        <a
+            href="{% url 'dashboard' %}"
+            class="dashboard"
+        >
+            Go to Dashboard
+        </a>
+
+    </div>
+
+
+    <div class="footer">
+        © YN Exports India • Secure Order System
+    </div>
+
+</div>
+
+</body>
+</html>

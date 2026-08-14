@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Verification - YN Export India</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f1f3f6; margin: 0; padding: 20px; }
+        .container { max-width: 400px; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+        h2 { color: #2874f0; }
+        input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+        .btn { width: 100%; padding: 12px; background: #2874f0; color: white; border: none; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📱 Mobile Verification</h2>
+        <p style="font-size:14px; color:#666;">Enter your mobile number to receive OTP</p>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color:red; font-size:13px;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="mobile_number" placeholder="Enter Mobile Number" required pattern="[0-9]{10}">
+            <button type="submit" class="btn">Send OTP</button>
+        </form>
+        <br>
+        <a href="{% url 'login' %}" style="text-decoration:none; color:#2874f0; font-size:14px;">Already have an account? Login</a>
+    </div>
+</body>
+</html>

@@ -182,7 +182,13 @@ Copy Referral Link
 
 <br><br>
 
+<a
+href="{% url 'wallet_view' %}"
+class="btn">
 
+Wallet
+
+</a>
 
 <a
 href="#"

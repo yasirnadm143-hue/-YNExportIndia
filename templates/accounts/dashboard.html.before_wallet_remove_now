@@ -437,7 +437,25 @@
         </a>
 
 
-        
+        <a href="{% url 'wallet_view' %}">
+
+            <div class="menu-left">
+
+                <div class="menu-icon">
+                    💰
+                </div>
+
+                <span>
+                    My Wallet
+                </span>
+
+            </div>
+
+            <div class="arrow">
+                ›
+            </div>
+
+        </a>
 
 
         <a href="{% url 'my_orders' %}">

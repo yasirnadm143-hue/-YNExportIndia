@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YN Export India - One Time Admin Setup</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        .box {
+            width: 92%;
+            max-width: 430px;
+            background: white;
+            padding: 28px;
+            border-radius: 14px;
+            box-shadow: 0 8px 30px rgba(0,0,0,.12);
+        }
+
+        h1 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px;
+            margin: 8px 0 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            border: 0;
+            border-radius: 8px;
+            background: #111827;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .error {
+            background: #fee2e2;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .success {
+            background: #dcfce7;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .locked {
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+
+    <h1>YN Export India</h1>
+
+    {% if locked %}
+
+        <div class="locked">
+            <h2>Admin Setup Locked</h2>
+            <p>An administrator already exists.</p>
+            <p>This one-time setup page is permanently disabled.</p>
+            <p><a href="/admin/">Go to Admin Login</a></p>
+        </div>
+
+    {% elif success %}
+
+        <div class="success">
+            <strong>Admin created successfully.</strong>
+            <p>Username: <strong>{{ username }}</strong></p>
+            <p>You can now login to the admin panel.</p>
+        </div>
+
+        <a href="/admin/">Go to Admin Login</a>
+
+    {% else %}
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <label>Setup Key</label>
+            <input type="password" name="setup_key" required>
+
+            <label>Admin Username</label>
+            <input type="text" name="username" required>
+
+            <label>Admin Password</label>
+            <input type="password" name="password" required>
+
+            <label>Confirm Password</label>
+            <input type="password" name="password2" required>
+
+            <button type="submit">Create Admin</button>
+        </form>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

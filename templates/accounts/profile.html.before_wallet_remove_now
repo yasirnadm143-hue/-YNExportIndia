@@ -266,6 +266,29 @@
             font-weight: 800;
         }
 
+        /* WALLET */
+
+        .wallet-box {
+            background: #f4faff;
+            border-radius: 20px;
+            padding: 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .wallet-label {
+            color: #68768a;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .wallet-balance {
+            color: #087bc8;
+            font-size: 32px;
+            font-weight: 900;
+        }
+
         /* BUTTONS */
 
         .bottom-buttons {
@@ -321,7 +344,11 @@
                 text-align: left;
             }
 
-
+            .wallet-box {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
 
             .wallet-balance {
                 font-size: 30px;
@@ -524,6 +551,29 @@
             id="copyMessage"
         >
             ✓ Referral link copied!
+        </div>
+
+    </div>
+
+
+    <!-- WALLET -->
+
+    <div class="section">
+
+        <div class="section-title">
+            💰 Wallet
+        </div>
+
+        <div class="wallet-box">
+
+            <div class="wallet-label">
+                Available Balance
+            </div>
+
+            <div class="wallet-balance">
+                ₹{{ user.wallet_balance|default:"0.00" }}
+            </div>
+
         </div>
 
     </div>

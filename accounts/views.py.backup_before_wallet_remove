@@ -1,0 +1,1014 @@
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from django.http import HttpResponse
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth import authenticate, login
+from django.contrib.auth import get_user_model
+from django.views.decorators.http import require_http_methods
+import os
+
+from .models import Product, Order, CustomUser, Notification
+from .forms import ProductForm, OrderForm
+
+
+
+# ==========================
+# ONE-TIME ADMIN SETUP
+# ==========================
+
+@require_http_methods(["GET", "POST"])
+def one_time_admin_setup(request):
+
+    User = get_user_model()
+    setup_key = os.environ.get("ADMIN_SETUP_KEY")
+
+    if not setup_key:
+        return render(
+            request,
+            "accounts/admin_setup.html",
+            {"error": "Admin setup is disabled."},
+            status=404,
+        )
+
+    # Permanently lock this page after the first superuser exists.
+    if User.objects.filter(is_superuser=True).exists():
+        return render(
+            request,
+            "accounts/admin_setup.html",
+            {"locked": True},
+            status=403,
+        )
+
+    if request.method == "POST":
+
+        submitted_key = request.POST.get("setup_key", "")
+        username = request.POST.get("username", "").strip()
+        password = request.POST.get("password", "")
+        password2 = request.POST.get("password2", "")
+
+        if submitted_key != setup_key:
+            return render(
+                request,
+                "accounts/admin_setup.html",
+                {"error": "Invalid setup key."},
+                status=403,
+            )
+
+        if not username or not password:
+            return render(
+                request,
+                "accounts/admin_setup.html",
+                {"error": "Username and password are required."},
+            )
+
+        if password != password2:
+            return render(
+                request,
+                "accounts/admin_setup.html",
+                {"error": "Passwords do not match."},
+            )
+
+        if User.objects.filter(username=username).exists():
+            return render(
+                request,
+                "accounts/admin_setup.html",
+                {"error": "Username already exists."},
+            )
+
+        user = User(
+            username=username,
+            is_active=True,
+            is_staff=True,
+            is_superuser=True,
+        )
+
+        user.set_password(password)
+        user.save()
+
+        return render(
+            request,
+            "accounts/admin_setup.html",
+            {
+                "success": True,
+                "username": username,
+            },
+        )
+
+    return render(
+        request,
+        "accounts/admin_setup.html",
+    )
+
+# ==========================
+# HOME
+# ==========================
+
+def home_view(request):
+    products = Product.objects.all()
+
+    return render(
+        request,
+        "accounts/home.html",
+        {
+            "products": products
+        }
+    )
+
+
+# ==========================
+# DASHBOARD
+# ==========================
+
+@login_required
+def user_dashboard(request):
+
+    user = request.user
+
+    # Direct team
+    direct_team = CustomUser.objects.filter(
+        upline=user
+    ).count()
+
+    # Total team: all levels below the current user
+    total_team = 0
+    current_level = [user]
+    visited = {user.id}
+
+    while current_level:
+        next_level = list(
+            CustomUser.objects.filter(
+                upline__in=current_level
+            ).exclude(
+                id__in=visited
+            )
+        )
+
+        if not next_level:
+            break
+
+        total_team += len(next_level)
+
+        visited.update(
+            member.id for member in next_level
+        )
+
+        current_level = next_level
+
+    # MLM commission income
+    from django.db.models import Sum
+    from .models import CommissionTransaction
+
+    total_income = CommissionTransaction.objects.filter(
+        beneficiary=user
+    ).aggregate(
+        total=Sum("amount")
+    )["total"] or 0
+
+    referral_link = request.build_absolute_uri(
+        "/register/"
+    ) + "?ref=" + str(user.referral_id)
+
+    return render(
+        request,
+        "accounts/dashboard.html",
+        {
+            "user": user,
+            "direct_team": direct_team,
+            "total_team": total_team,
+            "referral_count": total_team,
+            "total_income": total_income,
+            "referral_link": referral_link,
+        }
+    )
+
+
+# ==========================
+# PROFILE
+# ==========================
+
+@login_required
+def user_profile(request):
+
+    user = request.user
+
+    # Direct team
+    direct_team = CustomUser.objects.filter(
+        upline=user
+    ).count()
+
+    # Total team - all levels
+    total_team = 0
+    current_level = [user]
+    visited = {user.id}
+
+    while current_level:
+
+        next_level = list(
+            CustomUser.objects.filter(
+                upline__in=current_level
+            ).exclude(
+                id__in=visited
+            )
+        )
+
+        if not next_level:
+            break
+
+        total_team += len(next_level)
+
+        visited.update(
+            member.id for member in next_level
+        )
+
+        current_level = next_level
+
+    # Referral link
+    referral_link = request.build_absolute_uri(
+        "/register/"
+    ) + "?ref=" + str(user.referral_id)
+
+    return render(
+        request,
+        "accounts/profile.html",
+        {
+            "user": user,
+            "direct_team": direct_team,
+            "total_team": total_team,
+            "referral_link": referral_link,
+        }
+    )
+
+
+# ==========================
+# SETTINGS
+# ==========================
+
+@login_required
+def user_settings(request):
+    return render(
+        request,
+        "accounts/settings.html"
+    )
+
+
+# ==========================
+# WALLET
+# ==========================
+
+@login_required
+def wallet_view(request):
+    return render(
+        request,
+        "accounts/wallet.html"
+    )
+
+
+# ==========================
+# NOTIFICATIONS
+# ==========================
+
+@login_required
+def notifications_view(request):
+
+    notifications = Notification.objects.filter(
+        user=request.user
+    ).select_related(
+        "order"
+    ).order_by(
+        "-created_at"
+    )
+
+    return render(
+        request,
+        "accounts/notifications.html",
+        {
+            "notifications": notifications
+        }
+    )
+
+
+# ==========================
+# CUSTOMER SUPPORT
+# ==========================
+
+def customer_support(request):
+    return render(
+        request,
+        "accounts/support.html"
+    )
+
+
+# ==========================
+# REGISTER
+# ==========================
+
+def register_step1(request):
+
+    if request.method == "POST":
+
+        username = request.POST.get("username", "").strip()
+        first_name = request.POST.get("first_name", "").strip()
+        last_name = request.POST.get("last_name", "").strip()
+        email = request.POST.get("email", "").strip()
+        phone_number = request.POST.get("phone_number", "").strip()
+        referral_id = request.POST.get("referral_id", "").strip()
+        password = request.POST.get("password", "")
+        password2 = request.POST.get("password2", "")
+
+        errors = []
+
+        # Required fields
+        if not username:
+            errors.append("Username is required.")
+
+        if not first_name:
+            errors.append("First name is required.")
+
+        if not last_name:
+            errors.append("Last name is required.")
+
+        if not email:
+            errors.append("Email is required.")
+
+        if not phone_number:
+            errors.append("Mobile number is required.")
+
+        if not password:
+            errors.append("Password is required.")
+
+        # Password confirmation
+        if password and password != password2:
+            errors.append("Passwords do not match.")
+
+        # Username check
+        if username and CustomUser.objects.filter(
+            username__iexact=username
+        ).exists():
+            errors.append("This username is already registered.")
+
+        # Email check
+        if email and CustomUser.objects.filter(
+            email__iexact=email
+        ).exists():
+            errors.append("This email is already registered.")
+
+        # Phone check
+        if phone_number and CustomUser.objects.filter(
+            phone_number=phone_number
+        ).exists():
+            errors.append("This mobile number is already registered.")
+
+        # Referral check
+        upline = None
+
+        if referral_id:
+
+            upline = CustomUser.objects.filter(
+                referral_id=referral_id
+            ).first()
+
+            if not upline:
+                errors.append(
+                    "Invalid Referral ID."
+                )
+
+        # If errors exist
+        if errors:
+
+            for error in errors:
+                messages.error(request, error)
+
+            return render(
+                request,
+                "accounts/register.html",
+                {
+                    "form_data": request.POST
+                }
+            )
+
+        # Create user
+        user = CustomUser(
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            phone_number=phone_number,
+            upline=upline,
+        )
+
+        # Password hashing
+        user.set_password(password)
+
+        # Save user
+        user.save()
+
+        messages.success(
+            request,
+            "Registration successful. You can now login."
+        )
+
+        return redirect("login")
+
+    return render(
+        request,
+        "accounts/register.html"
+    )
+
+
+# ==========================
+# OTP VERIFICATION PAGE
+# ==========================
+
+def register_verify_otp(request):
+
+    return render(
+        request,
+        "accounts/register_verify_otp.html"
+    )
+
+
+# ==========================
+# REGISTRATION COMPLETE
+# ==========================
+
+def register_complete(request):
+
+    return render(
+        request,
+        "accounts/register_complete.html"
+    )
+
+
+# ==========================
+# PRODUCT DETAILS
+# ==========================
+
+def product_detail(request, pk):
+
+    product = get_object_or_404(
+        Product,
+        pk=pk
+    )
+
+    return render(
+        request,
+        "accounts/product_detail.html",
+        {
+            "product": product
+        }
+    )
+
+
+# ==========================
+# UPLOAD PRODUCT
+# ==========================
+
+@login_required
+def upload_product(request):
+
+    if not request.user.is_staff:
+
+        messages.error(
+            request,
+            "Only Admin can upload products."
+        )
+
+        return redirect("home")
+
+    if request.method == "POST":
+
+        form = ProductForm(
+            request.POST,
+            request.FILES
+        )
+
+        if form.is_valid():
+
+            product = form.save(
+                commit=False
+            )
+
+            product.owner = request.user
+            product.save()
+
+            messages.success(
+                request,
+                "Product uploaded successfully."
+            )
+
+            return redirect("home")
+
+    else:
+
+        form = ProductForm()
+
+    return render(
+        request,
+        "accounts/upload_product.html",
+        {
+            "form": form
+        }
+    )
+
+
+# ==========================
+# EDIT PRODUCT
+# ==========================
+
+@login_required
+def edit_product(request, pk):
+
+    product = get_object_or_404(
+        Product,
+        pk=pk
+    )
+
+    if not (
+        request.user.is_staff
+        or product.owner == request.user
+    ):
+
+        messages.error(
+            request,
+            "You are not allowed to edit this product."
+        )
+
+        return redirect("home")
+
+    if request.method == "POST":
+
+        form = ProductForm(
+            request.POST,
+            request.FILES,
+            instance=product
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                "Product updated successfully."
+            )
+
+            return redirect(
+                "product_detail",
+                pk=product.id
+            )
+
+    else:
+
+        form = ProductForm(
+            instance=product
+        )
+
+    return render(
+        request,
+        "accounts/upload_product.html",
+        {
+            "form": form,
+            "product": product
+        }
+    )
+
+
+# ==========================
+# DELETE PRODUCT
+# ==========================
+
+@login_required
+def delete_product(request, pk):
+
+    product = get_object_or_404(
+        Product,
+        pk=pk
+    )
+
+    if not (
+        request.user.is_staff
+        or product.owner == request.user
+    ):
+
+        messages.error(
+            request,
+            "You are not allowed to delete this product."
+        )
+
+        return redirect("home")
+
+    if request.method == "POST":
+
+        product.delete()
+
+        messages.success(
+            request,
+            "Product deleted successfully."
+        )
+
+        return redirect("home")
+
+    return render(
+        request,
+        "accounts/delete_product.html",
+        {
+            "product": product
+        }
+    )
+
+
+# ==========================
+# ORDER PRODUCT
+# ==========================
+
+@login_required
+def order_product(request, pk):
+
+    product = get_object_or_404(
+        Product,
+        pk=pk
+    )
+
+    if request.method == "POST":
+
+        form = OrderForm(
+            request.POST
+        )
+
+        if form.is_valid():
+
+            order = form.save(
+                commit=False
+            )
+
+            order.product = product
+            order.user = request.user
+
+            # ==========================
+            # ORDER PAYMENT CALCULATION
+            # ==========================
+
+            product_amount = product.price
+            delivery_charge = 85
+            shopping_charge = 15
+
+            total_amount = (
+                product_amount
+                + delivery_charge
+                + shopping_charge
+            )
+
+            # 50% of PRODUCT PRICE is paid online.
+            # Delivery + shopping charges remain in COD.
+            online_payment_amount = product_amount / 2
+            cod_amount = (
+                total_amount
+                - online_payment_amount
+            )
+
+            order.product_amount = product_amount
+            order.delivery_charge = delivery_charge
+            order.shopping_charge = shopping_charge
+            order.total_amount = total_amount
+            order.online_payment_amount = online_payment_amount
+            order.cod_amount = cod_amount
+
+            # Online payment is manually verified after
+            # customer sends payment proof.
+            order.payment_status = "PENDING"
+
+            order.save()
+
+            # ==========================
+            # PAYMENT PENDING NOTIFICATION
+            # ==========================
+
+            Notification.objects.create(
+                user=request.user,
+                order=order,
+                title="🧾 Order Created - Payment Pending",
+                message=(
+                    f"Order #{order.id} has been created. "
+                    f"Tracking ID: {order.tracking_id}. "
+                    f"Please complete the 50% online payment of "
+                    f"₹{order.online_payment_amount:.2f} and send the "
+                    f"payment screenshot on WhatsApp. "
+                    f"Order confirmation is pending payment verification."
+                )
+            )
+
+            messages.success(
+                request,
+                "Order created. Please complete the online payment "
+                "and send the payment screenshot on WhatsApp."
+            )
+
+            return redirect(
+                "payment_success",
+                order_id=order.id
+            )
+
+    else:
+
+        form = OrderForm()
+
+    # ==========================
+    # PAYMENT PREVIEW FOR CUSTOMER
+    # ==========================
+
+    product_amount = product.price
+    delivery_charge = 85
+    shopping_charge = 15
+
+    total_amount = (
+        product_amount
+        + delivery_charge
+        + shopping_charge
+    )
+
+    online_payment_amount = product_amount / 2
+    cod_amount = total_amount - online_payment_amount
+
+    return render(
+        request,
+        "accounts/order_product.html",
+        {
+            "product": product,
+            "form": form,
+            "product_amount": product_amount,
+            "delivery_charge": delivery_charge,
+            "shopping_charge": shopping_charge,
+            "total_amount": total_amount,
+            "online_payment_amount": online_payment_amount,
+            "cod_amount": cod_amount,
+        }
+    )
+
+
+# ==========================
+# PAYMENT SUCCESS
+# ==========================
+
+@login_required
+def download_invoice(request, order_id):
+
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        user=request.user
+    )
+
+    response = HttpResponse(
+        content_type="application/pdf"
+    )
+
+    response["Content-Disposition"] = (
+        f'attachment; filename="YN-Exports-Invoice-{order.id}.pdf"'
+    )
+
+    pdf = canvas.Canvas(
+        response,
+        pagesize=A4
+    )
+
+    width, height = A4
+
+    y = height - 50
+
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawString(
+        50,
+        y,
+        "YN EXPORTS INDIA"
+    )
+
+    y -= 35
+
+    pdf.setFont("Helvetica-Bold", 13)
+    pdf.drawString(
+        50,
+        y,
+        "ORDER INVOICE"
+    )
+
+    y -= 30
+
+    pdf.setFont("Helvetica", 10)
+
+    pdf.drawString(
+        50,
+        y,
+        f"Order ID: #{order.id}"
+    )
+
+    y -= 18
+
+    pdf.drawString(
+        50,
+        y,
+        f"Tracking ID: {order.tracking_id}"
+    )
+
+    y -= 18
+
+    pdf.drawString(
+        50,
+        y,
+        f"Order Date: {order.created_at.strftime('%d-%m-%Y %H:%M')}"
+    )
+
+    y -= 30
+
+    pdf.setFont("Helvetica-Bold", 11)
+    pdf.drawString(
+        50,
+        y,
+        "Customer Details"
+    )
+
+    y -= 20
+
+    pdf.setFont("Helvetica", 10)
+
+    customer_lines = [
+        f"Name: {order.full_name}",
+        f"Mobile: {order.mobile}",
+        f"Address: {order.address}",
+        f"Landmark: {order.landmark}",
+        f"District: {order.district}",
+        f"State: {order.state}",
+        f"Pincode: {order.pincode}",
+        f"Country: {order.country}",
+    ]
+
+    for line in customer_lines:
+        pdf.drawString(
+            50,
+            y,
+            line[:110]
+        )
+        y -= 17
+
+    y -= 15
+
+    pdf.setFont("Helvetica-Bold", 11)
+    pdf.drawString(
+        50,
+        y,
+        "Product & Payment Details"
+    )
+
+    y -= 22
+
+    pdf.setFont("Helvetica", 10)
+
+    lines = [
+        f"Product: {order.product.title}",
+        f"Product Price: Rs. {order.product_amount:.2f}",
+        f"Delivery Charge: Rs. {order.delivery_charge:.2f}",
+        f"Shopping Charge: Rs. {order.shopping_charge:.2f}",
+        f"Total Order Value: Rs. {order.total_amount:.2f}",
+        f"Online Payment: Rs. {order.online_payment_amount:.2f}",
+        f"COD Amount: Rs. {order.cod_amount:.2f}",
+        f"Payment Status: {order.get_payment_status_display()}",
+        f"Order Status: {order.get_status_display()}",
+    ]
+
+    for line in lines:
+        pdf.drawString(
+            50,
+            y,
+            line[:110]
+        )
+        y -= 18
+
+    y -= 20
+
+    pdf.setFont("Helvetica-Bold", 11)
+
+    pdf.drawString(
+        50,
+        y,
+        "Important: Attach this invoice with the package during dispatch."
+    )
+
+    y -= 35
+
+    pdf.setFont("Helvetica", 9)
+
+    pdf.drawString(
+        50,
+        y,
+        "YN Exports India — Thank you for your order."
+    )
+
+    y -= 15
+
+    pdf.drawString(
+        50,
+        y,
+        "This is a computer-generated invoice."
+    )
+
+    pdf.showPage()
+    pdf.save()
+
+    return response
+
+
+def payment_success(request, order_id):
+
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        user=request.user
+    )
+
+    return render(
+        request,
+        "accounts/payment_success.html",
+        {
+            "order": order
+        }
+    )
+
+
+# ==========================
+# MY ORDERS
+# ==========================
+
+@login_required
+def my_orders(request):
+
+    orders = Order.objects.filter(
+        user=request.user
+    ).select_related(
+        "product"
+    ).order_by(
+        "-created_at"
+    )
+
+    return render(
+        request,
+        "accounts/my_orders.html",
+        {
+            "orders": orders
+        }
+    )
+
+
+# ==========================
+# ORDER DETAILS
+# ==========================
+
+@login_required
+def order_details(request, order_id):
+
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        user=request.user
+    )
+
+    return render(
+        request,
+        "accounts/order_details.html",
+        {
+            "order": order
+        }
+    )
+
+
+# ==========================
+# TRACK ORDER
+# ==========================
+
+@login_required
+def track_order(request, order_id):
+
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        user=request.user
+    )
+
+    return render(
+        request,
+        "accounts/track_order.html",
+        {
+            "order": order
+        }
+    )
+
+# =========================
+# LOGOUT
+# =========================
+from django.contrib.auth import logout as django_logout
+from django.shortcuts import redirect
+
+def logout_view(request):
+    django_logout(request)
+    return redirect("home")

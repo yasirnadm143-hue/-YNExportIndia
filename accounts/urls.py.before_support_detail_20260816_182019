@@ -10,7 +10,6 @@ urlpatterns = [
     path('settings/', views.user_settings, name='user_settings'),
     path('wallet/', views.wallet_view, name='wallet_view'),
     path('support/', views.customer_support, name='customer_support'),
-    path('support/<str:ticket_id>/', views.support_ticket_detail, name='support_ticket_detail'),
     path('notifications/', views.notifications_view, name='notifications'),
 
     path('logout/', views.logout_view, name='logout'),

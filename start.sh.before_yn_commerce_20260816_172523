@@ -2,7 +2,7 @@
 set -e
 
 echo "======================================"
-echo "       YN COMMERCE INDIA START"
+echo "       YN EXPORT INDIA START"
 echo "======================================"
 
 echo "===== 1. APPLYING ALL MIGRATIONS ====="

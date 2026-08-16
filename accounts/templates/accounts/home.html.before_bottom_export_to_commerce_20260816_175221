@@ -643,7 +643,7 @@
             <span>Beauty</span>
         </a>
 
-        <a href="{% url 'home' %}?q=Commerce" class="category">
+        <a href="{% url 'home' %}?q=Export" class="category">
             <div class="category-icon">🚢</div>
             <span>Commerce</span>
         </a>
@@ -765,11 +765,11 @@
 
 
     <a
-        href="{% url 'home' %}?q=Commerce"
+        href="{% url 'home' %}?q=Export"
         class="nav-item"
     >
         <div class="nav-icon">🚢</div>
-        Commerce
+        Export
     </a>
 
 

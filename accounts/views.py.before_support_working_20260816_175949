@@ -10,14 +10,7 @@ from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_http_methods
 import os
 
-from .models import (
-    Product,
-    Order,
-    CustomUser,
-    Notification,
-    SupportTicket,
-    SupportMessage,
-)
+from .models import Product, Order, CustomUser, Notification
 from .forms import ProductForm, OrderForm
 
 
@@ -301,156 +294,10 @@ def notifications_view(request):
 # CUSTOMER SUPPORT
 # ==========================
 
-# ==========================
-# CUSTOMER SUPPORT
-# ==========================
-
-@login_required
-@require_http_methods(["GET", "POST"])
 def customer_support(request):
-
-    if request.method == "POST":
-
-        email = request.POST.get("email", "").strip()
-        subject = request.POST.get("subject", "").strip()
-        message_text = request.POST.get("message", "").strip()
-
-        errors = []
-
-        if not email:
-            errors.append("Email is required.")
-
-        if not subject:
-            errors.append("Subject is required.")
-
-        if not message_text:
-            errors.append("Please describe your problem.")
-
-        if len(subject) > 200:
-            errors.append("Subject is too long.")
-
-        if errors:
-            for error in errors:
-                messages.error(request, error)
-
-            return render(
-                request,
-                "accounts/support.html",
-                {
-                    "tickets": SupportTicket.objects.filter(
-                        user=request.user
-                    ).order_by("-created_at")
-                }
-            )
-
-        # Always associate the ticket with the logged-in user.
-        ticket = SupportTicket.objects.create(
-            user=request.user,
-            email=email,
-            subject=subject,
-            message=message_text,
-            status="OPEN",
-            priority="NORMAL",
-        )
-
-        # Save the original customer message separately.
-        SupportMessage.objects.create(
-            ticket=ticket,
-            sender=request.user,
-            message=message_text,
-            is_staff_reply=False,
-        )
-
-        messages.success(
-            request,
-            f"Support ticket {ticket.ticket_id} created successfully."
-        )
-
-        return redirect("customer_support")
-
-    tickets = SupportTicket.objects.filter(
-        user=request.user
-    ).order_by("-created_at")
-
     return render(
         request,
-        "accounts/support.html",
-        {
-            "tickets": tickets,
-        }
-    )
-
-
-
-# ==========================
-# SUPPORT TICKET DETAIL
-# ==========================
-
-@login_required
-@require_http_methods(["GET", "POST"])
-def support_ticket_detail(request, ticket_id):
-
-    ticket = get_object_or_404(
-        SupportTicket,
-        ticket_id=ticket_id,
-        user=request.user,
-    )
-
-    if request.method == "POST":
-
-        message_text = request.POST.get("message", "").strip()
-
-        if not message_text:
-            messages.error(
-                request,
-                "Please enter a message."
-            )
-            return redirect(
-                "support_ticket_detail",
-                ticket_id=ticket.ticket_id,
-            )
-
-        if ticket.status in ["RESOLVED", "CLOSED"]:
-            messages.error(
-                request,
-                "This ticket is closed. Please create a new ticket."
-            )
-            return redirect(
-                "support_ticket_detail",
-                ticket_id=ticket.ticket_id,
-            )
-
-        SupportMessage.objects.create(
-            ticket=ticket,
-            sender=request.user,
-            message=message_text,
-            is_staff_reply=False,
-        )
-
-        ticket.status = "OPEN"
-        ticket.save(update_fields=["status", "updated_at"])
-
-        messages.success(
-            request,
-            "Your reply has been sent successfully."
-        )
-
-        return redirect(
-            "support_ticket_detail",
-            ticket_id=ticket.ticket_id,
-        )
-
-    ticket_messages = ticket.messages.select_related(
-        "sender"
-    ).all()
-
-    return render(
-        request,
-        "accounts/support_ticket_detail.html",
-        {
-            "ticket": ticket,
-            "ticket_messages": ticket_messages,
-        }
+        "accounts/support.html"
     )
 
 

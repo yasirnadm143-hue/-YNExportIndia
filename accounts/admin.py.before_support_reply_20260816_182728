@@ -301,33 +301,6 @@ class SupportTicketAdmin(admin.ModelAdmin):
         SupportMessageInline,
     )
 
-    def save_model(self, request, obj, form, change):
-        old_reply = ""
-
-        if change:
-            old_obj = SupportTicket.objects.get(pk=obj.pk)
-            old_reply = (old_obj.admin_reply or "").strip()
-
-        new_reply = (obj.admin_reply or "").strip()
-
-        super().save_model(request, obj, form, change)
-
-        # Create a conversation message only when Admin
-        # has entered a new reply.
-        if new_reply and new_reply != old_reply:
-            SupportMessage.objects.create(
-                ticket=obj,
-                sender=request.user,
-                message=new_reply,
-                is_staff_reply=True,
-            )
-
-            # Automatically move the ticket to In Progress
-            # when staff sends a reply, unless already resolved/closed.
-            if obj.status not in ["RESOLVED", "CLOSED"]:
-                obj.status = "IN_PROGRESS"
-                obj.save(update_fields=["status", "updated_at"])
-
 
 @admin.register(SupportMessage)
 class SupportMessageAdmin(admin.ModelAdmin):

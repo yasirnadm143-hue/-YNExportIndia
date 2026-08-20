@@ -7,28 +7,7 @@ urlpatterns = [
 
     path('dashboard/', views.user_dashboard, name='dashboard'),
     path('mlm-commission/', views.mlm_commission_view, name='mlm_commission'),
-    path(
-        'mlm-commission/download/',
-        views.download_commission_csv,
-        name='download_commission_csv',
-    ),
     path('my-network/', views.mlm_tree_view, name='mlm_tree'),
-    path(
-        'mlm-commission-history/',
-        views.mlm_commission_history_view,
-        name='mlm_commission_history',
-    ),
-    path(
-        'direct-team/',
-        views.direct_team_view,
-        name='direct_team',
-    ),
-    path(
-        'total-team/',
-        views.total_team_view,
-        name='total_team',
-    ),
-
     path('profile/', views.user_profile, name='profile'),
     path('settings/', views.user_settings, name='user_settings'),
     path('wallet/', views.wallet_view, name='wallet_view'),

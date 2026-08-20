@@ -1,11 +1,51 @@
 from django.db import transaction
 
-from .models import CustomUser, Order
-from .mlm_config import (
-    RANKS,
-    get_next_rank,
-    get_required_downlines,
-)
+from .models import CustomUser
+
+
+# ==========================================================
+# RANK REQUIREMENTS
+# ==========================================================
+
+RANK_REQUIREMENTS = {
+    20: 3,   # Level 20 -> Level 30 : 3 active direct downlines
+    30: 5,   # Level 30 -> Level 40 : 5 active direct downlines
+    40: 8,   # Level 40 -> Level 50 : 8 active direct downlines
+
+    # बाद में final rules के अनुसार:
+    # 50: ...,
+    # 60: ...,
+    # 70: ...,
+    # 80: ...,
+}
+
+
+RANK_SEQUENCE = [
+    20,
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90,
+]
+
+
+# ==========================================================
+# NEXT RANK
+# ==========================================================
+
+def get_next_rank(current_rank):
+
+    current_rank = int(current_rank)
+
+    for rank in RANK_SEQUENCE:
+
+        if rank > current_rank:
+            return rank
+
+    return current_rank
 
 
 # ==========================================================
@@ -14,12 +54,16 @@ from .mlm_config import (
 
 def get_active_direct_downline_count(user):
     """
-    A direct downline is considered ACTIVE only when
-    that user has at least one DELIVERED order.
+    केवल direct downlines count होंगे।
 
-    PENDING / CONFIRMED / PACKED / SHIPPED /
-    OUT_FOR_DELIVERY orders do not make a user active.
+    Downline को active मानने के लिए
+    उसका कम से कम एक order DELIVERED होना जरूरी है.
+
+    केवल registration करने से active नहीं होगी.
+    CONFIRMED/PENDING order भी active नहीं मानी जाएगी.
     """
+
+    from .models import Order
 
     direct_downlines = CustomUser.objects.filter(
         upline=user
@@ -29,12 +73,12 @@ def get_active_direct_downline_count(user):
 
     for member in direct_downlines:
 
-        has_delivered_order = Order.objects.filter(
+        delivered_order = Order.objects.filter(
             user=member,
-            status="DELIVERED",
+            status="DELIVERED"
         ).exists()
 
-        if has_delivered_order:
+        if delivered_order:
             count += 1
 
     return count
@@ -46,24 +90,16 @@ def get_active_direct_downline_count(user):
 
 @transaction.atomic
 def update_user_rank(user):
-    """
-    Recalculate the user's MLM rank.
-
-    Rank can move upward when the required number of
-    active direct downlines is reached.
-
-    Rank never moves downward.
-    """
 
     user = CustomUser.objects.select_for_update().get(
         pk=user.pk
     )
 
-    current_rank = int(user.mlm_level or RANKS[0])
-
     active_count = get_active_direct_downline_count(
         user
     )
+
+    current_rank = int(user.mlm_level)
 
     # ======================================================
     # RANK PROGRESSION
@@ -75,23 +111,19 @@ def update_user_rank(user):
             current_rank
         )
 
-        # Already at the highest configured rank.
         if next_rank == current_rank:
             break
 
-        required = get_required_downlines(
+        required = RANK_REQUIREMENTS.get(
             current_rank
         )
 
-        # No rule configured for this rank.
         if required is None:
             break
 
-        # Not enough active direct downlines yet.
         if active_count < required:
             break
 
-        # Requirement fulfilled.
         current_rank = next_rank
 
     # ======================================================

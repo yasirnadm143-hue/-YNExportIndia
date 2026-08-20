@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLM Downline Tree - YN Commerce India</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f1f3f6; margin: 0; padding: 20px; text-align: center; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h2 { color: #2874f0; margin-bottom: 20px; }
+        .node-card { display: inline-block; background: #2874f0; color: white; padding: 12px 24px; border-radius: 50px; font-weight: bold; margin-bottom: 30px; box-shadow: 0 4px 8px rgba(40,116,240,0.3); }
+        .tree-container { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 20px; }
+        .child-card { background: #e8f4fd; color: #1251b8; border: 2px solid #2874f0; padding: 15px 20px; border-radius: 10px; width: 150px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .child-card h4 { margin: 0 0 5px 0; font-size: 16px; }
+        .child-card p { margin: 0; font-size: 12px; color: #555; }
+        .back-link { display: inline-block; margin-top: 25px; color: #2874f0; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🌳 Your Downline Team Tree</h2>
+
+        <div>
+            <div class="node-card">👑 You: {{ current_user.username }}</div>
+        </div>
+
+        <p style="color: #666; font-size: 14px;">Direct Referrals (Level 1)</p>
+
+        <div class="tree-container">
+            {% for member in downlines %}
+                <div class="child-card">
+                    <h4>👤 {{ member.username }}</h4>
+                    <p>Rank: {{ member.rank|default:"Member" }}</p>
+                </div>
+            {% empty %}
+                <p style="color: #888; width: 100%;">No downline members found yet. Share your referral link to grow your team!</p>
+            {% endfor %}
+        </div>
+
+        <a href="{% url 'dashboard' %}" class="back-link">← Back to Dashboard</a>
+    </div>
+</body>
+</html>

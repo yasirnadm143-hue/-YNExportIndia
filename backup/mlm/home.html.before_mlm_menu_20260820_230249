@@ -509,7 +509,7 @@
                 <a href="{% url 'home' %}" style="display:block;padding:14px 16px;border-bottom:1px solid #eee;">🏠 Home</a>
                 <a href="{% url 'profile' %}" style="display:block;padding:14px 16px;border-bottom:1px solid #eee;">👤 My Profile</a>
                 <a href="{% url 'my_orders' %}" style="display:block;padding:14px 16px;border-bottom:1px solid #eee;">📦 My Orders</a>
-                
+
                 <a href="{% url 'notifications' %}" style="display:block;padding:14px 16px;border-bottom:1px solid #eee;">🔔 Notifications</a>
                 <a href="{% url 'user_settings' %}" style="display:block;padding:14px 16px;border-bottom:1px solid #eee;">⚙️ Settings</a>
                 <a href="{% url 'customer_support' %}" style="display:block;padding:14px 16px;border-bottom:1px solid #eee;">🛟 Customer Support</a>
@@ -643,7 +643,7 @@
             <span>Beauty</span>
         </a>
 
-        <a href="{% url 'home' %}?q=Export" class="category">
+        <a href="{% url 'home' %}?q=Commerce" class="category">
             <div class="category-icon">🚢</div>
             <span>Commerce</span>
         </a>
@@ -765,15 +765,15 @@
 
 
     <a
-        href="{% url 'home' %}?q=Export"
+        href="{% url 'home' %}?q=Commerce"
         class="nav-item"
     >
         <div class="nav-icon">🚢</div>
-        Export
+        Commerce
     </a>
 
 
-    
+
 
 
     <a

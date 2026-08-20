@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MLM Commission - YN Commerce India</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.08);
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+        }
+
+        .header p {
+            margin: 4px 0;
+            color: #666;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #2874f0;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.07);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #555;
+        }
+
+        .amount {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.07);
+            overflow-x: auto;
+        }
+
+        .section h2 {
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+
+        th {
+            background: #f7f8fa;
+        }
+
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .level-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 14px;
+            background: #fafafa;
+        }
+
+        .level-card strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .user-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+        }
+
+        .empty {
+            color: #777;
+            padding: 15px 0;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 10px;
+            }
+
+            .summary {
+                grid-template-columns: 1fr;
+            }
+
+            .level-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .amount {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>💰 MLM Commission</h1>
+
+        <p>
+            <strong>Username:</strong>
+            {{ user.username }}
+        </p>
+
+        <p>
+            <strong>Referral ID:</strong>
+            {{ user.referral_id }}
+        </p>
+
+        <a href="{% url 'dashboard' %}" class="back">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="summary">
+
+        <div class="card">
+            <h3>Total Commission</h3>
+            <div class="amount">
+                ₹ {{ total_commission|floatformat:2 }}
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Direct Downline</h3>
+            <div class="amount">
+                {{ direct_downline|length }}
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Commission Transactions</h3>
+            <div class="amount">
+                {{ transactions|length }}
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- LEVEL SUMMARY -->
+
+    <div class="section">
+
+        <h2>📊 Level-wise Commission</h2>
+
+        {% if level_summary %}
+
+        <div class="level-grid">
+
+            {% for item in level_summary %}
+
+            <div class="level-card">
+
+                <strong>
+                    Level {{ item.level }}
+                </strong>
+
+                <span>
+                    ₹ {{ item.total|floatformat:2 }}
+                </span>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="empty">
+            No commission has been generated yet.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- DIRECT DOWNLINE -->
+
+    <div class="section">
+
+        <h2>👥 Direct Downline</h2>
+
+        {% if direct_downline %}
+
+        {% for member in direct_downline %}
+
+        <div class="user-card">
+
+            <strong>
+                👤 {{ member.username }}
+            </strong>
+
+            <div>
+                Referral ID:
+                {{ member.referral_id|default:"-" }}
+            </div>
+
+            <div>
+                Rank:
+                {{ member.rank|default:"Member" }}
+            </div>
+
+            <div>
+                Joining:
+                {{ member.date_joined|date:"d M Y, h:i A" }}
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+        {% else %}
+
+        <div class="empty">
+            No direct downline members found.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- COMMISSION TRANSACTIONS -->
+
+    <div class="section">
+
+        <h2>🧾 Commission Transactions</h2>
+
+        {% if transactions %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Level</th>
+                    <th>Source User</th>
+                    <th>Product</th>
+                    <th>Order Amount</th>
+                    <th>Rate</th>
+                    <th>Commission</th>
+                    <th>Date</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for transaction in transactions %}
+
+                <tr>
+
+                    <td>
+                        Level {{ transaction.level }}
+                    </td>
+
+                    <td>
+                        {{ transaction.source_user.username }}
+                    </td>
+
+                    <td>
+                        {{ transaction.order.product.title }}
+                    </td>
+
+                    <td>
+                        ₹ {{ transaction.order_amount|floatformat:2 }}
+                    </td>
+
+                    <td>
+                        {{ transaction.rate }}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ₹ {{ transaction.amount|floatformat:2 }}
+                        </strong>
+                    </td>
+
+                    <td>
+                        {{ transaction.created_at|date:"d M Y, h:i A" }}
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="empty">
+            No MLM commission transactions found.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

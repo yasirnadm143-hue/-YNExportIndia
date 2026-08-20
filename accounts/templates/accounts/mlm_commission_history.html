@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Commission History - YN Commerce India</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 15px;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .header,
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.08);
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin-top: 0;
+        }
+
+        .header p {
+            margin: 7px 0;
+            color: #666;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 11px 16px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .btn-blue {
+            background: #2874f0;
+        }
+
+        .btn-green {
+            background: #198754;
+        }
+
+        .btn-orange {
+            background: #f0a500;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.07);
+        }
+
+        .summary-title {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .summary-value {
+            font-size: 27px;
+            font-weight: bold;
+            margin-top: 7px;
+        }
+
+        .commission {
+            color: #198754;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1050px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f7f8fa;
+            font-size: 14px;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .delivered {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .confirmed {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .cancelled,
+        .rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .verified {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 35px 15px;
+            color: #777;
+        }
+
+        .amount {
+            font-weight: bold;
+        }
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .summary {
+                grid-template-columns: 1fr;
+            }
+
+            .header,
+            .card,
+            .summary-card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>🧾 Commission History</h1>
+
+        <p>
+            <strong>Username:</strong>
+            {{ user.username }}
+        </p>
+
+        <p>
+            <strong>Referral ID:</strong>
+            {{ user.referral_id|default:"-" }}
+        </p>
+
+        <div class="buttons">
+
+            <a
+                href="{% url 'mlm_commission' %}"
+                class="btn btn-blue"
+            >
+                ← MLM Commission
+            </a>
+
+            <a
+                href="{% url 'mlm_tree' %}"
+                class="btn btn-green"
+            >
+                🌳 My Network
+            </a>
+
+            <a
+                href="{% url 'dashboard' %}"
+                class="btn btn-orange"
+            >
+                Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="summary">
+
+        <div class="summary-card">
+
+            <div class="summary-title">
+                Total Commission
+            </div>
+
+            <div class="summary-value commission">
+                ₹ {{ total_commission|floatformat:2 }}
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-title">
+                Total Transactions
+            </div>
+
+            <div class="summary-value">
+                {{ transactions|length }}
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-title">
+                Current Wallet
+            </div>
+
+            <div class="summary-value">
+                ₹ {{ user.wallet_balance|floatformat:2 }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- HISTORY -->
+
+    <div class="card">
+
+        <h2>💰 Complete Commission History</h2>
+
+        {% if transactions %}
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Level</th>
+                        <th>Source User</th>
+                        <th>Product</th>
+                        <th>Order Amount</th>
+                        <th>Rate</th>
+                        <th>Commission</th>
+                        <th>Order Status</th>
+                        <th>Payment Status</th>
+                        <th>Date</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for transaction in transactions %}
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                Level {{ transaction.level }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ transaction.source_user.username }}
+                        </td>
+
+                        <td>
+                            {% if transaction.order.product %}
+                                {{ transaction.order.product.title }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            ₹ {{ transaction.order_amount|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            {{ transaction.rate }}
+                        </td>
+
+                        <td class="amount commission">
+                            ₹ {{ transaction.amount|floatformat:2 }}
+                        </td>
+
+                        <td>
+
+                            {% if transaction.order.status == "DELIVERED" %}
+
+                                <span class="status delivered">
+                                    Delivered
+                                </span>
+
+                            {% elif transaction.order.status == "CONFIRMED" %}
+
+                                <span class="status confirmed">
+                                    Confirmed
+                                </span>
+
+                            {% elif transaction.order.status == "CANCELLED" %}
+
+                                <span class="status cancelled">
+                                    Cancelled
+                                </span>
+
+                            {% else %}
+
+                                <span class="status pending">
+                                    {{ transaction.order.get_status_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if transaction.order.payment_status == "VERIFIED" %}
+
+                                <span class="status verified">
+                                    Payment Verified
+                                </span>
+
+                            {% elif transaction.order.payment_status == "REJECTED" %}
+
+                                <span class="status rejected">
+                                    Payment Rejected
+                                </span>
+
+                            {% else %}
+
+                                <span class="status pending">
+                                    {{ transaction.order.get_payment_status_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ transaction.created_at|date:"d M Y, h:i A" }}
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+            <div class="empty">
+
+                <h3>No Commission History</h3>
+
+                <p>
+                    No MLM commission transactions have been generated yet.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- INFORMATION -->
+
+    <div class="card">
+
+        <h3>ℹ️ Commission Information</h3>
+
+        <p>
+            Commission is credited to your wallet according to the
+            applicable MLM level and commission rate.
+        </p>
+
+        <p>
+            Commission records are protected against duplicate
+            crediting for the same order, beneficiary and level.
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+</html>

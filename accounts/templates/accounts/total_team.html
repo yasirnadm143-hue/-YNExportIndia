@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Total Team - YN Commerce India</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 15px;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .header,
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.08);
+        }
+
+        h1, h2, h3 {
+            margin-top: 0;
+        }
+
+        .muted {
+            color: #666;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 10px;
+            margin-right: 6px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            background: #2874f0;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .stat {
+            background: white;
+            padding: 18px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.07);
+        }
+
+        .stat-title {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 6px;
+        }
+
+        .level {
+            margin-bottom: 20px;
+        }
+
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            background: #2874f0;
+            color: white;
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .level-header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .level-count {
+            background: rgba(255,255,255,.2);
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .members {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .member {
+            background: #fff;
+            border: 1px solid #e1e5ea;
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .member h3 {
+            color: #2874f0;
+            margin-bottom: 10px;
+            word-break: break-word;
+        }
+
+        .member p {
+            margin: 7px 0;
+            font-size: 14px;
+        }
+
+        .view-btn {
+            display: block;
+            margin-top: 12px;
+            padding: 9px;
+            border-radius: 7px;
+            background: #2874f0;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .empty {
+            padding: 30px;
+            text-align: center;
+            color: #777;
+            background: #fafafa;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 800px) {
+            .summary {
+                grid-template-columns: 1fr;
+            }
+
+            .members {
+                grid-template-columns: 1fr;
+            }
+
+            .level-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>🌳 Total Team</h1>
+
+        <p class="muted">
+            Complete downline network — Level 1 to Level 20
+        </p>
+
+        <p>
+            <strong>Username:</strong>
+            {{ user.username }}
+        </p>
+
+        <p>
+            <strong>Referral ID:</strong>
+            {{ user.referral_id|default:"-" }}
+        </p>
+
+        <a href="{% url 'dashboard' %}" class="back">
+            ← Dashboard
+        </a>
+
+        <a href="{% url 'mlm_tree' %}" class="back">
+            🌳 My Network
+        </a>
+
+        <a href="{% url 'direct_team' %}" class="back">
+            👥 Direct Team
+        </a>
+
+    </div>
+
+
+    <div class="summary">
+
+        <div class="stat">
+            <div class="stat-title">
+                Total Team Members
+            </div>
+
+            <div class="stat-value">
+                {{ total_count }}
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-title">
+                Maximum MLM Levels
+            </div>
+
+            <div class="stat-value">
+                20
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-title">
+                Your Rank
+            </div>
+
+            <div class="stat-value">
+                {{ user.rank|default:"Member" }}
+            </div>
+        </div>
+
+    </div>
+
+
+    {% if levels %}
+
+        {% for level in levels %}
+
+        <div class="card level">
+
+            <div class="level-header">
+
+                <h2>
+                    📊 Level {{ level.number }}
+                </h2>
+
+                <div class="level-count">
+                    {{ level.count }} Member{{ level.count|pluralize }}
+                </div>
+
+            </div>
+
+
+            <div class="members">
+
+                {% for member in level.members %}
+
+                <div class="member">
+
+                    <h3>
+                        👤 {{ member.username }}
+                    </h3>
+
+                    <p>
+                        <strong>Referral ID:</strong>
+                        {{ member.referral_id|default:"-" }}
+                    </p>
+
+                    <p>
+                        <strong>Rank:</strong>
+                        {{ member.rank|default:"Member" }}
+                    </p>
+
+                    <p>
+                        <strong>MLM Level:</strong>
+                        {{ member.mlm_level|default:"20" }}
+                    </p>
+
+                    <p>
+                        <strong>Joining:</strong>
+                        {{ member.date_joined|date:"d M Y, h:i A" }}
+                    </p>
+
+                    <p>
+                        <strong>Direct Downline:</strong>
+                        {{ member.downlines.count }}
+                    </p>
+
+                    <a
+                        href="{% url 'mlm_tree' %}?user={{ member.id }}"
+                        class="view-btn"
+                    >
+                        🌳 View Network →
+                    </a>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="card">
+
+            <div class="empty">
+
+                <h2>No Downline Members Yet</h2>
+
+                <p>
+                    Your total team is currently empty.
+                </p>
+
+                <p>
+                    Share your referral link to grow your network.
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <div class="card">
+
+        <h2>🔗 Quick Navigation</h2>
+
+        <a href="{% url 'mlm_commission_history' %}" class="back">
+            🧾 Commission History
+        </a>
+
+        <a href="{% url 'direct_team' %}" class="back">
+            👥 Direct Team
+        </a>
+
+        <a href="{% url 'mlm_tree' %}" class="back">
+            🌳 My Network
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

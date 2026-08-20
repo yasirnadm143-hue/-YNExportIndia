@@ -131,13 +131,7 @@ def distribute_commission(order):
 
         if created:
 
-            current_wallet = Decimal(
-                str(upline.wallet_balance or "0.00")
-            )
-
-            upline.wallet_balance = (
-                current_wallet + amount
-            )
+            upline.wallet_balance += amount
 
             upline.save(
                 update_fields=[

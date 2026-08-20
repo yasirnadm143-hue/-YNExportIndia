@@ -3,41 +3,591 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MLM Downline Tree - YN Commerce India</title>
+
+    <title>My Network - YN Commerce India</title>
+
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f1f3f6; margin: 0; padding: 20px; text-align: center; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h2 { color: #2874f0; margin-bottom: 20px; }
-        .node-card { display: inline-block; background: #2874f0; color: white; padding: 12px 24px; border-radius: 50px; font-weight: bold; margin-bottom: 30px; box-shadow: 0 4px 8px rgba(40,116,240,0.3); }
-        .tree-container { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 20px; }
-        .child-card { background: #e8f4fd; color: #1251b8; border: 2px solid #2874f0; padding: 15px 20px; border-radius: 10px; width: 150px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
-        .child-card h4 { margin: 0 0 5px 0; font-size: 16px; }
-        .child-card p { margin: 0; font-size: 12px; color: #555; }
-        .back-link { display: inline-block; margin-top: 25px; color: #2874f0; text-decoration: none; font-weight: bold; }
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 15px;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: auto;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.08);
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+        }
+
+        .muted {
+            color: #666;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 5px 5px 0 0;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .blue {
+            background: #2874f0;
+        }
+
+        .green {
+            background: #198754;
+        }
+
+        .purple {
+            background: #6f42c1;
+        }
+
+        .orange {
+            background: #f0a500;
+        }
+
+        .gray {
+            background: #6c757d;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .stat {
+            background: white;
+            padding: 18px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.07);
+        }
+
+        .stat-title {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .stat-value {
+            font-size: 27px;
+            font-weight: bold;
+            margin-top: 7px;
+        }
+
+        .selected {
+            border: 2px solid #2874f0;
+            background: #f7fbff;
+        }
+
+        .selected h2 {
+            color: #1251b8;
+            margin-top: 0;
+        }
+
+        .upline {
+            background: #fff8e8;
+            border: 1px solid #f0d48a;
+        }
+
+        .upline-name {
+            font-size: 19px;
+            font-weight: bold;
+            margin: 8px 0;
+        }
+
+        .members {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .member {
+            border: 1px solid #e1e5ea;
+            border-radius: 12px;
+            padding: 16px;
+            background: white;
+            transition: .15s;
+        }
+
+        .member:hover {
+            box-shadow: 0 5px 18px rgba(0,0,0,.10);
+            transform: translateY(-1px);
+        }
+
+        .member h3 {
+            margin: 0 0 10px;
+            color: #2874f0;
+            word-break: break-word;
+        }
+
+        .member p {
+            margin: 7px 0;
+            font-size: 14px;
+        }
+
+        .member-actions {
+            margin-top: 12px;
+        }
+
+        .level-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            background: #2874f0;
+            color: white;
+            padding: 13px 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .level-title h2 {
+            margin: 0;
+            font-size: 19px;
+        }
+
+        .count {
+            background: rgba(255,255,255,.20);
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .empty {
+            padding: 25px;
+            text-align: center;
+            color: #777;
+            background: #fafafa;
+            border-radius: 10px;
+        }
+
+        .path {
+            padding: 12px;
+            background: #f7f8fa;
+            border-radius: 9px;
+            margin-top: 12px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .path a {
+            color: #2874f0;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        @media (max-width: 900px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .members {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .stats,
+            .members {
+                grid-template-columns: 1fr;
+            }
+
+            .level-title {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <h2>🌳 Your Downline Team Tree</h2>
-        
-        <div>
-            <div class="node-card">👑 You: {{ current_user.username }}</div>
-        </div>
 
-        <p style="color: #666; font-size: 14px;">Direct Referrals (Level 1)</p>
-        
-        <div class="tree-container">
-            {% for member in downlines %}
-                <div class="child-card">
-                    <h4>👤 {{ member.username }}</h4>
-                    <p>Rank: {{ member.rank|default:"Member" }}</p>
-                </div>
-            {% empty %}
-                <p style="color: #888; width: 100%;">No downline members found yet. Share your referral link to grow your team!</p>
-            {% endfor %}
-        </div>
+<div class="container">
 
-        <a href="{% url 'dashboard' %}" class="back-link">← Back to Dashboard</a>
+    <!-- HEADER -->
+
+    <div class="card header">
+
+        <h1>🌳 My MLM Network</h1>
+
+        <p class="muted">
+            Navigate through your Upline and complete Downline network.
+        </p>
+
+        <a href="{% url 'dashboard' %}" class="btn blue">
+            ← Dashboard
+        </a>
+
+        {% if not is_root %}
+        <a href="{% url 'mlm_tree' %}" class="btn gray">
+            🏠 My Network Root
+        </a>
+        {% endif %}
+
+        <a href="{% url 'mlm_commission_history' %}" class="btn green">
+            🧾 Commission History
+        </a>
+
+        <a href="{% url 'direct_team' %}" class="btn blue">
+            👥 Direct Team
+        </a>
+
+        <a href="{% url 'total_team' %}" class="btn purple">
+            🌳 Total Team
+        </a>
+
     </div>
+
+
+    <!-- SELECTED USER -->
+
+    <div class="card selected">
+
+        <h2>
+            👤 {{ current_user.username }}
+        </h2>
+
+        <p>
+            <strong>Referral ID:</strong>
+            {{ current_user.referral_id|default:"-" }}
+        </p>
+
+        <p>
+            <strong>Rank:</strong>
+            {{ current_user.rank|default:"Member" }}
+        </p>
+
+        <p>
+            <strong>MLM Level:</strong>
+            {{ current_user.mlm_level|default:"20" }}
+        </p>
+
+        <p>
+            <strong>Joining Date:</strong>
+            {{ current_user.date_joined|date:"d M Y, h:i A" }}
+        </p>
+
+    </div>
+
+
+    <!-- STATS -->
+
+    <div class="stats">
+
+        <div class="stat">
+
+            <div class="stat-title">
+                Direct Team
+            </div>
+
+            <div class="stat-value">
+                {{ direct_team_count }}
+            </div>
+
+        </div>
+
+        <div class="stat">
+
+            <div class="stat-title">
+                Total Team
+            </div>
+
+            <div class="stat-value">
+                {{ total_team }}
+            </div>
+
+        </div>
+
+        <div class="stat">
+
+            <div class="stat-title">
+                Commission Transactions
+            </div>
+
+            <div class="stat-value">
+                {{ commission_count }}
+            </div>
+
+        </div>
+
+        <div class="stat">
+
+            <div class="stat-title">
+                MLM Levels
+            </div>
+
+            <div class="stat-value">
+                20
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- UPLINE -->
+
+    <div class="card upline">
+
+        <h2>⬆️ Upline</h2>
+
+        {% if parent_user %}
+
+            <div class="upline-name">
+                👤 {{ parent_user.username }}
+            </div>
+
+            <p>
+                <strong>Referral ID:</strong>
+                {{ parent_user.referral_id|default:"-" }}
+            </p>
+
+            <p>
+                <strong>Rank:</strong>
+                {{ parent_user.rank|default:"Member" }}
+            </p>
+
+            <a
+                href="{% url 'mlm_tree' %}?user={{ parent_user.id }}"
+                class="btn orange"
+            >
+                ⬆️ View Upline Network
+            </a>
+
+        {% else %}
+
+            <div class="empty">
+                This account has no upline.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- DIRECT DOWNLINE -->
+
+    <div class="card">
+
+        <h2>👥 Direct Downline</h2>
+
+        <p class="muted">
+            These members are directly registered under
+            <strong>{{ current_user.username }}</strong>.
+            Click <strong>View Network</strong> to open their complete network.
+        </p>
+
+        {% if downlines %}
+
+        <div class="members">
+
+            {% for member in downlines %}
+
+            <div class="member">
+
+                <h3>
+                    👤 {{ member.username }}
+                </h3>
+
+                <p>
+                    <strong>Referral ID:</strong>
+                    {{ member.referral_id|default:"-" }}
+                </p>
+
+                <p>
+                    <strong>Rank:</strong>
+                    {{ member.rank|default:"Member" }}
+                </p>
+
+                <p>
+                    <strong>MLM Level:</strong>
+                    {{ member.mlm_level|default:"20" }}
+                </p>
+
+                <p>
+                    <strong>Joining:</strong>
+                    {{ member.date_joined|date:"d M Y, h:i A" }}
+                </p>
+
+                <p>
+                    <strong>Direct Downline:</strong>
+                    {{ member.downlines.count }}
+                </p>
+
+                <div class="member-actions">
+
+                    <a
+                        href="{% url 'mlm_tree' %}?user={{ member.id }}"
+                        class="btn blue"
+                    >
+                        🌳 View Network →
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="empty">
+
+            <h3>No Direct Downline</h3>
+
+            <p>
+                No member is currently registered directly under
+                {{ current_user.username }}.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- COMPLETE LEVEL-WISE NETWORK -->
+
+    <div class="card">
+
+        <h2>🌳 Complete Downline Network</h2>
+
+        <p class="muted">
+            Complete team of {{ current_user.username }},
+            shown level-by-level.
+        </p>
+
+        {% if network_levels %}
+
+            {% for level in network_levels %}
+
+            <div style="margin-bottom:22px;">
+
+                <div class="level-title">
+
+                    <h2>
+                        📊 Level {{ level.level }}
+                    </h2>
+
+                    <div class="count">
+                        {{ level.count }} Member{{ level.count|pluralize }}
+                    </div>
+
+                </div>
+
+                <div class="members">
+
+                    {% for member in level.members %}
+
+                    <div class="member">
+
+                        <h3>
+                            👤 {{ member.username }}
+                        </h3>
+
+                        <p>
+                            <strong>Referral ID:</strong>
+                            {{ member.referral_id|default:"-" }}
+                        </p>
+
+                        <p>
+                            <strong>Rank:</strong>
+                            {{ member.rank|default:"Member" }}
+                        </p>
+
+                        <p>
+                            <strong>Direct Downline:</strong>
+                            {{ member.downlines.count }}
+                        </p>
+
+                        <p>
+                            <strong>Joining:</strong>
+                            {{ member.date_joined|date:"d M Y, h:i A" }}
+                        </p>
+
+                        <a
+                            href="{% url 'mlm_tree' %}?user={{ member.id }}"
+                            class="btn blue"
+                        >
+                            View This Network →
+                        </a>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty">
+
+                <h3>No Downline Members</h3>
+
+                <p>
+                    {{ current_user.username }} currently has no downline members.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- QUICK ACTIONS -->
+
+    <div class="card">
+
+        <h2>⚡ Quick Actions</h2>
+
+        <a href="{% url 'mlm_commission_history' %}" class="btn green">
+            🧾 Commission History
+        </a>
+
+        <a href="{% url 'direct_team' %}" class="btn blue">
+            👥 Direct Team
+        </a>
+
+        <a href="{% url 'total_team' %}" class="btn purple">
+            🌳 Total Team
+        </a>
+
+    </div>
+
+</div>
+
 </body>
 </html>

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My MLM Network - YN Commerce India</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+padding:12px;
+font-family:Arial,sans-serif;
+background:#f4f6f8;
+color:#222;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+}
+
+.header,
+.card,
+.stat,
+.level-section{
+background:#fff;
+border-radius:16px;
+padding:18px;
+margin-bottom:16px;
+box-shadow:0 3px 12px rgba(0,0,0,.07);
+}
+
+.header h1{
+margin:0 0 7px;
+}
+
+.muted{
+color:#666;
+}
+
+.btn{
+display:inline-block;
+padding:10px 14px;
+border-radius:8px;
+text-decoration:none;
+font-weight:bold;
+color:white;
+background:#2874f0;
+margin-top:10px;
+margin-right:5px;
+}
+
+.btn-green{
+background:#198754;
+}
+
+.btn-orange{
+background:#f0a500;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:14px;
+margin-bottom:16px;
+}
+
+.stat-title{
+color:#666;
+font-size:14px;
+}
+
+.stat-value{
+font-size:28px;
+font-weight:bold;
+margin-top:7px;
+}
+
+.current{
+border:2px solid #2874f0;
+background:#f7fbff;
+}
+
+.current h2{
+margin-top:0;
+color:#1251b8;
+}
+
+.upline{
+background:#fff8e8;
+border:1px solid #f0d48a;
+}
+
+.members{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:14px;
+}
+
+.member{
+border:1px solid #e1e5ea;
+border-radius:13px;
+padding:15px;
+background:#fff;
+}
+
+.member h3{
+margin:0 0 10px;
+color:#2874f0;
+}
+
+.member p{
+margin:7px 0;
+font-size:14px;
+}
+
+.member-name{
+font-size:17px;
+font-weight:bold;
+}
+
+.level-title{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+margin-bottom:12px;
+}
+
+.badge{
+background:#e8f1ff;
+color:#1251b8;
+padding:6px 10px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+}
+
+.empty{
+padding:25px;
+text-align:center;
+color:#777;
+background:#fafafa;
+border-radius:10px;
+}
+
+.team-table{
+overflow-x:auto;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+min-width:750px;
+}
+
+th,
+td{
+padding:11px;
+border-bottom:1px solid #eee;
+text-align:left;
+}
+
+th{
+background:#f7f8fa;
+}
+
+.network-link{
+display:block;
+text-decoration:none;
+color:inherit;
+}
+
+.network-link:active{
+transform:scale(.99);
+}
+
+@media(max-width:900px){
+
+.stats{
+grid-template-columns:1fr 1fr 1fr;
+}
+
+.members{
+grid-template-columns:repeat(2,1fr);
+}
+
+}
+
+@media(max-width:600px){
+
+body{
+padding:8px;
+}
+
+.header,
+.card,
+.stat,
+.level-section{
+padding:14px;
+}
+
+.stats{
+grid-template-columns:1fr 1fr;
+}
+
+.members{
+grid-template-columns:1fr;
+}
+
+.stat-value{
+font-size:23px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+
+<!-- HEADER -->
+
+<div class="header">
+
+<h1>🌳 My MLM Network</h1>
+
+<div class="muted">
+YN Commerce India • Complete Upline & Downline
+</div>
+
+<a href="{% url 'dashboard' %}" class="btn">
+← Dashboard
+</a>
+
+<a href="{% url 'mlm_commission' %}" class="btn btn-green">
+💰 Commission
+</a>
+
+</div>
+
+
+<!-- CURRENT USER -->
+
+<div class="card current">
+
+<h2>
+👤 {{ current_user.username }}
+</h2>
+
+<p>
+<strong>Referral ID:</strong>
+{{ current_user.referral_id|default:"-" }}
+</p>
+
+<p>
+<strong>Rank:</strong>
+{{ current_user.rank|default:"Member" }}
+</p>
+
+<p>
+<strong>MLM Level:</strong>
+{{ current_user.mlm_level|default:"20" }}
+</p>
+
+<p>
+<strong>Joined:</strong>
+{{ current_user.date_joined|date:"d M Y, h:i A" }}
+</p>
+
+</div>
+
+
+<!-- STATS -->
+
+<div class="stats">
+
+<div class="stat">
+
+<div class="stat-title">
+👥 Direct Team
+</div>
+
+<div class="stat-value">
+{{ direct_team_count }}
+</div>
+
+<a
+href="#direct-team"
+class="btn"
+>
+View Direct Team
+</a>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+🌐 Total Team
+</div>
+
+<div class="stat-value">
+{{ total_team }}
+</div>
+
+<a
+href="#total-team"
+class="btn btn-green"
+>
+View Complete Team
+</a>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+💰 Commission Transactions
+</div>
+
+<div class="stat-value">
+{{ commission_count }}
+</div>
+
+<a
+href="{% url 'mlm_commission' %}"
+class="btn btn-orange"
+>
+View Commission
+</a>
+
+</div>
+
+</div>
+
+
+<!-- UPLINE -->
+
+<div class="card upline">
+
+<h2>⬆️ Upline</h2>
+
+{% if parent_user %}
+
+<p>
+<strong>Upline:</strong>
+{{ parent_user.username }}
+</p>
+
+<p>
+<strong>Referral ID:</strong>
+{{ parent_user.referral_id|default:"-" }}
+</p>
+
+<p>
+<strong>Rank:</strong>
+{{ parent_user.rank|default:"Member" }}
+</p>
+
+<a
+href="{% url 'mlm_tree' %}?user={{ parent_user.id }}"
+class="btn btn-orange"
+>
+⬆️ Open Upline Network
+</a>
+
+{% else %}
+
+<p>
+No Upline — You are at the top of this chain.
+</p>
+
+{% endif %}
+
+</div>
+
+
+<!-- DIRECT TEAM -->
+
+<div
+class="card"
+id="direct-team"
+>
+
+<h2>
+👥 Direct Team
+</h2>
+
+<p class="muted">
+Your members directly registered under this user.
+Tap any member to open their complete network.
+</p>
+
+{% if downlines %}
+
+<div class="members">
+
+{% for member in downlines %}
+
+<a
+href="{% url 'mlm_tree' %}?user={{ member.id }}"
+class="network-link"
+>
+
+<div class="member">
+
+<div class="member-name">
+👤 {{ member.username }}
+</div>
+
+<p>
+<strong>Referral ID:</strong>
+{{ member.referral_id|default:"-" }}
+</p>
+
+<p>
+<strong>Rank:</strong>
+{{ member.rank|default:"Member" }}
+</p>
+
+<p>
+<strong>MLM Level:</strong>
+{{ member.mlm_level|default:"20" }}
+</p>
+
+<p>
+<strong>Joined:</strong>
+{{ member.date_joined|date:"d M Y, h:i A" }}
+</p>
+
+<p>
+<strong>Direct Team:</strong>
+{{ member.downlines.count }}
+</p>
+
+<span class="btn">
+Open Network →
+</span>
+
+</div>
+
+</a>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="empty">
+No direct downline members found.
+</div>
+
+{% endif %}
+
+</div>
+
+
+<!-- COMPLETE TEAM -->
+
+<div
+class="card"
+id="total-team"
+>
+
+<h2>
+🌐 Complete Downline / Total Team
+</h2>
+
+<p class="muted">
+All members below {{ current_user.username }}, arranged level-by-level.
+</p>
+
+{% if network_levels %}
+
+{% for level in network_levels %}
+
+<div
+class="level-section"
+>
+
+<div class="level-title">
+
+<h3>
+Level {{ level.level }}
+</h3>
+
+<span class="badge">
+{{ level.count }} Member{{ level.count|pluralize }}
+</span>
+
+</div>
+
+
+<div class="members">
+
+{% for member in level.members %}
+
+<a
+href="{% url 'mlm_tree' %}?user={{ member.id }}"
+class="network-link"
+>
+
+<div class="member">
+
+<div class="member-name">
+👤 {{ member.username }}
+</div>
+
+<p>
+<strong>Referral ID:</strong>
+{{ member.referral_id|default:"-" }}
+</p>
+
+<p>
+<strong>Rank:</strong>
+{{ member.rank|default:"Member" }}
+</p>
+
+<p>
+<strong>MLM Level:</strong>
+{{ member.mlm_level|default:"20" }}
+</p>
+
+<p>
+<strong>Joined:</strong>
+{{ member.date_joined|date:"d M Y, h:i A" }}
+</p>
+
+<span class="btn">
+View This Member →
+</span>
+
+</div>
+
+</a>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<div class="empty">
+No downline members found.
+<br><br>
+Share your referral link to grow your team.
+</div>
+
+{% endif %}
+
+</div>
+
+
+<!-- SIMPLE TEAM TABLE -->
+
+{% if team_members %}
+
+<div class="card">
+
+<h2>
+📋 Complete Team Details
+</h2>
+
+<div class="team-table">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>#</th>
+<th>Username</th>
+<th>Referral ID</th>
+<th>Rank</th>
+<th>MLM Level</th>
+<th>Joined</th>
+<th>Open</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for member in team_members %}
+
+<tr>
+
+<td>
+{{ forloop.counter }}
+</td>
+
+<td>
+{{ member.username }}
+</td>
+
+<td>
+{{ member.referral_id|default:"-" }}
+</td>
+
+<td>
+{{ member.rank|default:"Member" }}
+</td>
+
+<td>
+{{ member.mlm_level|default:"20" }}
+</td>
+
+<td>
+{{ member.date_joined|date:"d M Y" }}
+</td>
+
+<td>
+
+<a
+href="{% url 'mlm_tree' %}?user={{ member.id }}"
+class="btn"
+>
+View
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+{% endif %}
+
+
+</div>
+
+</body>
+
+</html>

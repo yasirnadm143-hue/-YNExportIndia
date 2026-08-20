@@ -149,10 +149,6 @@ class OrderAdmin(admin.ModelAdmin):
     actions = (
         "verify_selected_payments",
         "reject_selected_payments",
-        "mark_selected_packed",
-        "mark_selected_shipped",
-        "mark_selected_out_for_delivery",
-        "mark_selected_delivered",
     )
 
     @admin.action(description="✅ Verify selected payments")
@@ -183,54 +179,6 @@ class OrderAdmin(admin.ModelAdmin):
         self.message_user(
             request,
             f"{updated} payment(s) verified and order(s) confirmed."
-        )
-
-    @admin.action(description="📦 Mark selected orders as Packed")
-    def mark_selected_packed(self, request, queryset):
-        updated = queryset.filter(
-            payment_status="VERIFIED",
-            status="CONFIRMED",
-        ).update(status="PACKED")
-
-        self.message_user(
-            request,
-            f"{updated} order(s) marked as Packed."
-        )
-
-    @admin.action(description="🚚 Mark selected orders as Shipped")
-    def mark_selected_shipped(self, request, queryset):
-        updated = queryset.filter(
-            payment_status="VERIFIED",
-            status="PACKED",
-        ).update(status="SHIPPED")
-
-        self.message_user(
-            request,
-            f"{updated} order(s) marked as Shipped."
-        )
-
-    @admin.action(description="🚛 Mark selected orders as Out for Delivery")
-    def mark_selected_out_for_delivery(self, request, queryset):
-        updated = queryset.filter(
-            payment_status="VERIFIED",
-            status="SHIPPED",
-        ).update(status="OUT_FOR_DELIVERY")
-
-        self.message_user(
-            request,
-            f"{updated} order(s) marked as Out for Delivery."
-        )
-
-    @admin.action(description="✅ Mark selected orders as Delivered")
-    def mark_selected_delivered(self, request, queryset):
-        updated = queryset.filter(
-            payment_status="VERIFIED",
-            status="OUT_FOR_DELIVERY",
-        ).update(status="DELIVERED")
-
-        self.message_user(
-            request,
-            f"{updated} order(s) marked as Delivered. MLM commission will be processed automatically."
         )
 
     @admin.action(description="❌ Reject selected payments")

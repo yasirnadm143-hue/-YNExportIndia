@@ -1,3 +1,4 @@
+from decimal import Decimal, InvalidOperation
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from django.http import HttpResponse
@@ -749,14 +750,14 @@ def user_settings(request):
 
 
 # ==========================
-# WALLET
+# BONUS BALANCE
 # ==========================
 
 @login_required
-def wallet_view(request):
+def bonus_balance_view(request):
     return render(
         request,
-        "accounts/wallet.html"
+        "accounts/bonus_balance.html"
     )
 
 
@@ -954,6 +955,7 @@ def register_step1(request):
         last_name = request.POST.get("last_name", "").strip()
         email = request.POST.get("email", "").strip()
         phone_number = request.POST.get("phone_number", "").strip()
+        # Referral ID is OPTIONAL
         referral_id = request.POST.get("referral_id", "").strip()
         password = request.POST.get("password", "")
         password2 = request.POST.get("password2", "")
@@ -1292,7 +1294,7 @@ def order_product(request, pk):
             # ==========================
 
             product_amount = product.price
-            delivery_charge = 85
+            delivery_charge = 45
             shopping_charge = 15
 
             total_amount = (
@@ -1301,13 +1303,9 @@ def order_product(request, pk):
                 + shopping_charge
             )
 
-            # 50% of PRODUCT PRICE is paid online.
-            # Delivery + shopping charges remain in COD.
-            online_payment_amount = product_amount / 2
-            cod_amount = (
-                total_amount
-                - online_payment_amount
-            )
+            # 100% Cash on Delivery.
+            online_payment_amount = 0
+            cod_amount = total_amount
 
             order.product_amount = product_amount
             order.delivery_charge = delivery_charge
@@ -1316,8 +1314,7 @@ def order_product(request, pk):
             order.online_payment_amount = online_payment_amount
             order.cod_amount = cod_amount
 
-            # Online payment is manually verified after
-            # customer sends payment proof.
+            # No online payment is required.
             order.payment_status = "PENDING"
 
             order.save()
@@ -1329,21 +1326,19 @@ def order_product(request, pk):
             Notification.objects.create(
                 user=request.user,
                 order=order,
-                title="🧾 Order Created - Payment Pending",
+                title="Order Confirmed",
                 message=(
-                    f"Order #{order.id} has been created. "
+                    f"Order #{order.id} has been created successfully. "
                     f"Tracking ID: {order.tracking_id}. "
-                    f"Please complete the 50% online payment of "
-                    f"₹{order.online_payment_amount:.2f} and send the "
-                    f"payment screenshot on WhatsApp. "
-                    f"Order confirmation is pending payment verification."
+                    f"Payment will be collected in full at delivery "
+                    f"through Cash on Delivery."
                 )
             )
 
             messages.success(
                 request,
-                "Order created. Please complete the online payment "
-                "and send the payment screenshot on WhatsApp."
+                "Order placed successfully. Full payment will be collected "
+                "at the time of delivery."
             )
 
             return redirect(
@@ -1360,7 +1355,7 @@ def order_product(request, pk):
     # ==========================
 
     product_amount = product.price
-    delivery_charge = 85
+    delivery_charge = 45
     shopping_charge = 15
 
     total_amount = (
@@ -1369,8 +1364,8 @@ def order_product(request, pk):
         + shopping_charge
     )
 
-    online_payment_amount = product_amount / 2
-    cod_amount = total_amount - online_payment_amount
+    online_payment_amount = 0
+    cod_amount = total_amount
 
     return render(
         request,
@@ -1511,8 +1506,8 @@ def download_invoice(request, order_id):
         f"Delivery Charge: Rs. {order.delivery_charge:.2f}",
         f"Shopping Charge: Rs. {order.shopping_charge:.2f}",
         f"Total Order Value: Rs. {order.total_amount:.2f}",
-        f"Online Payment: Rs. {order.online_payment_amount:.2f}",
-        f"COD Amount: Rs. {order.cod_amount:.2f}",
+        f"Payment Method: Cash on Delivery",
+        f"Payment Due at Delivery: Rs. {order.cod_amount:.2f}",
         f"Payment Status: {order.get_payment_status_display()}",
         f"Order Status: {order.get_status_display()}",
     ]
@@ -1652,3 +1647,937 @@ from django.shortcuts import redirect
 def logout_view(request):
     django_logout(request)
     return redirect("home")
+
+# ==========================
+# SELLER DASHBOARD
+# ==========================
+
+@login_required
+def seller_dashboard(request):
+    seller = SellerProfile.objects.filter(
+        user=request.user
+    ).first()
+
+    if not seller:
+        return redirect("seller_register")
+
+    if seller.status != "APPROVED":
+        return redirect("seller_pending")
+
+
+    if not request.user.is_staff:
+        messages.error(
+            request,
+            "Seller access is not enabled for this account."
+        )
+        return redirect("home")
+
+    from django.db.models import Count, Sum
+
+    products = Product.objects.filter(
+        owner=request.user
+    )
+
+    total_products = products.count()
+
+    active_products = products.count()
+
+    seller_orders = Order.objects.filter(
+        product__owner=request.user
+    )
+
+    total_orders = seller_orders.count()
+
+    delivered_orders = seller_orders.filter(
+        status="DELIVERED"
+    ).count()
+
+    pending_orders = seller_orders.filter(
+        status="PENDING"
+    ).count()
+
+    total_sales = seller_orders.filter(
+        status="DELIVERED"
+    ).aggregate(
+        total=Sum("total_amount")
+    )["total"] or 0
+
+    return render(
+        request,
+        "accounts/seller_dashboard.html",
+        {
+            "user": request.user,
+            "total_products": total_products,
+            "active_products": active_products,
+            "total_orders": total_orders,
+            "delivered_orders": delivered_orders,
+            "pending_orders": pending_orders,
+            "total_sales": total_sales,
+        }
+    )
+
+
+# ==========================
+# SELLER PRODUCTS
+# ==========================
+
+@login_required
+def seller_products(request):
+
+    if not request.user.is_staff:
+        messages.error(
+            request,
+            "Seller access is not enabled for this account."
+        )
+        return redirect("home")
+
+    products = Product.objects.filter(
+        owner=request.user
+    ).select_related(
+        "category",
+        "subcategory",
+        "brand",
+    ).order_by("-id")
+
+    return render(
+        request,
+        "accounts/seller_products.html",
+        {
+            "user": request.user,
+            "products": products,
+        }
+    )
+
+
+# ==========================
+# SELLER REGISTRATION
+# ==========================
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import SellerRegistrationForm
+from .models import SellerProfile
+
+
+@login_required
+def seller_register_view(request):
+
+    existing_profile = SellerProfile.objects.filter(
+        user=request.user
+    ).first()
+
+    if existing_profile:
+        return redirect("seller_dashboard")
+
+    if request.method == "POST":
+        form = SellerRegistrationForm(
+            request.POST,
+            request.FILES
+        )
+
+        if form.is_valid():
+            seller = form.save(commit=False)
+            seller.user = request.user
+            seller.save()
+
+            messages.success(
+                request,
+                "Seller registration submitted successfully."
+            )
+
+            return redirect("seller_pending")
+
+    else:
+        form = SellerRegistrationForm(
+            initial={
+                "email": request.user.email,
+                "mobile": request.user.phone_number,
+            }
+        )
+
+    return render(
+        request,
+        "accounts/seller_register.html",
+        {"form": form}
+    )
+
+
+@login_required
+def seller_pending_view(request):
+
+    profile = SellerProfile.objects.filter(
+        user=request.user
+    ).first()
+
+    if not profile:
+        return redirect("seller_register")
+
+    if profile.status == "APPROVED":
+        return redirect("seller_dashboard")
+
+    return render(
+        request,
+        "accounts/seller_pending.html",
+        {"seller": profile}
+    )
+
+
+@login_required
+def seller_add_product(request):
+    profile = getattr(request.user, "seller_profile", None)
+
+    if not profile or profile.status != "APPROVED":
+        messages.error(request, "Seller account is not approved.")
+        return redirect("seller_dashboard")
+
+    categories = Category.objects.filter(is_active=True)
+    brands = Brand.objects.filter(is_active=True)
+
+    if request.method == "POST":
+        title = request.POST.get("title", "").strip()
+        description = request.POST.get("description", "").strip()
+        price = request.POST.get("price", "").strip()
+        category_id = request.POST.get("category")
+        subcategory_id = request.POST.get("subcategory")
+        brand_id = request.POST.get("brand")
+        image = request.FILES.get("image")
+        images = request.FILES.getlist("images")
+
+        if not title or not description or not price:
+            messages.error(request, "Title, description and price are required.")
+            return redirect("seller_add_product")
+
+        try:
+            price_value = Decimal(price)
+            if price_value <= 0:
+                raise ValueError
+        except (InvalidOperation, ValueError):
+            messages.error(request, "Enter a valid product price.")
+            return redirect("seller_add_product")
+
+        product = Product(
+            owner=request.user,
+            title=title,
+            description=description,
+            price=price_value,
+            image=image,
+        )
+
+        if category_id:
+            product.category_id = category_id
+
+        if subcategory_id:
+            product.subcategory_id = subcategory_id
+
+        if brand_id:
+            product.brand_id = brand_id
+
+        product.save()
+
+        from accounts.models import ProductImage
+
+        for index, uploaded_image in enumerate(images):
+            ProductImage.objects.create(
+                product=product,
+                image=uploaded_image,
+                sort_order=index
+            )
+
+        messages.success(request, "Product added successfully.")
+        return redirect("seller_products")
+
+    return render(
+        request,
+        "accounts/seller_add_product.html",
+        {
+            "categories": categories,
+            "brands": brands,
+        }
+    )
+
+
+@login_required
+def seller_orders(request):
+    profile = getattr(request.user, "seller_profile", None)
+
+    if not profile or profile.status != "APPROVED":
+        messages.error(request, "Seller account is not approved.")
+        return redirect("seller_dashboard")
+
+    orders = Order.objects.filter(
+        product__owner=request.user
+    ).select_related(
+        "product",
+        "user"
+    ).order_by("-created_at")
+
+    return render(
+        request,
+        "accounts/seller_orders.html",
+        {
+            "orders": orders,
+        }
+    )
+
+
+@login_required
+def cancel_order(request, order_id):
+    from django.utils import timezone
+    from django.contrib import messages
+    from datetime import timedelta
+
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        user=request.user
+    )
+
+    if request.method != "POST":
+        return redirect("order_details", order_id=order.id)
+
+    if order.status in ["SHIPPED", "OUT_FOR_DELIVERY", "DELIVERED", "CANCELLED"]:
+        messages.error(request, "This order cannot be cancelled.")
+        return redirect("order_details", order_id=order.id)
+
+    now = timezone.now()
+    cancellation_deadline = order.created_at + timedelta(hours=3)
+
+    if now >= cancellation_deadline:
+        messages.error(
+            request,
+            "Order cancellation is available only within 3 hours of placing the order."
+        )
+        return redirect("order_details", order_id=order.id)
+
+    reason = request.POST.get("cancellation_reason", "").strip()
+
+    order.status = "CANCELLED"
+    order.cancelled_by_customer = True
+    order.cancellation_reason = reason
+    order.cancelled_at = now
+    order.save(
+        update_fields=[
+            "status",
+            "cancelled_by_customer",
+            "cancellation_reason",
+            "cancelled_at",
+            "updated_at",
+        ]
+    )
+
+    messages.success(request, "Your order has been cancelled successfully.")
+    return redirect("order_details", order_id=order.id)
+
+
+@login_required
+def seller_accept_order(request, order_id):
+    from django.utils import timezone
+    from django.contrib import messages
+
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        product__owner=request.user
+    )
+
+    if request.method != "POST":
+        return redirect("seller_orders")
+
+    if order.status != "PENDING":
+        messages.error(
+            request,
+            "This order cannot be accepted in its current status."
+        )
+        return redirect("seller_orders")
+
+    order.status = "CONFIRMED"
+    order.seller_accepted_at = timezone.now()
+    order.save(
+        update_fields=[
+            "status",
+            "seller_accepted_at",
+            "updated_at",
+        ]
+    )
+
+    messages.success(
+        request,
+        "Order accepted successfully."
+    )
+
+    return redirect("seller_orders")
+
+
+@login_required
+def seller_pack_order(request, order_id):
+    from django.utils import timezone
+    from django.contrib import messages
+
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        product__owner=request.user
+    )
+
+    if request.method != "POST":
+        return redirect("seller_orders")
+
+    if order.status != "CONFIRMED":
+        messages.error(
+            request,
+            "Only confirmed orders can be marked as packed."
+        )
+        return redirect("seller_orders")
+
+    order.status = "PACKED"
+    order.packed_at = timezone.now()
+    order.save(
+        update_fields=[
+            "status",
+            "packed_at",
+            "updated_at",
+        ]
+    )
+
+    messages.success(
+        request,
+        "Order marked as packed successfully."
+    )
+
+    return redirect("seller_orders")
+
+
+@login_required
+def seller_download_label(request, order_id):
+    from django.http import HttpResponse
+    from django.contrib import messages
+
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        product__owner=request.user
+    )
+
+    if order.status not in ["PACKED", "SHIPPED", "OUT_FOR_DELIVERY", "DELIVERED"]:
+        messages.error(
+            request,
+            "Shipping label is available after the order is packed."
+        )
+        return redirect("seller_orders")
+
+    if not order.label_file:
+        messages.error(
+            request,
+            "Shipping label has not been generated yet."
+        )
+        return redirect("seller_orders")
+
+    response = HttpResponse(
+        order.label_file.open("rb").read(),
+        content_type="application/octet-stream"
+    )
+    response["Content-Disposition"] = (
+        f'attachment; filename="shipping-label-{order.id}.pdf"'
+    )
+    return response
+
+
+@login_required
+def seller_generate_label(request, order_id):
+    from django.http import HttpResponse
+    from django.core.files.base import ContentFile
+    from django.contrib import messages
+    from reportlab.pdfgen import canvas
+    from io import BytesIO
+
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        product__owner=request.user
+    )
+
+    if request.method != "POST":
+        return redirect("seller_orders")
+
+    if order.status != "PACKED":
+        messages.error(
+            request,
+            "Shipping label can only be generated after packing the order."
+        )
+        return redirect("seller_orders")
+
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer)
+
+    pdf.setTitle(f"Shipping Label - Order {order.id}")
+
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawString(50, 780, "YN EXPORT INDIA")
+
+    pdf.setFont("Helvetica-Bold", 13)
+    pdf.drawString(50, 745, "SHIPPING LABEL")
+
+    pdf.setFont("Helvetica", 10)
+
+    y = 710
+    pdf.drawString(50, y, f"Order ID: {order.id}")
+    y -= 20
+    pdf.drawString(50, y, f"Tracking ID: {order.tracking_id}")
+    y -= 30
+
+    pdf.setFont("Helvetica-Bold", 11)
+    pdf.drawString(50, y, "DELIVER TO")
+    y -= 20
+
+    pdf.setFont("Helvetica", 10)
+    pdf.drawString(50, y, f"Name: {order.full_name}")
+    y -= 18
+    pdf.drawString(50, y, f"Mobile: {order.mobile}")
+    y -= 18
+    pdf.drawString(50, y, f"Address: {order.address}")
+    y -= 18
+    pdf.drawString(50, y, f"Landmark: {order.landmark}")
+    y -= 18
+    pdf.drawString(50, y, f"District: {order.district}")
+    y -= 18
+    pdf.drawString(50, y, f"State: {order.state}")
+    y -= 18
+    pdf.drawString(50, y, f"Country: {order.country}")
+    y -= 18
+    pdf.drawString(50, y, f"Pincode: {order.pincode}")
+
+    y -= 35
+    pdf.setFont("Helvetica-Bold", 11)
+    pdf.drawString(50, y, "PRODUCT")
+
+    y -= 20
+    pdf.setFont("Helvetica", 10)
+    pdf.drawString(50, y, f"Product: {order.product.title}")
+    y -= 18
+    pdf.drawString(50, y, f"Amount: Rs. {order.total_amount}")
+
+    pdf.showPage()
+    pdf.save()
+
+    buffer.seek(0)
+
+    filename = f"shipping-label-{order.id}.pdf"
+
+    order.label_file.save(
+        filename,
+        ContentFile(buffer.getvalue()),
+        save=False
+    )
+    order.save(update_fields=["label_file", "updated_at"])
+
+    messages.success(
+        request,
+        "Shipping label generated successfully."
+    )
+
+    return redirect("seller_orders")
+
+
+@login_required
+def seller_ship_order(request, order_id):
+    from django.utils import timezone
+    from django.contrib import messages
+
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        product__owner=request.user
+    )
+
+    if request.method != "POST":
+        return redirect("seller_orders")
+
+    if order.status != "PACKED":
+        messages.error(
+            request,
+            "Only packed orders can be marked as shipped."
+        )
+        return redirect("seller_orders")
+
+    if not order.label_file:
+        messages.error(
+            request,
+            "Generate the shipping label before shipping the order."
+        )
+        return redirect("seller_orders")
+
+    order.status = "SHIPPED"
+    order.shipped_at = timezone.now()
+    order.save(
+        update_fields=[
+            "status",
+            "shipped_at",
+            "updated_at",
+        ]
+    )
+
+    messages.success(
+        request,
+        "Order marked as shipped successfully."
+    )
+
+    return redirect("seller_orders")
+
+
+@login_required
+def seller_deliver_order(request, order_id):
+    from django.utils import timezone
+    from django.contrib import messages
+
+    order = get_object_or_404(
+        Order,
+        id=order_id,
+        product__owner=request.user
+    )
+
+    if request.method != "POST":
+        return redirect("seller_orders")
+
+    if order.status not in ["SHIPPED", "OUT_FOR_DELIVERY"]:
+        messages.error(
+            request,
+            "Only shipped orders can be marked as delivered."
+        )
+        return redirect("seller_orders")
+
+    order.status = "DELIVERED"
+    order.delivered_at = timezone.now()
+    order.save(
+        update_fields=[
+            "status",
+            "delivered_at",
+            "updated_at",
+        ]
+    )
+
+    messages.success(
+        request,
+        "Order marked as delivered successfully."
+    )
+
+    return redirect("seller_orders")
+
+
+@login_required
+def bonus_balance_view(request):
+    from django.shortcuts import render
+    from .models import SellerBonusBalance, SellerBonusBalanceTransaction
+
+    bonus_balance, created = SellerBonusBalance.objects.get_or_create(
+        seller=request.user
+    )
+
+    transactions = SellerBonusBalanceTransaction.objects.filter(
+        bonus_balance=bonus_balance
+    ).select_related("order")
+
+    return render(
+        request,
+        "accounts/bonus_balance.html",
+        {
+            "bonus_balance": bonus_balance,
+            "transactions": transactions,
+        }
+    )
+
+
+@login_required
+def seller_products(request):
+    profile = getattr(request.user, "seller_profile", None)
+
+    if not profile or profile.status != "APPROVED":
+        messages.error(request, "Seller account is not approved.")
+        return redirect("seller_dashboard")
+
+    products = Product.objects.filter(
+        owner=request.user
+    ).select_related(
+        "category",
+        "subcategory",
+        "brand",
+    ).order_by("-id")
+
+    return render(
+        request,
+        "accounts/seller_products.html",
+        {
+            "user": request.user,
+            "products": products,
+        }
+    )
+
+@login_required
+def seller_products(request):
+    profile = getattr(request.user, "seller_profile", None)
+
+    if not profile or profile.status != "APPROVED":
+        messages.error(request, "Seller account is not approved.")
+        return redirect("seller_dashboard")
+
+    products = Product.objects.filter(
+        owner=request.user
+    ).select_related(
+        "category",
+        "subcategory",
+        "brand",
+    ).order_by("-id")
+
+    return render(
+        request,
+        "accounts/seller_products.html",
+        {
+            "user": request.user,
+            "products": products,
+        }
+    )
+
+# ============================================================
+# SELLER SYSTEM - FINAL AUTO APPROVAL OVERRIDE
+# ============================================================
+
+from django.contrib.auth.decorators import login_required as _seller_login_required
+from django.contrib import messages as _seller_messages
+from django.core.mail import send_mail as _seller_send_mail
+from django.shortcuts import render as _seller_render, redirect as _seller_redirect
+from django.utils import timezone as _seller_timezone
+from django.db.models import Sum as _seller_Sum
+
+from .forms import SellerRegistrationForm as _SellerRegistrationForm
+from .models import SellerProfile as _SellerProfile
+
+
+@_seller_login_required
+def seller_register_view(request):
+    """
+    Seller registration.
+
+    New seller:
+        Registration -> APPROVED immediately -> Seller Dashboard
+
+    Existing seller:
+        PENDING / UNDER_REVIEW / REJECTED -> APPROVED immediately
+    """
+
+    existing_profile = _SellerProfile.objects.filter(
+        user=request.user
+    ).first()
+
+    # --------------------------------------------------------
+    # EXISTING SELLER
+    # --------------------------------------------------------
+    if existing_profile:
+
+        if existing_profile.status != "APPROVED":
+            existing_profile.status = "APPROVED"
+            existing_profile.verified_at = _seller_timezone.now()
+            existing_profile.rejection_reason = ""
+            existing_profile.save(
+                update_fields=[
+                    "status",
+                    "verified_at",
+                    "rejection_reason",
+                ]
+            )
+
+        return _seller_redirect("seller_dashboard")
+
+    # --------------------------------------------------------
+    # NEW SELLER
+    # --------------------------------------------------------
+    if request.method == "POST":
+
+        form = _SellerRegistrationForm(
+            request.POST,
+            request.FILES
+        )
+
+        if form.is_valid():
+
+            seller = form.save(commit=False)
+            seller.user = request.user
+
+            # AUTO APPROVAL
+            seller.status = "APPROVED"
+            seller.verified_at = _seller_timezone.now()
+            seller.rejection_reason = ""
+
+            seller.save()
+
+            _seller_messages.success(
+                request,
+                "🎉 Seller registration completed successfully. "
+                "Your seller account is now APPROVED."
+            )
+
+            # Email is optional. Failure must never block registration.
+            try:
+                if seller.email:
+                    _seller_send_mail(
+                        subject="YN Commerce India - Seller Account Approved",
+                        message=(
+                            f"Hello {seller.full_name},\n\n"
+                            "Your seller registration has been completed successfully.\n\n"
+                            "Seller Status: APPROVED\n\n"
+                            "You can now access your Seller Dashboard.\n\n"
+                            "Thank you,\n"
+                            "YN Commerce India"
+                        ),
+                        from_email=None,
+                        recipient_list=[seller.email],
+                        fail_silently=True,
+                    )
+            except Exception:
+                pass
+
+            return _seller_redirect("seller_dashboard")
+
+        _seller_messages.error(
+            request,
+            "Seller registration could not be completed. "
+            "Please correct the errors shown below."
+        )
+
+    else:
+
+        form = _SellerRegistrationForm(
+            initial={
+                "email": request.user.email,
+                "mobile": getattr(
+                    request.user,
+                    "phone_number",
+                    ""
+                ),
+                "pickup_country": "India",
+            }
+        )
+
+    return _seller_render(
+        request,
+        "accounts/seller_register.html",
+        {
+            "form": form
+        }
+    )
+
+
+@_seller_login_required
+def seller_dashboard(request):
+
+    seller = _SellerProfile.objects.filter(
+        user=request.user
+    ).first()
+
+    # --------------------------------------------------------
+    # NO PROFILE = SEND TO REGISTRATION
+    # --------------------------------------------------------
+    if not seller:
+        return _seller_redirect("seller_register")
+
+    # --------------------------------------------------------
+    # ANY OLD STATUS = AUTO APPROVE
+    # --------------------------------------------------------
+    if seller.status != "APPROVED":
+        seller.status = "APPROVED"
+        seller.verified_at = _seller_timezone.now()
+        seller.rejection_reason = ""
+        seller.save(
+            update_fields=[
+                "status",
+                "verified_at",
+                "rejection_reason",
+            ]
+        )
+
+    products = Product.objects.filter(
+        owner=request.user
+    )
+
+    total_products = products.count()
+
+    # Currently all seller products are considered active.
+    active_products = products.count()
+
+    seller_orders = Order.objects.filter(
+        product__owner=request.user
+    )
+
+    total_orders = seller_orders.count()
+
+    delivered_orders = seller_orders.filter(
+        status="DELIVERED"
+    ).count()
+
+    pending_orders = seller_orders.filter(
+        status="PENDING"
+    ).count()
+
+    total_sales = seller_orders.filter(
+        status="DELIVERED"
+    ).aggregate(
+        total=_seller_Sum("total_amount")
+    )["total"] or 0
+
+    return _seller_render(
+        request,
+        "accounts/seller_dashboard.html",
+        {
+            "user": request.user,
+            "seller": seller,
+            "total_products": total_products,
+            "active_products": active_products,
+            "total_orders": total_orders,
+            "delivered_orders": delivered_orders,
+            "pending_orders": pending_orders,
+            "total_sales": total_sales,
+        }
+    )
+
+
+@_seller_login_required
+def seller_products(request):
+
+    profile = getattr(
+        request.user,
+        "seller_profile",
+        None
+    )
+
+    if not profile:
+        return _seller_redirect("seller_register")
+
+    # AUTO APPROVE EXISTING PROFILE
+    if profile.status != "APPROVED":
+        profile.status = "APPROVED"
+        profile.verified_at = _seller_timezone.now()
+        profile.rejection_reason = ""
+        profile.save(
+            update_fields=[
+                "status",
+                "verified_at",
+                "rejection_reason",
+            ]
+        )
+
+    products = Product.objects.filter(
+        owner=request.user
+    ).select_related(
+        "category",
+        "subcategory",
+        "brand",
+    ).order_by("-id")
+
+    return _seller_render(
+        request,
+        "accounts/seller_products.html",
+        {
+            "user": request.user,
+            "seller": profile,
+            "products": products,
+        }
+    )

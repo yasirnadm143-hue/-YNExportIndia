@@ -1,0 +1,177 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#063b9e">
+
+    <title>{% block title %}YN Commerce India{% endblock %}</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fc;
+            color: #101828;
+            min-height: 100vh;
+        }
+
+        .site-header {
+            background: linear-gradient(135deg, #031b52, #063b9e, #1261e8);
+            color: white;
+            padding: 16px 20px;
+            box-shadow: 0 5px 25px rgba(0,0,0,.15);
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: 900;
+        }
+
+        .brand span {
+            color: #ffc400;
+        }
+
+        .brand-subtitle {
+            font-size: 11px;
+            margin-top: 3px;
+            color: #dbeafe;
+            font-weight: 700;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 16px;
+            border-radius: 12px;
+            color: white;
+            background: rgba(255,255,255,.12);
+            border: 1px solid rgba(255,255,255,.25);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .page-container {
+            width: min(100% - 30px, 1100px);
+            margin: 28px auto;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 22px;
+            padding: 24px;
+            box-shadow: 0 10px 35px rgba(16,24,40,.08);
+            border: 1px solid #e8edf5;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #d0d5dd;
+            border-radius: 12px;
+            outline: none;
+            background: white;
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #1261e8;
+            box-shadow: 0 0 0 3px rgba(18,97,232,.10);
+        }
+
+        button,
+        input[type="submit"] {
+            cursor: pointer;
+        }
+
+        .site-footer {
+            text-align: center;
+            padding: 25px 15px 40px;
+            color: #667085;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            .site-header {
+                padding: 14px;
+            }
+
+            .brand {
+                font-size: 20px;
+            }
+
+            .page-container {
+                width: min(100% - 20px, 1100px);
+                margin: 18px auto;
+            }
+
+            .content-card {
+                padding: 18px;
+                border-radius: 18px;
+            }
+
+            .back-btn {
+                padding: 9px 12px;
+                font-size: 13px;
+            }
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+
+        <div>
+            <div class="brand">
+                YN COMMERCE <span>INDIA</span>
+            </div>
+            <div class="brand-subtitle">
+                IMPORT • EXPORT • DELIVER
+            </div>
+        </div>
+
+        <a href="{% url 'home' %}" class="back-btn">
+            ← Home
+        </a>
+
+    </div>
+</header>
+
+<main class="page-container">
+    <div class="content-card">
+        {% block content %}{% endblock %}
+    </div>
+</main>
+
+<footer class="site-footer">
+    © {% now "Y" %} YN Commerce India • Premium Marketplace
+</footer>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

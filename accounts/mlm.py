@@ -23,7 +23,7 @@ def distribute_commission(order):
     Commission is created only once for each:
         order + beneficiary + level
 
-    This prevents duplicate wallet credits.
+    This prevents duplicate bonus_balance credits.
     """
 
     # ======================================================
@@ -126,22 +126,22 @@ def distribute_commission(order):
         )
 
         # ==================================================
-        # CREDIT WALLET ONLY ON FIRST CREATION
+        # CREDIT BONUS BALANCE ONLY ON FIRST CREATION
         # ==================================================
 
         if created:
 
-            current_wallet = Decimal(
-                str(upline.wallet_balance or "0.00")
+            current_bonus_balance = Decimal(
+                str(upline.bonus_balance or "0.00")
             )
 
-            upline.wallet_balance = (
-                current_wallet + amount
+            upline.bonus_balance = (
+                current_bonus_balance + amount
             )
 
             upline.save(
                 update_fields=[
-                    "wallet_balance",
+                    "bonus_balance",
                 ]
             )
 

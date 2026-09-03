@@ -119,7 +119,30 @@ class RegisterForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ["title", "description", "price", "image"]
+        fields = [
+            "category",
+            "subcategory",
+            "brand",
+            "title",
+            "description",
+            "price",
+            "image",
+        ]
+
+        widgets = {
+            "title": forms.TextInput(attrs={
+                "placeholder": "Enter product name"
+            }),
+            "description": forms.Textarea(attrs={
+                "placeholder": "Enter product description",
+                "rows": 5,
+            }),
+            "price": forms.NumberInput(attrs={
+                "placeholder": "Enter price",
+                "step": "0.01",
+                "min": "0",
+            }),
+        }
 
 
 class OrderForm(forms.ModelForm):
@@ -138,3 +161,129 @@ class OrderForm(forms.ModelForm):
             "country",
             "address",
         ]
+
+
+# ==========================
+# SELLER REGISTRATION FORM
+# ==========================
+
+from django import forms
+from .models import SellerProfile
+
+
+class SellerRegistrationForm(forms.ModelForm):
+
+    class Meta:
+        model = SellerProfile
+
+        fields = [
+            "full_name",
+            "email",
+            "mobile",
+            "age",
+            "pan_number",
+            "aadhaar_number",
+            "pan_card",
+            "aadhaar_card",
+            "bank_account_number",
+            "ifsc_code",
+            "bank_account_name",
+            "pickup_address",
+            "pickup_pincode",
+            "pickup_district",
+            "pickup_state",
+            "pickup_country",
+        ]
+
+        widgets = {
+            "full_name": forms.TextInput(attrs={
+                "placeholder": "Seller Full Name"
+            }),
+
+            "email": forms.EmailInput(attrs={
+                "placeholder": "Seller Email"
+            }),
+
+            "mobile": forms.TextInput(attrs={
+                "placeholder": "Mobile Number"
+            }),
+
+            "age": forms.NumberInput(attrs={
+                "placeholder": "Age",
+                "min": "18"
+            }),
+
+            "pan_number": forms.TextInput(attrs={
+                "placeholder": "PAN Number",
+                "maxlength": "10"
+            }),
+
+            "aadhaar_number": forms.TextInput(attrs={
+                "placeholder": "Aadhaar Number",
+                "maxlength": "12"
+            }),
+
+            "bank_account_number": forms.TextInput(attrs={
+                "placeholder": "Bank Account Number"
+            }),
+
+            "ifsc_code": forms.TextInput(attrs={
+                "placeholder": "IFSC Code"
+            }),
+
+            "bank_account_name": forms.TextInput(attrs={
+                "placeholder": "Account Holder Name"
+            }),
+
+            "pickup_address": forms.Textarea(attrs={
+                "placeholder": "Complete Pickup Address",
+                "rows": 4
+            }),
+
+            "pickup_pincode": forms.TextInput(attrs={
+                "placeholder": "Pickup Pincode"
+            }),
+
+            "pickup_district": forms.TextInput(attrs={
+                "placeholder": "District"
+            }),
+
+            "pickup_state": forms.TextInput(attrs={
+                "placeholder": "State"
+            }),
+
+            "pickup_country": forms.TextInput(attrs={
+                "placeholder": "Country"
+            }),
+        }
+
+    def clean_age(self):
+        age = self.cleaned_data["age"]
+
+        if age < 18:
+            raise forms.ValidationError(
+                "Seller की उम्र कम से कम 18 वर्ष होनी चाहिए।"
+            )
+
+        return age
+
+    def clean_pan_number(self):
+        pan = self.cleaned_data["pan_number"].strip().upper()
+
+        if len(pan) != 10:
+            raise forms.ValidationError(
+                "PAN Number 10 characters का होना चाहिए।"
+            )
+
+        return pan
+
+    def clean_aadhaar_number(self):
+        aadhaar = self.cleaned_data["aadhaar_number"].strip()
+
+        if not aadhaar.isdigit() or len(aadhaar) != 12:
+            raise forms.ValidationError(
+                "Aadhaar Number 12 digits का होना चाहिए।"
+            )
+
+        return aadhaar
+

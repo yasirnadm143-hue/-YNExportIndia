@@ -1,4 +1,5 @@
 import random
+import uuid
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -16,7 +17,7 @@ class CustomUser(AbstractUser):
         related_name="downlines"
     )
 
-    wallet_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    bonus_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     rank = models.CharField(max_length=50, default="Member")
 
     # MLM numeric rank
@@ -38,6 +39,184 @@ class CustomUser(AbstractUser):
         super().save(*args, **kwargs)
 
 
+
+
+# ==========================
+# PRODUCT CATALOG
+# ==========================
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=120, unique=True)
+    icon = models.ImageField(
+        upload_to="category_icons/",
+        blank=True,
+        null=True
+    )
+    banner = models.ImageField(
+        upload_to="category_banners/",
+        blank=True,
+        null=True
+    )
+    is_active = models.BooleanField(default=True)
+    sort_order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["sort_order", "name"]
+        verbose_name_plural = "Categories"
+
+    def __str__(self):
+        return self.name
+
+
+class SubCategory(models.Model):
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+        related_name="subcategories"
+    )
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=120)
+
+    class Meta:
+        ordering = ["name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["category", "slug"],
+                name="unique_subcategory_category_slug"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.category.name} / {self.name}"
+
+
+class Brand(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=120, unique=True)
+    logo = models.ImageField(
+        upload_to="brand_logos/",
+        blank=True,
+        null=True
+    )
+    description = models.TextField(blank=True)
+    is_verified = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+
+# ==========================
+# SELLER PROFILE
+# ==========================
+
+class SellerProfile(models.Model):
+
+    STATUS_CHOICES = [
+        ("PENDING", "Pending"),
+        ("UNDER_REVIEW", "Under Review"),
+        ("APPROVED", "Approved"),
+        ("REJECTED", "Rejected"),
+    ]
+
+    user = models.OneToOneField(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="seller_profile"
+    )
+
+    full_name = models.CharField(max_length=150)
+    email = models.EmailField()
+    mobile = models.CharField(max_length=15)
+    age = models.PositiveSmallIntegerField()
+
+    # KYC
+    pan_number = models.CharField(
+        max_length=10,
+        unique=True
+    )
+
+    aadhaar_number = models.CharField(
+        max_length=12,
+        unique=True
+    )
+
+    pan_card = models.FileField(
+        upload_to="seller_kyc/pan/"
+    )
+
+    aadhaar_card = models.FileField(
+        upload_to="seller_kyc/aadhaar/"
+    )
+
+    # Bank
+    bank_account_number = models.CharField(
+        max_length=30
+    )
+
+    ifsc_code = models.CharField(
+        max_length=20
+    )
+
+    bank_account_name = models.CharField(
+        max_length=150
+    )
+
+    # Pickup Address
+    pickup_address = models.TextField()
+
+    pickup_pincode = models.CharField(
+        max_length=10
+    )
+
+    pickup_district = models.CharField(
+        max_length=100
+    )
+
+    pickup_state = models.CharField(
+        max_length=100
+    )
+
+    pickup_country = models.CharField(
+        max_length=100,
+        default="India"
+    )
+
+    # Verification
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="PENDING"
+    )
+
+    rejection_reason = models.TextField(
+        blank=True,
+        default=""
+    )
+
+    verified_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+
+    def __str__(self):
+        return f"{self.full_name} - {self.status}"
+
+
 class Product(models.Model):
     owner = models.ForeignKey(
         CustomUser,
@@ -45,6 +224,31 @@ class Product(models.Model):
         related_name="products",
         null=True,
         blank=True,
+    )
+
+
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="products",
+    )
+
+    subcategory = models.ForeignKey(
+        SubCategory,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="products",
+    )
+
+    brand = models.ForeignKey(
+        Brand,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="products",
     )
 
     title = models.CharField(max_length=200)
@@ -58,6 +262,33 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class ProductImage(models.Model):
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="images"
+    )
+
+    image = models.ImageField(
+        upload_to="product_images/"
+    )
+
+    sort_order = models.PositiveIntegerField(
+        default=0
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ["sort_order", "id"]
+
+    def __str__(self):
+        return f"{self.product.title} - Image {self.id}"
 
 
 class Order(models.Model):
@@ -111,6 +342,85 @@ class Order(models.Model):
         default="PENDING"
     )
 
+
+    cancelled_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    cancellation_reason = models.TextField(
+        blank=True,
+        default=""
+    )
+
+    cancelled_by_customer = models.BooleanField(
+        default=False
+    )
+
+    # ==========================
+    # PAYMENT & ORDER CHARGES
+    # ==========================
+
+    delivery_charge = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=85.00
+    )
+
+    shopping_charge = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=15.00
+    )
+
+    product_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00
+    )
+
+    total_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00
+    )
+
+    online_payment_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00
+    )
+
+    cod_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00
+    )
+
+    PAYMENT_STATUS_CHOICES = [
+        ("PENDING", "Payment Pending"),
+        ("AWAITING_VERIFICATION", "Awaiting Verification"),
+        ("VERIFIED", "Payment Verified"),
+        ("REJECTED", "Payment Rejected"),
+    ]
+
+    payment_status = models.CharField(
+        max_length=30,
+        choices=PAYMENT_STATUS_CHOICES,
+        default="PENDING"
+    )
+
+    payment_screenshot = models.ImageField(
+        upload_to="payment_screenshots/",
+        blank=True,
+        null=True
+    )
+
+    payment_verified_at = models.DateTimeField(
+        blank=True,
+        null=True
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True
     )
@@ -118,6 +428,37 @@ class Order(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True
     )
+    seller_accepted_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    packed_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    shipped_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    delivered_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    label_file = models.FileField(
+        upload_to="shipping_labels/",
+        null=True,
+        blank=True
+    )
+
+    seller_note = models.TextField(
+        blank=True,
+        default=""
+    )
+
 
     def save(self, *args, **kwargs):
 
@@ -249,3 +590,118 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.title} - {self.user.username}"
+
+
+# ==========================
+# CUSTOMER SUPPORT SYSTEM
+# ==========================
+
+class SupportTicket(models.Model):
+
+    STATUS_CHOICES = [
+        ("OPEN", "Open"),
+        ("IN_PROGRESS", "In Progress"),
+        ("RESOLVED", "Resolved"),
+        ("CLOSED", "Closed"),
+    ]
+
+    PRIORITY_CHOICES = [
+        ("LOW", "Low"),
+        ("NORMAL", "Normal"),
+        ("HIGH", "High"),
+        ("URGENT", "Urgent"),
+    ]
+
+    ticket_id = models.CharField(
+        max_length=20,
+        unique=True,
+        editable=False
+    )
+
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="support_tickets"
+    )
+
+    email = models.EmailField()
+
+    subject = models.CharField(
+        max_length=200
+    )
+
+    message = models.TextField()
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="OPEN"
+    )
+
+    priority = models.CharField(
+        max_length=20,
+        choices=PRIORITY_CHOICES,
+        default="NORMAL"
+    )
+
+    admin_reply = models.TextField(
+        blank=True,
+        default=""
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    def save(self, *args, **kwargs):
+
+        if not self.ticket_id:
+            self.ticket_id = (
+                "YNCS"
+                + uuid.uuid4().hex[:10].upper()
+            )
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.ticket_id} - {self.subject}"
+
+
+class SupportMessage(models.Model):
+
+    ticket = models.ForeignKey(
+        SupportTicket,
+        on_delete=models.CASCADE,
+        related_name="messages"
+    )
+
+    sender = models.ForeignKey(
+        CustomUser,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="support_messages"
+    )
+
+    message = models.TextField()
+
+    is_staff_reply = models.BooleanField(
+        default=False
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ["created_at"]
+
+    def __str__(self):
+        return f"{self.ticket.ticket_id} - Support Message"
+
+
+# ==========================

@@ -117,3 +117,40 @@ body {
 
 </body>
 </html>
+
+
+{% if order.status != "CANCELLED" %}
+    {% if order.status != "SHIPPED" and order.status != "OUT_FOR_DELIVERY" and order.status != "DELIVERED" %}
+        <div class="order-cancellation-section">
+            <h3>Cancel Order</h3>
+
+            {% if order.created_at|timesince %}
+                <p>Order cancellation is available within 3 hours of placing the order.</p>
+            {% endif %}
+
+            <form method="post" action="{% url 'cancel_order' order.id %}">
+                {% csrf_token %}
+
+                <label for="cancellation_reason">Cancellation reason</label>
+
+                <select
+                    name="cancellation_reason"
+                    id="cancellation_reason"
+                    required
+                >
+                    <option value="">Select a reason</option>
+                    <option value="Changed my mind">Changed my mind</option>
+                    <option value="Ordered by mistake">Ordered by mistake</option>
+                    <option value="Found a better price">Found a better price</option>
+                    <option value="Delivery time is too long">Delivery time is too long</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <button type="submit">
+                    Cancel Order
+                </button>
+            </form>
+        </div>
+    {% endif %}
+{% endif %}
+

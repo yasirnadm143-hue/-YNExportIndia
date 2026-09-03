@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils import timezone
 
-from .models import CustomUser, Product, Order, SupportTicket, SupportMessage
+from .models import CustomUser, Product, Order, SupportTicket, SupportMessage, SellerProfile
 
 
 @admin.register(CustomUser)
@@ -12,20 +12,20 @@ class CustomUserAdmin(UserAdmin):
         "email",
         "phone_number",
         "referral_id",
-        "wallet_balance",
+        "bonus_balance",
         "rank",
         "is_staff",
     )
 
     fieldsets = UserAdmin.fieldsets + (
         (
-            "MLM & Wallet",
+            "MLM & Bonus Balance",
             {
                 "fields": (
                     "phone_number",
                     "referral_id",
                     "upline",
-                    "wallet_balance",
+                    "bonus_balance",
                     "rank",
                 )
             },
@@ -406,3 +406,152 @@ class SupportMessageAdmin(admin.ModelAdmin):
     readonly_fields = (
         "created_at",
     )
+
+
+# ==========================================================
+# SELLER KYC / REGISTRATION ADMIN
+# ==========================================================
+
+@admin.register(SellerProfile)
+class SellerProfileAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "id",
+        "full_name",
+        "email",
+        "mobile",
+        "status",
+        "created_at",
+        "verified_at",
+    )
+
+    list_filter = (
+        "status",
+        "created_at",
+        "verified_at",
+    )
+
+    search_fields = (
+        "full_name",
+        "email",
+        "mobile",
+        "pan_number",
+        "aadhaar_number",
+        "user__username",
+    )
+
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+        "verified_at",
+    )
+
+    fieldsets = (
+        (
+            "Seller Account",
+            {
+                "fields": (
+                    "user",
+                    "full_name",
+                    "email",
+                    "mobile",
+                    "age",
+                )
+            },
+        ),
+        (
+            "KYC Verification",
+            {
+                "fields": (
+                    "pan_number",
+                    "pan_card",
+                    "aadhaar_number",
+                    "aadhaar_card",
+                )
+            },
+        ),
+        (
+            "Bank Details",
+            {
+                "fields": (
+                    "bank_account_name",
+                    "bank_account_number",
+                    "ifsc_code",
+                )
+            },
+        ),
+        (
+            "Pickup Address",
+            {
+                "fields": (
+                    "pickup_address",
+                    "pickup_pincode",
+                    "pickup_district",
+                    "pickup_state",
+                    "pickup_country",
+                )
+            },
+        ),
+        (
+            "Verification",
+            {
+                "fields": (
+                    "status",
+                    "rejection_reason",
+                    "verified_at",
+                )
+            },
+        ),
+        (
+            "System Information",
+            {
+                "fields": (
+                    "created_at",
+                    "updated_at",
+                )
+            },
+        ),
+    )
+
+    actions = (
+        "approve_selected_sellers",
+        "reject_selected_sellers",
+        "mark_under_review",
+    )
+
+    @admin.action(description="✅ Approve selected sellers")
+    def approve_selected_sellers(self, request, queryset):
+        from django.utils import timezone
+
+        updated = queryset.update(
+            status="APPROVED",
+            verified_at=timezone.now(),
+            rejection_reason="",
+        )
+
+        self.message_user(
+            request,
+            f"{updated} seller(s) approved successfully."
+        )
+
+    @admin.action(description="🔎 Mark selected sellers Under Review")
+    def mark_under_review(self, request, queryset):
+        updated = queryset.update(
+            status="UNDER_REVIEW"
+        )
+
+        self.message_user(
+            request,
+            f"{updated} seller(s) moved to Under Review."
+        )
+
+    @admin.action(description="❌ Reject selected sellers")
+    def reject_selected_sellers(self, request, queryset):
+        updated = queryset.update(
+            status="REJECTED"
+        )
+
+        self.message_user(
+            request,
+            f"{updated} seller(s) rejected."
+        )

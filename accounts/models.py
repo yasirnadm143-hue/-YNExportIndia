@@ -17,7 +17,7 @@ class CustomUser(AbstractUser):
         related_name="downlines"
     )
 
-    wallet_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    bonus_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     rank = models.CharField(max_length=50, default="Member")
 
     # MLM numeric rank
@@ -110,6 +110,113 @@ class Brand(models.Model):
         return self.name
 
 
+
+# ==========================
+# SELLER PROFILE
+# ==========================
+
+class SellerProfile(models.Model):
+
+    STATUS_CHOICES = [
+        ("PENDING", "Pending"),
+        ("UNDER_REVIEW", "Under Review"),
+        ("APPROVED", "Approved"),
+        ("REJECTED", "Rejected"),
+    ]
+
+    user = models.OneToOneField(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="seller_profile"
+    )
+
+    full_name = models.CharField(max_length=150)
+    email = models.EmailField()
+    mobile = models.CharField(max_length=15)
+    age = models.PositiveSmallIntegerField()
+
+    # KYC
+    pan_number = models.CharField(
+        max_length=10,
+        unique=True
+    )
+
+    aadhaar_number = models.CharField(
+        max_length=12,
+        unique=True
+    )
+
+    pan_card = models.FileField(
+        upload_to="seller_kyc/pan/"
+    )
+
+    aadhaar_card = models.FileField(
+        upload_to="seller_kyc/aadhaar/"
+    )
+
+    # Bank
+    bank_account_number = models.CharField(
+        max_length=30
+    )
+
+    ifsc_code = models.CharField(
+        max_length=20
+    )
+
+    bank_account_name = models.CharField(
+        max_length=150
+    )
+
+    # Pickup Address
+    pickup_address = models.TextField()
+
+    pickup_pincode = models.CharField(
+        max_length=10
+    )
+
+    pickup_district = models.CharField(
+        max_length=100
+    )
+
+    pickup_state = models.CharField(
+        max_length=100
+    )
+
+    pickup_country = models.CharField(
+        max_length=100,
+        default="India"
+    )
+
+    # Verification
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="PENDING"
+    )
+
+    rejection_reason = models.TextField(
+        blank=True,
+        default=""
+    )
+
+    verified_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+
+    def __str__(self):
+        return f"{self.full_name} - {self.status}"
+
+
 class Product(models.Model):
     owner = models.ForeignKey(
         CustomUser,
@@ -155,6 +262,33 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class ProductImage(models.Model):
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="images"
+    )
+
+    image = models.ImageField(
+        upload_to="product_images/"
+    )
+
+    sort_order = models.PositiveIntegerField(
+        default=0
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ["sort_order", "id"]
+
+    def __str__(self):
+        return f"{self.product.title} - Image {self.id}"
 
 
 class Order(models.Model):
@@ -206,6 +340,21 @@ class Order(models.Model):
         max_length=30,
         choices=STATUS_CHOICES,
         default="PENDING"
+    )
+
+
+    cancelled_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    cancellation_reason = models.TextField(
+        blank=True,
+        default=""
+    )
+
+    cancelled_by_customer = models.BooleanField(
+        default=False
     )
 
     # ==========================
@@ -279,6 +428,37 @@ class Order(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True
     )
+    seller_accepted_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    packed_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    shipped_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    delivered_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    label_file = models.FileField(
+        upload_to="shipping_labels/",
+        null=True,
+        blank=True
+    )
+
+    seller_note = models.TextField(
+        blank=True,
+        default=""
+    )
+
 
     def save(self, *args, **kwargs):
 
@@ -522,3 +702,6 @@ class SupportMessage(models.Model):
 
     def __str__(self):
         return f"{self.ticket.ticket_id} - Support Message"
+
+
+# ==========================

@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#062d78">
+
+<title>YN COMMERCE INDIA | Import. Export. Deliver.</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --blue:#073b9e;
+    --blue2:#1264e8;
+    --dark:#061f55;
+    --yellow:#ffc400;
+    --bg:#f4f7fc;
+    --white:#ffffff;
+    --text:#111827;
+    --muted:#697586;
+    --green:#159447;
+    --border:#e5eaf2;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding-bottom:92px;
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+button,
+input{
+    font-family:inherit;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+    background:linear-gradient(135deg,#041b4d,#073b9e,#1264e8);
+    color:white;
+    box-shadow:0 8px 30px rgba(4,31,91,.22);
+}
+
+.header-top{
+    max-width:1380px;
+    margin:auto;
+    min-height:82px;
+    padding:14px 22px;
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.menu-button{
+    width:50px;
+    height:50px;
+    border:1px solid rgba(255,255,255,.25);
+    background:rgba(255,255,255,.10);
+    border-radius:15px;
+    color:#fff;
+    font-size:27px;
+}
+
+.logo-area{
+    min-width:220px;
+}
+
+.logo{
+    font-size:29px;
+    font-weight:900;
+    letter-spacing:-1.5px;
+    white-space:nowrap;
+}
+
+.logo span{
+    color:var(--yellow);
+}
+
+.tagline{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.5px;
+    margin-top:4px;
+    color:#dce8ff;
+}
+
+.header-search{
+    flex:1;
+    max-width:600px;
+    margin:auto;
+}
+
+.search-box{
+    height:50px;
+    background:#fff;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    padding:0 17px;
+    box-shadow:0 5px 18px rgba(0,0,0,.12);
+}
+
+.search-icon{
+    color:#174ea6;
+    font-size:23px;
+    margin-right:12px;
+}
+
+.search-box input{
+    border:0;
+    outline:0;
+    width:100%;
+    font-size:16px;
+    color:#172033;
+}
+
+.header-actions{
+    display:flex;
+    gap:9px;
+}
+
+.circle-button{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.25);
+    background:rgba(255,255,255,.10);
+    color:white;
+    font-size:22px;
+    position:relative;
+}
+
+.badge{
+    position:absolute;
+    top:-2px;
+    right:-2px;
+    min-width:20px;
+    height:20px;
+    padding:0 5px;
+    border-radius:20px;
+    background:#ef3340;
+    color:#fff;
+    font-size:11px;
+    font-weight:bold;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.container{
+    max-width:1380px;
+    margin:auto;
+    padding:18px 22px;
+}
+
+/* =========================
+   ACCOUNT SUMMARY
+========================= */
+
+.account-card{
+    background:linear-gradient(110deg,#082f7f,#0c55c9);
+    color:#fff;
+    border-radius:18px;
+    padding:17px 22px;
+    display:grid;
+    grid-template-columns:1.4fr 1fr 1fr 1fr;
+    align-items:center;
+    box-shadow:0 8px 25px rgba(10,62,145,.20);
+    margin-bottom:16px;
+}
+
+.user-area{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.avatar{
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    background:#eaf2ff;
+    color:#1460c9;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:29px;
+    border:3px solid rgba(255,255,255,.5);
+}
+
+.welcome{
+    font-size:13px;
+    color:#d7e5ff;
+    margin-bottom:4px;
+}
+
+.username{
+    font-size:18px;
+    font-weight:800;
+}
+
+.role{
+    display:inline-block;
+    margin-left:6px;
+    padding:4px 9px;
+    border-radius:7px;
+    background:#1768e9;
+    font-size:10px;
+}
+
+.summary-item{
+    min-height:55px;
+    padding-left:22px;
+    border-left:1px solid rgba(255,255,255,.22);
+}
+
+.summary-label{
+    font-size:12px;
+    color:#d9e7ff;
+    margin-bottom:5px;
+}
+
+.summary-value{
+    font-size:18px;
+    font-weight:800;
+}
+
+.summary-link{
+    display:block;
+    margin-top:4px;
+    color:#dceaff;
+    font-size:11px;
+}
+
+/* =========================
+   CATEGORIES
+========================= */
+
+.categories{
+    background:#fff;
+    border-radius:18px;
+    padding:13px;
+    display:grid;
+    grid-template-columns:repeat(8,1fr);
+    gap:8px;
+    border:1px solid var(--border);
+    box-shadow:0 5px 18px rgba(20,40,80,.05);
+    margin-bottom:17px;
+}
+
+.category{
+    text-align:center;
+    padding:8px 4px;
+    border-radius:13px;
+    transition:.2s;
+}
+
+.category:hover{
+    background:#f2f6ff;
+    transform:translateY(-2px);
+}
+
+.category-icon{
+    width:58px;
+    height:58px;
+    margin:auto;
+    border-radius:50%;
+    background:#f1f5fb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:29px;
+}
+
+.category-name{
+    font-size:12px;
+    font-weight:700;
+    margin-top:7px;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+    min-height:330px;
+    border-radius:19px;
+    overflow:hidden;
+    position:relative;
+    background:
+        radial-gradient(circle at 85% 25%,rgba(255,196,0,.18),transparent 25%),
+        linear-gradient(115deg,#031c50,#063b9f 60%,#1265df);
+    color:white;
+    padding:45px 48px;
+    display:flex;
+    align-items:center;
+    margin-bottom:17px;
+    box-shadow:0 10px 28px rgba(8,45,110,.20);
+}
+
+.hero-content{
+    position:relative;
+    z-index:2;
+    max-width:580px;
+}
+
+.hero-label{
+    display:inline-block;
+    border:1px solid rgba(255,255,255,.35);
+    border-radius:30px;
+    padding:9px 17px;
+    font-size:12px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.hero h1{
+    font-size:44px;
+    line-height:1.05;
+    margin-bottom:14px;
+    letter-spacing:-1.5px;
+}
+
+.hero h1 span{
+    color:var(--yellow);
+}
+
+.hero p{
+    font-size:15px;
+    color:#dce8ff;
+    line-height:1.6;
+    max-width:530px;
+}
+
+.shop-button{
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+    margin-top:22px;
+    background:#fff;
+    color:#073b9e;
+    padding:13px 22px;
+    border-radius:11px;
+    font-size:14px;
+    font-weight:800;
+}
+
+.hero-art{
+    position:absolute;
+    right:40px;
+    bottom:10px;
+    font-size:145px;
+    opacity:.92;
+    filter:drop-shadow(0 15px 20px rgba(0,0,0,.20));
+}
+
+.dots{
+    position:absolute;
+    bottom:13px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:7px;
+}
+
+.dot{
+    width:23px;
+    height:5px;
+    border-radius:10px;
+    background:rgba(255,255,255,.30);
+}
+
+.dot.active{
+    width:28px;
+    background:#fff;
+}
+
+/* =========================
+   TRUST BAR
+========================= */
+
+.trust{
+    background:#fff;
+    border-radius:17px;
+    padding:17px;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    margin-bottom:25px;
+    border:1px solid var(--border);
+    box-shadow:0 5px 18px rgba(20,40,80,.05);
+}
+
+.trust-item{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    border-right:1px solid #e8ebf0;
+}
+
+.trust-item:last-child{
+    border-right:0;
+}
+
+.trust-icon{
+    font-size:24px;
+}
+
+.trust-title{
+    font-size:12px;
+    font-weight:800;
+}
+
+.trust-text{
+    font-size:10px;
+    color:var(--muted);
+    margin-top:3px;
+}
+
+/* =========================
+   SECTION
+========================= */
+
+.section-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin:10px 2px 13px;
+}
+
+.section-title h2{
+    font-size:20px;
+}
+
+.view-all{
+    color:#0754bb;
+    font-weight:bold;
+    font-size:13px;
+}
+
+/* =========================
+   PRODUCTS
+========================= */
+
+.products{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    margin-bottom:28px;
+}
+
+.product-card{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 5px 17px rgba(20,40,80,.06);
+    transition:.2s;
+}
+
+.product-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 9px 25px rgba(20,40,80,.11);
+}
+
+.product-image{
+    height:205px;
+    background:#f5f7fa;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    overflow:hidden;
+}
+
+.product-image img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.product-placeholder{
+    font-size:65px;
+}
+
+.discount{
+    position:absolute;
+    top:10px;
+    left:10px;
+    background:#0756ba;
+    color:white;
+    padding:5px 8px;
+    border-radius:6px;
+    font-size:10px;
+    font-weight:bold;
+}
+
+.product-info{
+    padding:13px;
+}
+
+.product-title{
+    font-size:14px;
+    font-weight:700;
+    line-height:1.35;
+    min-height:38px;
+}
+
+.rating{
+    display:inline-block;
+    background:#159447;
+    color:#fff;
+    border-radius:5px;
+    padding:4px 7px;
+    font-size:10px;
+    margin:9px 0;
+}
+
+.price{
+    font-size:18px;
+    font-weight:900;
+}
+
+.delivery{
+    font-size:11px;
+    color:#536070;
+    margin:9px 0;
+}
+
+.product-actions{
+    display:flex;
+    gap:8px;
+}
+
+.view-product{
+    flex:1;
+    background:#0754bd;
+    color:white;
+    text-align:center;
+    padding:10px 7px;
+    border-radius:9px;
+    font-size:12px;
+    font-weight:800;
+}
+
+.wishlist{
+    width:42px;
+    border:1px solid #ccd3df;
+    background:white;
+    border-radius:9px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+}
+
+/* =========================
+   QUICK LINKS
+========================= */
+
+.quick-links{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:12px;
+    margin-bottom:18px;
+}
+
+.quick{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:15px;
+    display:flex;
+    align-items:center;
+    gap:11px;
+    min-height:78px;
+    box-shadow:0 4px 15px rgba(20,40,80,.05);
+}
+
+.quick-icon{
+    width:45px;
+    height:45px;
+    border-radius:12px;
+    background:#edf4ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:23px;
+}
+
+.quick-title{
+    font-weight:800;
+    font-size:13px;
+}
+
+.quick-text{
+    color:var(--muted);
+    font-size:10px;
+    margin-top:4px;
+}
+
+/* =========================
+   BOTTOM NAV
+========================= */
+
+.bottom-nav{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    height:82px;
+    background:rgba(4,37,102,.98);
+    border-top:1px solid rgba(255,255,255,.16);
+    z-index:2000;
+    display:flex;
+    justify-content:center;
+    box-shadow:0 -5px 20px rgba(0,0,0,.14);
+}
+
+.bottom-inner{
+    width:100%;
+    max-width:760px;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+}
+
+.bottom-item{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    color:#dbe7ff;
+    font-size:11px;
+    font-weight:700;
+    border-right:1px solid rgba(255,255,255,.09);
+}
+
+.bottom-item:last-child{
+    border-right:0;
+}
+
+.bottom-icon{
+    font-size:23px;
+    line-height:1;
+}
+
+.bottom-item.active{
+    color:#fff;
+}
+
+.bottom-item.active:before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:20%;
+    right:20%;
+    height:2px;
+    background:var(--yellow);
+    border-radius:0 0 4px 4px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:800px){
+
+    body{
+        padding-bottom:78px;
+    }
+
+    .header{
+        position:relative;
+    }
+
+    .header-top{
+        min-height:205px;
+        padding:15px 18px 20px;
+        display:grid;
+        grid-template-columns:52px 1fr auto;
+        grid-template-rows:auto auto;
+        gap:12px;
+    }
+
+    .menu-button{
+        width:48px;
+        height:48px;
+    }
+
+    .logo-area{
+        min-width:0;
+    }
+
+    .logo{
+        font-size:22px;
+        letter-spacing:-1px;
+    }
+
+    .tagline{
+        font-size:9px;
+    }
+
+    .header-actions{
+        gap:6px;
+    }
+
+    .circle-button{
+        width:43px;
+        height:43px;
+        font-size:19px;
+    }
+
+    .header-search{
+        grid-column:1 / -1;
+        width:100%;
+    }
+
+    .search-box{
+        height:55px;
+        border-radius:16px;
+    }
+
+    .search-box input{
+        font-size:15px;
+    }
+
+    .container{
+        padding:12px 12px;
+    }
+
+    .account-card{
+        grid-template-columns:1fr 1fr;
+        gap:15px;
+        padding:16px;
+        border-radius:17px;
+    }
+
+    .user-area{
+        grid-column:1 / -1;
+    }
+
+    .summary-item{
+        border-left:0;
+        border-top:1px solid rgba(255,255,255,.2);
+        padding:11px 0 0;
+    }
+
+    .categories{
+        grid-template-columns:repeat(4,1fr);
+        gap:3px;
+        padding:9px;
+    }
+
+    .category{
+        padding:7px 2px;
+    }
+
+    .category-icon{
+        width:50px;
+        height:50px;
+        font-size:25px;
+    }
+
+    .category-name{
+        font-size:10px;
+    }
+
+    .hero{
+        min-height:310px;
+        padding:30px 24px;
+        border-radius:17px;
+    }
+
+    .hero h1{
+        font-size:31px;
+    }
+
+    .hero p{
+        font-size:13px;
+        max-width:65%;
+    }
+
+    .hero-art{
+        right:-10px;
+        bottom:30px;
+        font-size:95px;
+    }
+
+    .trust{
+        grid-template-columns:repeat(2,1fr);
+        gap:0;
+        padding:10px;
+    }
+
+    .trust-item{
+        justify-content:flex-start;
+        padding:10px 7px;
+        border-right:0;
+    }
+
+    .trust-item:nth-child(odd){
+        border-right:1px solid #e8ebf0;
+    }
+
+    .trust-item:last-child{
+        grid-column:1 / -1;
+    }
+
+    .products{
+        grid-template-columns:repeat(2,1fr);
+        gap:10px;
+    }
+
+    .product-image{
+        height:145px;
+    }
+
+    .product-info{
+        padding:10px;
+    }
+
+    .product-title{
+        font-size:12px;
+    }
+
+    .price{
+        font-size:16px;
+    }
+
+    .quick-links{
+        grid-template-columns:repeat(2,1fr);
+        gap:10px;
+    }
+
+    .quick{
+        min-height:70px;
+        padding:11px;
+    }
+
+    .quick-icon{
+        width:40px;
+        height:40px;
+    }
+
+    .bottom-nav{
+        height:78px;
+    }
+
+    .bottom-inner{
+        max-width:none;
+    }
+
+    .bottom-item{
+        font-size:10px;
+    }
+
+    .bottom-icon{
+        font-size:22px;
+    }
+}
+
+@media(max-width:390px){
+
+    .logo{
+        font-size:19px;
+    }
+
+    .header-top{
+        grid-template-columns:47px 1fr auto;
+        padding-left:12px;
+        padding-right:12px;
+    }
+
+    .hero h1{
+        font-size:27px;
+    }
+
+    .hero p{
+        max-width:72%;
+    }
+
+    .product-image{
+        height:130px;
+    }
+
+    .bottom-item{
+        font-size:9px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header class="header">
+
+    <div class="header-top">
+
+        <button class="menu-button" id="menuButton" type="button" aria-label="Open menu" aria-controls="sideDrawer" aria-expanded="false">☰</button>
+
+        <div class="logo-area">
+            <div class="logo">
+                YN COMMERCE <span>INDIA</span>
+            </div>
+            <div class="tagline">
+                IMPORT. EXPORT. DELIVER.
+            </div>
+        </div>
+
+        <div class="header-actions">
+
+            <a href="{% url 'notifications' %}" class="circle-button">
+                🔔
+                <span class="badge">3</span>
+            </a>
+
+            <a href="#" class="circle-button">
+                🛒
+            </a>
+
+        </div>
+
+        <div class="header-search">
+            <form class="search-box" method="get">
+                <span class="search-icon">⌕</span>
+                <input
+                    type="search"
+                    name="q"
+                    placeholder="Search for products, brands & more..."
+                    autocomplete="off"
+                >
+            </form>
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+<!-- =========================
+     ACCOUNT SUMMARY
+========================= -->
+
+{% if user.is_authenticated %}
+
+<div class="account-card">
+
+    <div class="user-area">
+
+        <div class="avatar">👤</div>
+
+        <div>
+            <div class="welcome">Welcome back,</div>
+
+            <div class="username">
+                {{ user.username }}
+                <span class="role">Buyer</span>
+            </div>
+
+            {% if user.referral_id %}
+            <div style="font-size:11px;color:#dce8ff;margin-top:4px;">
+                {{ user.referral_id }}
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <div class="summary-item">
+
+        <div class="summary-label">
+            💰 Bonus Balance
+        </div>
+
+        <div class="summary-value">
+            ₹{{ user.bonus_balance|default:"0.00"|floatformat:2 }}
+        </div>
+
+        <a href="{% url 'bonus_balance_view' %}" class="summary-link">
+            View Details →
+        </a>
+
+    </div>
+
+    <div class="summary-item">
+
+        <div class="summary-label">
+            ⭐ YN Points
+        </div>
+
+        <div class="summary-value">
+            View
+        </div>
+
+        <a href="{% url 'mlm_commission_history' %}" class="summary-link">
+            Commission Details →
+        </a>
+
+    </div>
+
+    <div class="summary-item">
+
+        <div class="summary-label">
+            👥 Referral ID
+        </div>
+
+        <div class="summary-value">
+            {{ user.referral_id|default:"YN MEMBER" }}
+        </div>
+
+        <a href="{% url 'mlm_tree' %}" class="summary-link">
+            My Network →
+        </a>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- =========================
+     CATEGORIES
+========================= -->
+
+<div class="categories">
+
+    <a href="#" class="category">
+        <div class="category-icon">📱</div>
+        <div class="category-name">Electronics</div>
+    </a>
+
+    <a href="#" class="category">
+        <div class="category-icon">👕</div>
+        <div class="category-name">Fashion</div>
+    </a>
+
+    <a href="#" class="category">
+        <div class="category-icon">🛋️</div>
+        <div class="category-name">Home & Living</div>
+    </a>
+
+    <a href="#" class="category">
+        <div class="category-icon">💄</div>
+        <div class="category-name">Beauty</div>
+    </a>
+
+    <a href="#" class="category">
+        <div class="category-icon">💎</div>
+        <div class="category-name">Jewellery</div>
+    </a>
+
+    <a href="#" class="category">
+        <div class="category-icon">🏀</div>
+        <div class="category-name">Sports</div>
+    </a>
+
+    <a href="#" class="category">
+        <div class="category-icon">📚</div>
+        <div class="category-name">Books</div>
+    </a>
+
+    <a href="#" class="category">
+        <div class="category-icon">•••</div>
+        <div class="category-name">More</div>
+    </a>
+
+</div>
+
+
+<!-- =========================
+     HERO
+========================= -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <div class="hero-label">
+            ✓ YN COMMERCE INDIA
+        </div>
+
+        <h1>
+            BEST QUALITY.<br>
+            <span>BEST PRICES.</span>
+        </h1>
+
+        <p>
+            Global Import & Export Marketplace.
+            Discover quality products, trusted sellers
+            and great prices — all in one place.
+        </p>
+
+        <a href="#products" class="shop-button">
+            SHOP NOW →
+        </a>
+
+    </div>
+
+    <div class="hero-art">
+        🛒🌎
+    </div>
+
+    <div class="dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+    </div>
+
+</section>
+
+
+<!-- =========================
+     TRUST
+========================= -->
+
+<div class="trust">
+
+    <div class="trust-item">
+        <div class="trust-icon">🛡️</div>
+        <div>
+            <div class="trust-title">100% Original</div>
+            <div class="trust-text">Genuine Products</div>
+        </div>
+    </div>
+
+    <div class="trust-item">
+        <div class="trust-icon">↩️</div>
+        <div>
+            <div class="trust-title">Easy Returns</div>
+            <div class="trust-text">7 Days Return</div>
+        </div>
+    </div>
+
+    <div class="trust-item">
+        <div class="trust-icon">🔒</div>
+        <div>
+            <div class="trust-title">Secure Payment</div>
+            <div class="trust-text">100% Protected</div>
+        </div>
+    </div>
+
+    <div class="trust-item">
+        <div class="trust-icon">🚚</div>
+        <div>
+            <div class="trust-title">Fast Delivery</div>
+            <div class="trust-text">Pan India Delivery</div>
+        </div>
+    </div>
+
+    <div class="trust-item">
+        <div class="trust-icon">🎧</div>
+        <div>
+            <div class="trust-title">24/7 Support</div>
+            <div class="trust-text">We're Here</div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- =========================
+     PRODUCTS
+========================= -->
+
+<section id="products">
+
+    <div class="section-title">
+
+        <h2>🔥 Top Deals of the Day</h2>
+
+        <a href="#products" class="view-all">
+            View All →
+        </a>
+
+    </div>
+
+    <div class="products">
+
+        {% for product in products|slice:":8" %}
+
+        <article class="product-card">
+
+            <div class="product-image">
+
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.title }}">
+                {% else %}
+                    <div class="product-placeholder">📦</div>
+                {% endif %}
+
+                <span class="discount">DEAL</span>
+
+            </div>
+
+            <div class="product-info">
+
+                <div class="product-title">
+                    {{ product.title }}
+                </div>
+
+                <span class="rating">
+                    ★ 4.5
+                </span>
+
+                <div class="price">
+                    ₹{{ product.price|floatformat:2 }}
+                </div>
+
+                <div class="delivery">
+                    🚚 Free Delivery
+                </div>
+
+                <div class="product-actions">
+
+                    <a
+                        href="{% url 'product_detail' product.pk %}"
+                        class="view-product"
+                    >
+                        🛒 View Product
+                    </a>
+
+                    <button class="wishlist" type="button">
+                        ♡
+                    </button>
+
+                </div>
+
+            </div>
+
+        </article>
+
+        {% empty %}
+
+        <div style="
+            grid-column:1/-1;
+            background:#fff;
+            border-radius:15px;
+            padding:35px;
+            text-align:center;
+            color:#697586;
+        ">
+            No products available yet.
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     QUICK LINKS
+========================= -->
+
+<div class="quick-links">
+
+    <a href="{% url 'my_orders' %}" class="quick">
+        <div class="quick-icon">📋</div>
+        <div>
+            <div class="quick-title">My Orders</div>
+            <div class="quick-text">Track & View</div>
+        </div>
+    </a>
+
+    <a href="{% url 'profile' %}" class="quick">
+        <div class="quick-icon">📍</div>
+        <div>
+            <div class="quick-title">Account</div>
+            <div class="quick-text">Manage Profile</div>
+        </div>
+    </a>
+
+    <a href="{% url 'bonus_balance_view' %}" class="quick">
+        <div class="quick-icon">💰</div>
+        <div>
+            <div class="quick-title">Bonus Balance</div>
+            <div class="quick-text">
+                ₹{{ user.bonus_balance|default:"0.00"|floatformat:2 }}
+            </div>
+        </div>
+    </a>
+
+    <a href="{% url 'mlm_commission_history' %}" class="quick">
+        <div class="quick-icon">⭐</div>
+        <div>
+            <div class="quick-title">YN Commission</div>
+            <div class="quick-text">View Earnings</div>
+        </div>
+    </a>
+
+    <a href="{% url 'customer_support' %}" class="quick">
+        <div class="quick-icon">🎧</div>
+        <div>
+            <div class="quick-title">Support</div>
+            <div class="quick-text">Help Center</div>
+        </div>
+    </a>
+
+</div>
+
+</main>
+
+
+<!-- =========================
+     BOTTOM NAVIGATION
+========================= -->
+
+<nav class="bottom-nav">
+
+    <div class="bottom-inner">
+
+        <a href="{% url 'home' %}" class="bottom-item active">
+            <div class="bottom-icon">⌂</div>
+            <div>Home</div>
+        </a>
+
+        <a href="#" class="bottom-item">
+            <div class="bottom-icon">▦</div>
+            <div>Categories</div>
+        </a>
+
+        <a href="{% url 'my_orders' %}" class="bottom-item">
+            <div class="bottom-icon">▣</div>
+            <div>My Orders</div>
+        </a>
+
+        <a href="{% url 'bonus_balance_view' %}" class="bottom-item">
+            <div class="bottom-icon">💰</div>
+            <div>Bonus</div>
+        </a>
+
+        <a href="{% url 'profile' %}" class="bottom-item">
+            <div class="bottom-icon">♙</div>
+            <div>Account</div>
+        </a>
+
+    </div>
+
+</nav>
+
+
+<!-- PREMIUM SIDE DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+
+<aside class="side-drawer" id="sideDrawer" aria-hidden="true">
+
+    <div class="drawer-header">
+        <div>
+            <div class="drawer-brand">YN <span>COMMERCE</span> INDIA</div>
+            <div class="drawer-subtitle">Premium Shopping</div>
+        </div>
+
+        <button class="drawer-close" id="drawerClose" type="button"
+                aria-label="Close menu">×</button>
+    </div>
+
+    <div class="drawer-body">
+
+        <a href="{% url 'home' %}" class="drawer-item">
+            <span class="drawer-icon">⌂</span>
+            <span>Home</span>
+        </a>
+
+        <a href="{% url 'my_orders' %}" class="drawer-item">
+            <span class="drawer-icon">📦</span>
+            <span>My Orders</span>
+        </a>
+
+        <a href="{% url 'profile' %}" class="drawer-item">
+            <span class="drawer-icon">👤</span>
+            <span>My Account</span>
+        </a>
+
+        {% if user.is_authenticated %}
+
+        <a href="{% url 'dashboard' %}" class="drawer-item">
+            <span class="drawer-icon">📊</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="{% url 'bonus_balance_view' %}" class="drawer-item">
+            <span class="drawer-icon">💰</span>
+            <span>Bonus Balance</span>
+        </a>
+
+        <a href="{% url 'mlm_commission_history' %}" class="drawer-item">
+            <span class="drawer-icon">💳</span>
+            <span>Commission History</span>
+        </a>
+
+        <a href="{% url 'notifications' %}" class="drawer-item">
+            <span class="drawer-icon">🔔</span>
+            <span>Notifications</span>
+        </a>
+
+        {% endif %}
+
+        <a href="{% url 'customer_support' %}" class="drawer-item">
+            <span class="drawer-icon">💬</span>
+            <span>Customer Support</span>
+        </a>
+
+    </div>
+
+    <div class="drawer-footer">
+        <div class="drawer-footer-title">YN COMMERCE INDIA</div>
+        <div class="drawer-footer-text">Import • Export • Deliver</div>
+    </div>
+
+</aside>
+
+<style>
+
+/* ==============================
+   PREMIUM SIDE DRAWER
+================================ */
+
+.drawer-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(3,15,40,.52);
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .28s ease, visibility .28s ease;
+    z-index:5000;
+}
+
+.side-drawer{
+    position:fixed;
+    top:0;
+    left:0;
+    width:min(355px,88vw);
+    height:100dvh;
+    background:#fff;
+    z-index:5001;
+    transform:translateX(-105%);
+    transition:transform .32s cubic-bezier(.22,.61,.36,1);
+    box-shadow:12px 0 40px rgba(0,0,0,.20);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
+
+body.drawer-open{
+    overflow:hidden;
+}
+
+body.drawer-open .drawer-overlay{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+}
+
+body.drawer-open .side-drawer{
+    transform:translateX(0);
+}
+
+.drawer-header{
+    min-height:92px;
+    padding:20px 18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    color:#fff;
+    background:linear-gradient(135deg,#031b52,#063b9e,#1261e8);
+}
+
+.drawer-brand{
+    font-size:21px;
+    font-weight:900;
+    letter-spacing:-.6px;
+}
+
+.drawer-brand span{
+    color:#ffc400;
+}
+
+.drawer-subtitle{
+    margin-top:4px;
+    font-size:11px;
+    color:#dbeafe;
+    font-weight:700;
+}
+
+.drawer-close{
+    width:42px;
+    height:42px;
+    border:1px solid rgba(255,255,255,.28);
+    border-radius:13px;
+    background:rgba(255,255,255,.10);
+    color:#fff;
+    font-size:30px;
+    line-height:1;
+    cursor:pointer;
+}
+
+.drawer-body{
+    flex:1;
+    overflow-y:auto;
+    padding:14px 12px;
+}
+
+.drawer-item{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    min-height:54px;
+    margin:4px 0;
+    padding:9px 13px;
+    border-radius:14px;
+    color:#182230;
+    font-size:15px;
+    font-weight:700;
+    transition:background .18s ease, transform .18s ease;
+}
+
+.drawer-item:hover{
+    background:#f1f5ff;
+    transform:translateX(3px);
+}
+
+.drawer-item:active{
+    transform:scale(.98);
+}
+
+.drawer-icon{
+    width:38px;
+    height:38px;
+    flex:0 0 38px;
+    display:grid;
+    place-items:center;
+    border-radius:11px;
+    background:#f0f4ff;
+    font-size:19px;
+}
+
+.drawer-footer{
+    padding:17px 18px 20px;
+    border-top:1px solid #edf0f5;
+    background:#fafbfc;
+}
+
+.drawer-footer-title{
+    font-size:12px;
+    font-weight:900;
+    color:#063b9e;
+}
+
+.drawer-footer-text{
+    margin-top:4px;
+    font-size:11px;
+    color:#667085;
+}
+
+/* Keep hamburger clearly clickable */
+.menu-button{
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+}
+
+@media(max-width:480px){
+
+    .side-drawer{
+        width:min(340px,90vw);
+    }
+
+    .drawer-header{
+        min-height:86px;
+    }
+
+}
+
+</style>
+
+<script>
+(function(){
+
+    const menuButton = document.getElementById("menuButton");
+    const drawer = document.getElementById("sideDrawer");
+    const overlay = document.getElementById("drawerOverlay");
+    const closeButton = document.getElementById("drawerClose");
+
+    if(!menuButton || !drawer || !overlay || !closeButton){
+        console.warn("YN Commerce menu elements not found.");
+        return;
+    }
+
+    function openDrawer(){
+        document.body.classList.add("drawer-open");
+        menuButton.setAttribute("aria-expanded","true");
+        drawer.setAttribute("aria-hidden","false");
+    }
+
+    function closeDrawer(){
+        document.body.classList.remove("drawer-open");
+        menuButton.setAttribute("aria-expanded","false");
+        drawer.setAttribute("aria-hidden","true");
+    }
+
+    menuButton.addEventListener("click", function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        openDrawer();
+    });
+
+    closeButton.addEventListener("click", function(event){
+        event.preventDefault();
+        closeDrawer();
+    });
+
+    overlay.addEventListener("click", function(){
+        closeDrawer();
+    });
+
+    drawer.querySelectorAll("a").forEach(function(link){
+        link.addEventListener("click", function(){
+            closeDrawer();
+        });
+    });
+
+    document.addEventListener("keydown", function(event){
+        if(event.key === "Escape"){
+            closeDrawer();
+        }
+    });
+
+})();
+</script>
+
+</body>
+</html>

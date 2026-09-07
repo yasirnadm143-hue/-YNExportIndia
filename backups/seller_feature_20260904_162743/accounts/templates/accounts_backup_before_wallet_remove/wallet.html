@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wallet - YN Export India</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f2f4f8;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .wallet-card {
+            background: linear-gradient(135deg, #388e3c, #2e7d32);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,.15);
+        }
+
+        .wallet-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .wallet-balance {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .info {
+            background: white;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
+        }
+
+        .back {
+            display: block;
+            margin-top: 20px;
+            padding: 13px;
+            background: #1565c0;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="wallet-card">
+        <div class="wallet-title">
+            💰 Wallet Balance
+        </div>
+
+        <div class="wallet-balance">
+            ₹ {{ request.user.wallet_balance|default:"0.00" }}
+        </div>
+    </div>
+
+    <div class="info">
+        <h3>Wallet Information</h3>
+
+        <p>
+            Your wallet balance is maintained for eligible
+            account credits and commission records.
+        </p>
+
+        <p>
+            Bank withdrawal/payout functionality is currently
+            unavailable.
+        </p>
+    </div>
+
+    <a href="{% url 'home' %}" class="back">
+        🏠 Back To Home
+    </a>
+
+</div>
+
+</body>
+</html>

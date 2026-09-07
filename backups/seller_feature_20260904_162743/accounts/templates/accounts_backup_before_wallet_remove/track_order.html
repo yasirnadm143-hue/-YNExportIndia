@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order - YN Export India</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f1f3f6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        h2 { color: #2874f0; font-size: 18px; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; }
+        .status-box { margin-top: 20px; padding: 15px; background: #e8f4fd; border-left: 4px solid #2874f0; border-radius: 4px; }
+        .back-link { display: inline-block; margin-top: 15px; color: #2874f0; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📦 Order Tracking Details</h2>
+        <p style="margin-top: 15px;"><strong>Product:</strong> {{ order.product.title }}</p>
+        <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+        <p><strong>Total Amount:</strong> ₹ {{ order.total_price }}</p>
+        <p><strong>Shipping Address:</strong> {{ order.address }}, {{ order.district }}, {{ order.state }} - {{ order.pincode }}</p>
+        
+        <div class="status-box">
+            <h3 style="font-size: 15px; color: #1251b8; margin-bottom: 5px;">Current Status:</h3>
+            <p style="font-size: 16px; font-weight: bold; color: #2874f0;">{{ order.get_status_display }}</p>
+        </div>
+
+        <a href="{% url 'dashboard' %}" class="back-link">← Back to Dashboard</a>
+    </div>
+</body>
+</html>

@@ -115,16 +115,49 @@ def one_time_admin_setup(request):
 # ==========================
 
 def home_view(request):
+    from django.db.models import Q
+
+    query = (request.GET.get("q") or "").strip()
+
     products = Product.objects.all()
+
+    if query:
+        # Normalize the search text
+        words = [
+            word.strip()
+            for word in query.split()
+            if word.strip()
+        ]
+
+        # Match the complete query first
+        search_filter = (
+            Q(title__icontains=query)
+            | Q(category__name__icontains=query)
+            | Q(description__icontains=query)
+        )
+
+        # Also allow multi-word searches.
+        # Example: "black shirt" can match products
+        # containing "black" and "shirt".
+        for word in words:
+            search_filter |= (
+                Q(title__icontains=word)
+                | Q(category__name__icontains=word)
+                | Q(description__icontains=word)
+            )
+
+        products = products.filter(
+            search_filter
+        ).distinct()
 
     return render(
         request,
         "accounts/home.html",
         {
-            "products": products
+            "products": products,
+            "query": query,
         }
     )
-
 
 # ==========================
 # DASHBOARD
@@ -2227,6 +2260,8 @@ def seller_ship_order(request, order_id):
 
 @login_required
 def seller_deliver_order(request, order_id):
+    from decimal import Decimal, ROUND_DOWN
+    from django.db import transaction
     from django.utils import timezone
     from django.contrib import messages
 
@@ -2246,19 +2281,123 @@ def seller_deliver_order(request, order_id):
         )
         return redirect("seller_orders")
 
-    order.status = "DELIVERED"
-    order.delivered_at = timezone.now()
-    order.save(
-        update_fields=[
-            "status",
-            "delivered_at",
-            "updated_at",
-        ]
-    )
+    with transaction.atomic():
+
+        # Lock the order so delivery/settlement cannot
+        # accidentally be processed twice at the same time.
+        order = (
+            Order.objects
+            .select_for_update()
+            .select_related("product", "product__owner")
+            .get(id=order_id)
+        )
+
+        # If already delivered, do not credit seller again.
+        if order.status == "DELIVERED":
+            messages.info(
+                request,
+                "This order has already been delivered."
+            )
+            return redirect("seller_orders")
+
+        product = order.product
+        seller = product.owner
+
+        # --------------------------------------------------
+        # PRODUCT PRICE
+        # --------------------------------------------------
+        order_amount = Decimal(
+            str(product.price or "0.00")
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_DOWN
+        )
+
+        # --------------------------------------------------
+        # FIXED SELLER SETTLEMENT
+        # Company commission = 10%
+        # Seller earning = 90%
+        #
+        # MLM commission is separate and is NOT taken
+        # from the seller's 90%.
+        # --------------------------------------------------
+        company_rate = Decimal("10.00")
+        seller_rate = Decimal("90.00")
+
+        company_amount = (
+            order_amount * company_rate / Decimal("100.00")
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_DOWN
+        )
+
+        seller_amount = (
+            order_amount * seller_rate / Decimal("100.00")
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_DOWN
+        )
+
+        # --------------------------------------------------
+        # MARK ORDER DELIVERED
+        # --------------------------------------------------
+        order.status = "DELIVERED"
+        order.delivered_at = timezone.now()
+
+        order.save(
+            update_fields=[
+                "status",
+                "delivered_at",
+                "updated_at",
+            ]
+        )
+
+        # --------------------------------------------------
+        # SELLER SETTLEMENT
+        # --------------------------------------------------
+        settlement, created = (
+            SellerOrderSettlement.objects
+            .get_or_create(
+                order=order,
+                defaults={
+                    "seller": seller,
+                    "order_amount": order_amount,
+                    "company_rate": company_rate,
+                    "company_amount": company_amount,
+                    "seller_rate": seller_rate,
+                    "seller_amount": seller_amount,
+                    "status": "SETTLED",
+                    "settled_at": timezone.now(),
+                },
+            )
+        )
+
+        # --------------------------------------------------
+        # CREDIT SELLER BALANCE ONLY ON FIRST SETTLEMENT
+        # --------------------------------------------------
+        if created:
+
+            current_balance = Decimal(
+                str(seller.seller_balance or "0.00")
+            )
+
+            seller.seller_balance = (
+                current_balance + seller_amount
+            )
+
+            seller.save(
+                update_fields=[
+                    "seller_balance",
+                ]
+            )
 
     messages.success(
         request,
-        "Order marked as delivered successfully."
+        (
+            f"Order delivered successfully. "
+            f"Seller balance credited ₹{seller_amount:.2f} "
+            f"({seller_rate:.2f}% of product price)."
+        )
     )
 
     return redirect("seller_orders")
@@ -2267,22 +2406,12 @@ def seller_deliver_order(request, order_id):
 @login_required
 def bonus_balance_view(request):
     from django.shortcuts import render
-    from .models import SellerBonusBalance, SellerBonusBalanceTransaction
-
-    bonus_balance, created = SellerBonusBalance.objects.get_or_create(
-        seller=request.user
-    )
-
-    transactions = SellerBonusBalanceTransaction.objects.filter(
-        bonus_balance=bonus_balance
-    ).select_related("order")
 
     return render(
         request,
         "accounts/bonus_balance.html",
         {
-            "bonus_balance": bonus_balance,
-            "transactions": transactions,
+            "bonus_balance": request.user.bonus_balance,
         }
     )
 

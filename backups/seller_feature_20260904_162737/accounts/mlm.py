@@ -1,0 +1,158 @@
+from decimal import Decimal, ROUND_DOWN
+
+from django.db import transaction
+
+from .models import CustomUser, CommissionTransaction
+from .mlm_config import get_commission_rate
+from .mlm_rank import update_user_rank
+
+
+# ==========================================================
+# COMMISSION DISTRIBUTION
+# ==========================================================
+
+@transaction.atomic
+def distribute_commission(order):
+    """
+    Distribute MLM commission for a DELIVERED order.
+
+    Commission is calculated on PRODUCT PRICE.
+
+    Maximum 20 upline levels.
+
+    Commission is created only once for each:
+        order + beneficiary + level
+
+    This prevents duplicate bonus_balance credits.
+    """
+
+    # ======================================================
+    # DELIVERY CHECK
+    # ======================================================
+
+    if order.status != "DELIVERED":
+        return []
+
+    # ======================================================
+    # SOURCE USER
+    # ======================================================
+
+    source_user = order.user
+
+    order_amount = Decimal(
+        order.product.price
+    )
+
+    commissions = []
+
+    current_user = source_user
+
+    # ======================================================
+    # 20 LEVEL UPLINE LOOP
+    # ======================================================
+
+    for level in range(1, 21):
+
+        upline_id = current_user.upline_id
+
+        if not upline_id:
+            break
+
+        # ==================================================
+        # LOCK UPLINE ROW
+        # ==================================================
+
+        try:
+            upline = (
+                CustomUser.objects
+                .select_for_update()
+                .get(id=upline_id)
+            )
+        except CustomUser.DoesNotExist:
+            break
+
+        # ==================================================
+        # UPDATE RANK
+        # ==================================================
+
+        upline = update_user_rank(
+            upline
+        )
+
+        # ==================================================
+        # COMMISSION RATE
+        # ==================================================
+
+        rate = get_commission_rate(
+            level
+        )
+
+        if rate <= Decimal("0.00"):
+            current_user = upline
+            continue
+
+        # ==================================================
+        # COMMISSION AMOUNT
+        # ==================================================
+
+        amount = (
+            order_amount * rate
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_DOWN,
+        )
+
+        if amount <= Decimal("0.00"):
+            current_user = upline
+            continue
+
+        # ==================================================
+        # CREATE COMMISSION TRANSACTION
+        # ==================================================
+
+        commission, created = (
+            CommissionTransaction.objects
+            .get_or_create(
+                order=order,
+                beneficiary=upline,
+                level=level,
+                defaults={
+                    "source_user": source_user,
+                    "rate": rate,
+                    "order_amount": order_amount,
+                    "amount": amount,
+                },
+            )
+        )
+
+        # ==================================================
+        # CREDIT BONUS BALANCE ONLY ON FIRST CREATION
+        # ==================================================
+
+        if created:
+
+            current_bonus_balance = Decimal(
+                str(upline.bonus_balance or "0.00")
+            )
+
+            upline.bonus_balance = (
+                current_bonus_balance + amount
+            )
+
+            upline.save(
+                update_fields=[
+                    "bonus_balance",
+                ]
+            )
+
+            commissions.append(
+                commission
+            )
+
+        # ==================================================
+        # NEXT UPLINE
+        # ==================================================
+
+        current_user = upline
+
+    return commissions

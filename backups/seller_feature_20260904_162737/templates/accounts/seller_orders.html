@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Orders</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .back {
+            text-decoration: none;
+        }
+
+        .order {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .status {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: #eee;
+            font-weight: bold;
+        }
+
+        .price {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .empty {
+            background: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="top">
+        <h1>Seller Orders</h1>
+        <a class="back" href="{% url 'seller_dashboard' %}">
+            Seller Dashboard
+        </a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    {% if orders %}
+
+        {% for order in orders %}
+
+            <div class="order">
+
+                <h2>Order #{{ order.id }}</h2>
+
+                <p>
+                    <strong>Product:</strong>
+                    {{ order.product.title }}
+                </p>
+
+                <p>
+                    <strong>Customer:</strong>
+                    {{ order.full_name }}
+                </p>
+
+                <p>
+                    <strong>Mobile:</strong>
+                    {{ order.mobile }}
+                </p>
+
+                <p>
+                    <strong>Address:</strong>
+                    {{ order.address }},
+                    {{ order.district }},
+                    {{ order.state }},
+                    {{ order.pincode }}
+                </p>
+
+                <p class="price">
+                    ₹{{ order.total_amount }}
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    <span class="status">
+                        {{ order.get_status_display }}
+                    </span>
+                </p>
+
+                <p>
+                    <strong>Tracking ID:</strong>
+                    {{ order.tracking_id }}
+                </p>
+
+                <p>
+                    <strong>Order Date:</strong>
+                    {{ order.created_at }}
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty">
+            <h2>No Orders Yet</h2>
+            <p>Orders for your products will appear here.</p>
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
+
+
+{% if order.status == "PENDING" %}
+<form method="post" action="{% url 'seller_accept_order' order.id %}">
+    {% csrf_token %}
+    <button type="submit">
+        Accept Order
+    </button>
+</form>
+{% endif %}
+
+
+{% if order.status == "CONFIRMED" %}
+<form method="post" action="{% url 'seller_pack_order' order.id %}">
+    {% csrf_token %}
+    <button type="submit">
+        Pack Order
+    </button>
+</form>
+{% endif %}
+
+
+{% if order.status == "PACKED" and not order.label_file %}
+<form method="post" action="{% url 'seller_generate_label' order.id %}">
+    {% csrf_token %}
+    <button type="submit">
+        Generate Shipping Label
+    </button>
+</form>
+{% endif %}
+
+{% if order.label_file %}
+<a href="{% url 'seller_download_label' order.id %}">
+    Download Shipping Label
+</a>
+{% endif %}
+
+
+{% if order.status == "PACKED" and order.label_file %}
+<form method="post" action="{% url 'seller_ship_order' order.id %}">
+    {% csrf_token %}
+    <button type="submit">
+        Mark as Shipped
+    </button>
+</form>
+{% endif %}
+
+
+{% if order.status in "SHIPPED OUT_FOR_DELIVERY" %}
+<form method="post" action="{% url 'seller_deliver_order' order.id %}">
+    {% csrf_token %}
+    <button type="submit">
+        Mark as Delivered
+    </button>
+</form>
+{% endif %}
+

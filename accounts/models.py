@@ -17,7 +17,30 @@ class CustomUser(AbstractUser):
         related_name="downlines"
     )
 
-    bonus_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    # ========================================================
+    # BALANCES
+    # ========================================================
+    # MLM commission/bonus balance
+    bonus_balance = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0.00
+    )
+
+    # Buyer balance
+    buyer_balance = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0.00
+    )
+
+    # Seller earning balance
+    seller_balance = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0.00
+    )
+
     rank = models.CharField(max_length=50, default="Member")
 
     # MLM numeric rank
@@ -254,6 +277,18 @@ class Product(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    # ========================================================
+    # SELLER COMMISSION
+    # 7% = company commission, 93% = seller share
+    # 8% = company commission, 92% = seller share
+    # ========================================================
+    commission_rate = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=7.00,
+    )
+
     image = models.ImageField(
         upload_to="product_images/",
         blank=True,
@@ -705,3 +740,87 @@ class SupportMessage(models.Model):
 
 
 # ==========================
+
+# ============================================================
+# SELLER ORDER SETTLEMENT
+# ============================================================
+
+class SellerOrderSettlement(models.Model):
+
+    STATUS_CHOICES = [
+        ("PENDING", "Pending"),
+        ("SETTLED", "Settled"),
+        ("REVERSED", "Reversed"),
+    ]
+
+    order = models.OneToOneField(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="seller_settlement"
+    )
+
+    seller = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="seller_settlements"
+    )
+
+    order_amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2
+    )
+
+    # Company commission: 10%
+    company_rate = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=10.00
+    )
+
+    company_amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0.00
+    )
+
+    # Seller receives: 90%
+    seller_rate = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=90.00
+    )
+
+    seller_amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0.00
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="PENDING"
+    )
+
+    settled_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return (
+            f"Settlement #{self.id} - "
+            f"Order #{self.order_id} - "
+            f"Seller ₹{self.seller_amount}"
+        )

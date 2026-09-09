@@ -1933,7 +1933,7 @@ def seller_add_product(request):
             )
 
         messages.success(request, "Product added successfully.")
-        return redirect("seller_products")
+        return redirect("home")
 
     return render(
         request,

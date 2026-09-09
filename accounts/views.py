@@ -122,7 +122,7 @@ def home_view(request):
 
     query = (request.GET.get("q") or "").strip()
 
-    products = Product.objects.all()
+    products = Product.objects.order_by("-id")
 
     print("===== HOME PRODUCT DEBUG =====")
     print("HOME PRODUCT COUNT:", products.count())

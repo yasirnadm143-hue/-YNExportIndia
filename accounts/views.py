@@ -19,6 +19,8 @@ from .models import (
     SupportTicket,
     SupportMessage,
     Category,
+    SubCategory,
+    Brand,
 )
 from .forms import ProductForm, OrderForm
 

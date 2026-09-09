@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="seller-pending">
+    <h1>Seller Verification</h1>
+
+    {% if seller.status == "PENDING" %}
+        <h2>Registration Submitted</h2>
+        <p>Your seller registration is waiting for verification.</p>
+
+    {% elif seller.status == "UNDER_REVIEW" %}
+        <h2>Under Review</h2>
+        <p>Your seller documents are currently being reviewed.</p>
+
+    {% elif seller.status == "REJECTED" %}
+        <h2>Registration Rejected</h2>
+        <p>Your seller registration was rejected.</p>
+
+        {% if seller.rejection_reason %}
+            <p>Reason: {{ seller.rejection_reason }}</p>
+        {% endif %}
+
+        <a href="{% url 'seller_register' %}">
+            Review Registration
+        </a>
+
+    {% else %}
+        <h2>Verification Status</h2>
+        <p>Status: {{ seller.get_status_display }}</p>
+    {% endif %}
+</div>
+{% endblock %}

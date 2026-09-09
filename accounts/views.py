@@ -114,6 +114,82 @@ def one_time_admin_setup(request):
     )
 
 # ==========================
+# CUSTOMER CART
+# ==========================
+
+@login_required
+@require_http_methods(["POST"])
+def add_to_cart(request, pk):
+    from .models import Cart, CartItem
+
+    product = get_object_or_404(Product, pk=pk)
+
+    cart, created = Cart.objects.get_or_create(
+        user=request.user
+    )
+
+    item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        product=product,
+    )
+
+    if not created:
+        item.quantity += 1
+        item.save(update_fields=["quantity"])
+
+    messages.success(
+        request,
+        f"{product.title} added to cart."
+    )
+
+    return redirect("product_detail", pk=product.pk)
+
+
+@login_required
+def cart_view(request):
+    from .models import Cart
+
+    cart, created = Cart.objects.get_or_create(
+        user=request.user
+    )
+
+    items = cart.items.select_related("product").all()
+
+    total = sum(
+        item.product.price * item.quantity
+        for item in items
+    )
+
+    return render(
+        request,
+        "accounts/cart.html",
+        {
+            "cart": cart,
+            "items": items,
+            "total": total,
+        },
+    )
+
+
+@login_required
+@require_http_methods(["POST"])
+def remove_from_cart(request, pk):
+    from .models import CartItem
+
+    item = get_object_or_404(
+        CartItem,
+        pk=pk,
+        cart__user=request.user,
+    )
+
+    item.delete()
+
+    messages.success(request, "Item removed from cart.")
+
+    return redirect("cart")
+
+
+# ==========================
 # HOME
 # ==========================
 
@@ -1131,17 +1207,19 @@ def register_complete(request):
 # ==========================
 
 def product_detail(request, pk):
-
     product = get_object_or_404(
         Product,
         pk=pk
     )
 
+    images = product.images.all()
+
     return render(
         request,
         "accounts/product_detail.html",
         {
-            "product": product
+            "product": product,
+            "images": images,
         }
     )
 
@@ -1152,49 +1230,41 @@ def product_detail(request, pk):
 
 @login_required
 def upload_product(request):
-
     if not request.user.is_staff:
-
-        messages.error(
-            request,
-            "Only Admin can upload products."
-        )
-
+        messages.error(request, "Only Admin can upload products.")
         return redirect("home")
 
     if request.method == "POST":
-
-        form = ProductForm(
-            request.POST,
-            request.FILES
-        )
+        form = ProductForm(request.POST, request.FILES)
 
         if form.is_valid():
-
-            product = form.save(
-                commit=False
-            )
-
+            product = form.save(commit=False)
             product.owner = request.user
             product.save()
 
+            # Save additional product images
+            images = request.FILES.getlist("images")
+
+            for index, uploaded_image in enumerate(images):
+                ProductImage.objects.create(
+                    product=product,
+                    image=uploaded_image,
+                    sort_order=index,
+                )
+
             messages.success(
                 request,
-                "Product uploaded successfully."
+                "Product uploaded successfully with multiple images."
             )
-
             return redirect("home")
 
     else:
-
         form = ProductForm()
 
     return render(
         request,
         "accounts/upload_product.html",
-        {
-            "form": form
-        }
+        {"form": form}
     )
 
 

@@ -72,7 +72,7 @@
         margin-top:12px;
     }
 
-    .order{background:#ff6f00;}
+    .order{background:#ff6f00;}.cart{background:#2874f0;}.cart-view{background:#198754;}
     .edit{background:#0d6efd;}
     .delete{background:#dc3545;}
     .back{background:#198754;}
@@ -102,6 +102,20 @@
 
 <p align="center">
 🔍 Tap Image to Zoom
+
+{% if images %}
+<div style="margin:15px 0;">
+    <h3>📸 Product Images</h3>
+    <div id="imageGallery" style="display:flex;gap:10px;overflow-x:auto;padding:8px 0;">
+        {% for img in images %}
+        <img src="{{ img.image.url }}"
+             onclick="changeProductImage('{{ img.image.url }}')"
+             style="width:80px;height:80px;object-fit:cover;border:2px solid #ddd;border-radius:8px;cursor:pointer;">
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
 </p>
 
 <h2>{{ product.title }}</h2>
@@ -113,6 +127,14 @@
 <div class="desc">
 {{ product.description }}
 </div>
+<form method="POST" action="{% url 'add_to_cart' product.id %}">
+{% csrf_token %}
+<button type="submit" class="btn cart" style="border:0;cursor:pointer;">
+🛒 Add to Cart
+</button>
+</form>
+<a href="{% url 'cart' %}" class="btn cart-view">🛍️ View Cart</a>
+
 <a href="{% url 'order_product' product.id %}" class="btn order">
 🛒 Order Now
 </a>
@@ -141,6 +163,14 @@ function toggleZoom() {
     document.getElementById("zoomImg").classList.toggle("zoomed");
 }
 
+
+    function changeProductImage(url) {
+        const img = document.getElementById("zoomImg");
+        if (img) {
+            img.src = url;
+            img.classList.remove("zoomed");
+        }
+    }
 </script>
 
 </body>

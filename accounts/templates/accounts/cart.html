@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Cart - YN Commerce India</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#f1f3f6;
+    margin:0;
+    padding:15px;
+}
+
+.container{
+    max-width:750px;
+    margin:auto;
+}
+
+.card{
+    background:white;
+    padding:15px;
+    margin-bottom:12px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+
+.item{
+    display:flex;
+    gap:15px;
+    align-items:center;
+}
+
+.item img{
+    width:90px;
+    height:90px;
+    object-fit:contain;
+    border-radius:8px;
+    border:1px solid #ddd;
+}
+
+.info{
+    flex:1;
+}
+
+.title{
+    font-weight:bold;
+    font-size:17px;
+}
+
+.price{
+    color:#198754;
+    font-size:18px;
+    font-weight:bold;
+    margin-top:7px;
+}
+
+.qty{
+    margin-top:8px;
+    color:#555;
+}
+
+.remove{
+    display:inline-block;
+    margin-top:8px;
+    padding:7px 12px;
+    background:#dc3545;
+    color:white;
+    text-decoration:none;
+    border-radius:6px;
+}
+
+.total{
+    font-size:22px;
+    font-weight:bold;
+    text-align:right;
+}
+
+.empty{
+    text-align:center;
+    padding:50px 10px;
+    background:white;
+    border-radius:10px;
+}
+
+.back{
+    display:inline-block;
+    margin-bottom:15px;
+    text-decoration:none;
+}
+
+.checkout{
+    display:block;
+    width:100%;
+    box-sizing:border-box;
+    text-align:center;
+    padding:14px;
+    background:#ff6f00;
+    color:white;
+    text-decoration:none;
+    border-radius:8px;
+    font-weight:bold;
+    margin-top:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<a class="back" href="{% url 'home' %}">← Continue Shopping</a>
+
+<h1>🛒 My Cart</h1>
+
+{% if messages %}
+<div class="card">
+{% for message in messages %}
+<p>{{ message }}</p>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if items %}
+
+{% for item in items %}
+<div class="card">
+
+<div class="item">
+
+{% if item.product.image %}
+<img src="{{ item.product.image.url }}" alt="{{ item.product.title }}">
+{% else %}
+<div style="width:90px;height:90px;display:flex;align-items:center;justify-content:center;font-size:40px;">
+📦
+</div>
+{% endif %}
+
+<div class="info">
+
+<div class="title">
+{{ item.product.title }}
+</div>
+
+<div class="price">
+₹ {{ item.product.price }}
+</div>
+
+<div class="qty">
+Quantity: {{ item.quantity }}
+</div>
+
+<div>
+₹ {{ item.product.price|floatformat:2 }} × {{ item.quantity }}
+</div>
+
+<form method="POST" action="{% url 'remove_from_cart' item.id %}" style="margin:0;">
+    {% csrf_token %}
+    <button type="submit" style="background:#dc3545;color:white;border:0;padding:10px 16px;border-radius:8px;cursor:pointer;">
+        🗑️ Remove
+    </button>
+</form>
+
+</div>
+
+</div>
+
+</div>
+{% endfor %}
+
+<div class="card">
+<div class="total">
+Cart Total: ₹ {{ total }}
+</div>
+
+<a href="{% url 'home' %}" class="checkout">
+⚡ Continue Shopping / Checkout
+</a>
+</div>
+
+{% else %}
+
+<div class="empty">
+<h2>🛒 Your Cart is Empty</h2>
+<p>Add products to your cart and they will appear here.</p>
+<a href="{% url 'home' %}" class="checkout">
+🛍️ Start Shopping
+</a>
+</div>
+
+{% endif %}
+
+</div>
+
+</body>
+</html>

@@ -152,7 +152,7 @@
             accept="image/*"
         >
 
-        <label for="images">Additional Product Images</label>
+        <label for="images">📸 Product Gallery - Multiple Images</label>
         <input
             type="file"
             id="images"
@@ -161,14 +161,34 @@
             multiple
         >
 
-        <small>
-            You can select multiple product images.
+        <div id="imageCount"
+             style="margin-top:8px;padding:10px;background:#eef5ff;border-radius:8px;color:#0d47a1;">
+            Select multiple images for this product
+        </div>
+
+        <small style="display:block;margin-top:8px;color:#666;">
+            You can select 2, 3, 5, 10 or more images at the same time.
+            All selected images will stay attached to this one product.
         </small>
 
         <button type="submit">Add Product</button>
     </form>
 
 </div>
+
+
+<script>
+document.getElementById("images").addEventListener("change", function () {
+    const count = this.files.length;
+    const box = document.getElementById("imageCount");
+
+    if (count === 0) {
+        box.textContent = "Select multiple images for this product";
+    } else {
+        box.textContent = "✅ " + count + " gallery image(s) selected";
+    }
+});
+</script>
 
 </body>
 </html>

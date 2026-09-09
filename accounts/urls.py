@@ -47,6 +47,10 @@ urlpatterns = [
     path('register/complete/', views.register_complete, name='register_complete'),
 
     path('product/<int:pk>/', views.product_detail, name='product_detail'),
+    path('product/<int:pk>/add-to-cart/', views.add_to_cart, name='add_to_cart'),
+    path('cart/', views.cart_view, name='cart'),
+    path('cart/remove/<int:pk>/', views.remove_from_cart, name='remove_from_cart'),
+
     path('order/<int:pk>/', views.order_product, name='order_product'),
 
     path('payment-success/<int:order_id>/', views.payment_success, name='payment_success'),

@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>YN INDIA | Online Marketplace</title>
+
+    <meta name="description"
+          content="YN INDIA - Shop quality products at competitive prices.">
+
+    <style>
+        *{
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
+        }
+
+        :root{
+            --blue:#073b9e;
+            --blue2:#0b5be7;
+            --dark:#061b4f;
+            --yellow:#ffc400;
+            --orange:#ff6b00;
+            --bg:#f5f7fb;
+            --white:#ffffff;
+            --text:#111827;
+            --muted:#6b7280;
+            --green:#168a45;
+            --border:#e5e7eb;
+        }
+
+        body{
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+            background:var(--bg);
+            color:var(--text);
+            padding-bottom:82px;
+        }
+
+        a{
+            text-decoration:none;
+            color:inherit;
+        }
+
+        button{
+            font-family:inherit;
+        }
+
+        /* =========================
+           TOP HEADER
+        ========================= */
+
+        .top-header{
+            background:linear-gradient(
+                135deg,
+                #041b55,
+                #073b9e,
+                #0b5be7
+            );
+            color:white;
+            padding:14px 16px;
+            position:sticky;
+            top:0;
+            z-index:1000;
+            box-shadow:0 4px 18px rgba(0,0,0,.18);
+        }
+
+        .header-row{
+            max-width:1250px;
+            margin:auto;
+            display:flex;
+            align-items:center;
+            gap:14px;
+        }
+
+        .brand{
+            min-width:185px;
+            font-weight:900;
+            font-size:28px;
+            letter-spacing:-1px;
+        }
+
+        .brand span{
+            color:var(--yellow);
+        }
+
+        .tagline{
+            font-size:10px;
+            color:#dbeafe;
+            font-weight:bold;
+            margin-top:1px;
+            letter-spacing:.4px;
+        }
+
+        .menu-btn{
+            display:none;
+            border:0;
+            background:transparent;
+            color:white;
+            font-size:27px;
+            cursor:pointer;
+        }
+
+        .search-box{
+            flex:1;
+            display:flex;
+            background:white;
+            border-radius:12px;
+            overflow:hidden;
+            min-height:48px;
+            box-shadow:0 3px 12px rgba(0,0,0,.12);
+        }
+
+        .search-box input{
+            flex:1;
+            border:0;
+            outline:none;
+            padding:0 17px;
+            font-size:15px;
+            color:#333;
+        }
+
+        .search-btn{
+            width:58px;
+            border:0;
+            background:var(--blue2);
+            color:white;
+            font-size:20px;
+            cursor:pointer;
+        }
+
+        .header-icons{
+            display:flex;
+            align-items:center;
+            gap:9px;
+        }
+
+        .icon-btn{
+            width:43px;
+            height:43px;
+            border-radius:50%;
+            border:1px solid rgba(255,255,255,.25);
+            background:rgba(255,255,255,.1);
+            color:white;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:21px;
+            position:relative;
+        }
+
+        .badge{
+            position:absolute;
+            top:-4px;
+            right:-3px;
+            min-width:18px;
+            height:18px;
+            border-radius:50%;
+            background:#ef233c;
+            color:white;
+            font-size:10px;
+            font-weight:bold;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .container{
+            max-width:1250px;
+            margin:auto;
+            padding:16px;
+        }
+
+        /* =========================
+           USER SUMMARY
+        ========================= */
+
+        .user-card{
+            background:white;
+            border-radius:18px;
+            padding:17px;
+            display:grid;
+            grid-template-columns:1.4fr 1fr 1fr 1fr;
+            gap:10px;
+            box-shadow:0 5px 20px rgba(15,23,42,.07);
+            border:1px solid #edf0f5;
+        }
+
+        .user-main{
+            display:flex;
+            align-items:center;
+            gap:13px;
+        }
+
+        .avatar{
+            width:58px;
+            height:58px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#dbeafe,#bfdbfe);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:28px;
+            flex-shrink:0;
+        }
+
+        .welcome{
+            color:#6b7280;
+            font-size:13px;
+        }
+
+        .username{
+            font-size:18px;
+            font-weight:800;
+            color:var(--dark);
+            margin-top:3px;
+        }
+
+        .ref{
+            color:var(--blue2);
+            font-size:12px;
+            font-weight:bold;
+            margin-top:3px;
+        }
+
+        .summary-item{
+            border-left:1px solid var(--border);
+            padding:6px 15px;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+        }
+
+        .summary-title{
+            color:#64748b;
+            font-size:12px;
+            font-weight:bold;
+        }
+
+        .summary-value{
+            font-size:20px;
+            font-weight:900;
+            margin-top:4px;
+            color:var(--dark);
+        }
+
+        .summary-link{
+            color:var(--blue2);
+            font-size:11px;
+            margin-top:3px;
+            font-weight:bold;
+        }
+
+        .bonus-value{
+            color:#f97316;
+        }
+
+        /* =========================
+           CATEGORIES
+        ========================= */
+
+        .categories{
+            background:white;
+            margin-top:14px;
+            border-radius:18px;
+            padding:14px;
+            display:flex;
+            justify-content:space-between;
+            gap:10px;
+            overflow-x:auto;
+            box-shadow:0 4px 16px rgba(15,23,42,.05);
+        }
+
+        .category{
+            min-width:85px;
+            text-align:center;
+            cursor:pointer;
+        }
+
+        .category-icon{
+            width:58px;
+            height:58px;
+            margin:auto;
+            border-radius:50%;
+            background:#f1f5f9;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:27px;
+            border:1px solid #e5e7eb;
+            transition:.2s;
+        }
+
+        .category:hover .category-icon{
+            transform:translateY(-3px);
+            background:#e0edff;
+        }
+
+        .category-name{
+            font-size:12px;
+            font-weight:bold;
+            margin-top:7px;
+            white-space:nowrap;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero{
+            margin-top:16px;
+            border-radius:20px;
+            overflow:hidden;
+            min-height:330px;
+            background:
+                radial-gradient(
+                    circle at 80% 35%,
+                    rgba(27,99,255,.7),
+                    transparent 34%
+                ),
+                linear-gradient(
+                    135deg,
+                    #061b55,
+                    #073b9e,
+                    #0b5be7
+                );
+            color:white;
+            position:relative;
+            display:flex;
+            align-items:center;
+            padding:35px;
+            box-shadow:0 8px 25px rgba(7,59,158,.25);
+        }
+
+        .hero-content{
+            max-width:620px;
+            position:relative;
+            z-index:2;
+        }
+
+        .hero-label{
+            display:inline-block;
+            border:1px solid rgba(255,255,255,.5);
+            border-radius:20px;
+            padding:8px 15px;
+            font-size:12px;
+            font-weight:bold;
+            margin-bottom:15px;
+        }
+
+        .hero h1{
+            font-size:48px;
+            line-height:1;
+            font-weight:950;
+            letter-spacing:-1px;
+        }
+
+        .hero h1 span{
+            color:var(--yellow);
+        }
+
+        .hero p{
+            font-size:17px;
+            margin-top:15px;
+            color:#e0ecff;
+            line-height:1.5;
+        }
+
+        .hero-btn{
+            display:inline-block;
+            margin-top:22px;
+            background:white;
+            color:var(--blue);
+            padding:13px 25px;
+            border-radius:10px;
+            font-weight:900;
+            font-size:14px;
+        }
+
+        .hero-art{
+            position:absolute;
+            right:35px;
+            bottom:20px;
+            font-size:145px;
+            opacity:.9;
+            transform:rotate(-4deg);
+        }
+
+        /* =========================
+           SERVICE STRIP
+        ========================= */
+
+        .services{
+            margin-top:14px;
+            background:white;
+            border-radius:17px;
+            padding:16px;
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:10px;
+            box-shadow:0 4px 16px rgba(15,23,42,.05);
+        }
+
+        .service{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:10px;
+            border-right:1px solid var(--border);
+            padding:5px;
+        }
+
+        .service:last-child{
+            border-right:0;
+        }
+
+        .service-icon{
+            font-size:27px;
+        }
+
+        .service-title{
+            font-size:13px;
+            font-weight:900;
+        }
+
+        .service-text{
+            color:#64748b;
+            font-size:10px;
+            margin-top:3px;
+        }
+
+        /* =========================
+           SECTION TITLE
+        ========================= */
+
+        .section-head{
+            margin-top:27px;
+            margin-bottom:13px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+        }
+
+        .section-title{
+            font-size:21px;
+            font-weight:950;
+        }
+
+        .view-all{
+            color:var(--blue2);
+            font-size:13px;
+            font-weight:bold;
+        }
+
+        /* =========================
+           PRODUCTS
+        ========================= */
+
+        .products{
+            display:grid;
+            grid-template-columns:
+                repeat(4,minmax(0,1fr));
+            gap:14px;
+        }
+
+        .product{
+            background:white;
+            border-radius:17px;
+            overflow:hidden;
+            border:1px solid #e8ebf1;
+            box-shadow:0 5px 17px rgba(15,23,42,.06);
+            transition:.2s;
+        }
+
+        .product:hover{
+            transform:translateY(-3px);
+            box-shadow:0 10px 25px rgba(15,23,42,.12);
+        }
+
+        .product-image{
+            height:205px;
+            background:#f8fafc;
+            position:relative;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+        }
+
+        .product-image img{
+            width:100%;
+            height:100%;
+            object-fit:contain;
+            padding:12px;
+        }
+
+        .discount{
+            position:absolute;
+            top:10px;
+            left:10px;
+            background:var(--blue2);
+            color:white;
+            border-radius:7px;
+            padding:5px 8px;
+            font-size:10px;
+            font-weight:900;
+            z-index:2;
+        }
+
+        .product-body{
+            padding:13px;
+        }
+
+        .product-title{
+            font-size:14px;
+            font-weight:900;
+            min-height:38px;
+            color:#0f172a;
+        }
+
+        .product-price{
+            margin-top:9px;
+            font-size:20px;
+            font-weight:950;
+            color:#111827;
+        }
+
+        .delivery{
+            margin-top:6px;
+            font-size:11px;
+            color:var(--green);
+            font-weight:bold;
+        }
+
+        .product-btn{
+            display:block;
+            width:100%;
+            margin-top:11px;
+            padding:11px;
+            text-align:center;
+            border-radius:9px;
+            background:var(--blue2);
+            color:white;
+            font-size:13px;
+            font-weight:900;
+        }
+
+        .empty{
+            background:white;
+            border-radius:16px;
+            padding:40px 20px;
+            text-align:center;
+            color:#64748b;
+            grid-column:1/-1;
+        }
+
+        /* =========================
+           QUICK ACTIONS
+        ========================= */
+
+        .quick-actions{
+            margin-top:26px;
+            display:grid;
+            grid-template-columns:
+                repeat(5,minmax(0,1fr));
+            gap:12px;
+        }
+
+        .quick{
+            background:white;
+            border-radius:15px;
+            padding:15px;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            border:1px solid var(--border);
+            box-shadow:0 4px 13px rgba(15,23,42,.05);
+        }
+
+        .quick-icon{
+            width:42px;
+            height:42px;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:20px;
+            background:#eaf1ff;
+        }
+
+        .quick-title{
+            font-size:12px;
+            font-weight:900;
+        }
+
+        .quick-text{
+            color:#64748b;
+            font-size:9px;
+            margin-top:3px;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer{
+            margin-top:35px;
+            background:#061b4f;
+            color:white;
+            padding:30px 16px;
+            text-align:center;
+        }
+
+        footer h2{
+            font-size:22px;
+        }
+
+        footer p{
+            color:#cbd5e1;
+            font-size:12px;
+            margin-top:7px;
+        }
+
+        /* =========================
+           MOBILE NAV
+        ========================= */
+
+        .bottom-nav{
+            position:fixed;
+            left:0;
+            right:0;
+            bottom:0;
+            z-index:2000;
+            background:#061b4f;
+            border-top:1px solid rgba(255,255,255,.12);
+            display:flex;
+            justify-content:space-around;
+            padding:8px 5px;
+            box-shadow:0 -5px 20px rgba(0,0,0,.15);
+        }
+
+        .bottom-item{
+            color:#cbd5e1;
+            text-align:center;
+            font-size:10px;
+            font-weight:bold;
+            min-width:60px;
+        }
+
+        .bottom-icon{
+            font-size:21px;
+            display:block;
+            margin-bottom:3px;
+        }
+
+        .bottom-item.active{
+            color:white;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media(max-width:900px){
+
+            .brand{
+                min-width:auto;
+                font-size:23px;
+            }
+
+            .user-card{
+                grid-template-columns:
+                    repeat(2,1fr);
+            }
+
+            .summary-item{
+                border-left:0;
+                border-top:1px solid var(--border);
+                padding-top:12px;
+            }
+
+            .products{
+                grid-template-columns:
+                    repeat(2,minmax(0,1fr));
+            }
+
+            .quick-actions{
+                grid-template-columns:
+                    repeat(2,1fr);
+            }
+
+            .services{
+                grid-template-columns:
+                    repeat(2,1fr);
+            }
+
+            .service:nth-child(2){
+                border-right:0;
+            }
+
+            .service:nth-child(3){
+                border-top:1px solid var(--border);
+            }
+        }
+
+        @media(max-width:600px){
+
+            body{
+                padding-bottom:75px;
+            }
+
+            .top-header{
+                padding:11px;
+            }
+
+            .header-row{
+                flex-wrap:wrap;
+            }
+
+            .menu-btn{
+                display:block;
+            }
+
+            .brand{
+                flex:1;
+                font-size:22px;
+            }
+
+            .search-box{
+                order:3;
+                flex-basis:100%;
+            }
+
+            .header-icons{
+                gap:5px;
+            }
+
+            .icon-btn{
+                width:38px;
+                height:38px;
+            }
+
+            .container{
+                padding:10px;
+            }
+
+            .user-card{
+                grid-template-columns:1fr 1fr;
+                padding:11px;
+            }
+
+            .user-main{
+                grid-column:1/-1;
+            }
+
+            .summary-value{
+                font-size:16px;
+            }
+
+            .categories{
+                padding:11px 7px;
+            }
+
+            .category{
+                min-width:72px;
+            }
+
+            .category-icon{
+                width:50px;
+                height:50px;
+                font-size:23px;
+            }
+
+            .hero{
+                min-height:315px;
+                padding:25px 20px;
+            }
+
+            .hero h1{
+                font-size:35px;
+                max-width:330px;
+            }
+
+            .hero p{
+                font-size:14px;
+                max-width:300px;
+            }
+
+            .hero-art{
+                right:-10px;
+                bottom:12px;
+                font-size:100px;
+                opacity:.3;
+            }
+
+            .services{
+                grid-template-columns:1fr 1fr;
+                padding:10px;
+            }
+
+            .service{
+                border-right:0;
+            }
+
+            .service-title{
+                font-size:11px;
+            }
+
+            .products{
+                grid-template-columns:1fr 1fr;
+                gap:9px;
+            }
+
+            .product-image{
+                height:155px;
+            }
+
+            .product-body{
+                padding:9px;
+            }
+
+            .product-title{
+                font-size:12px;
+            }
+
+            .product-price{
+                font-size:17px;
+            }
+
+            .product-btn{
+                font-size:11px;
+                padding:10px 5px;
+            }
+
+            .quick-actions{
+                grid-template-columns:1fr 1fr;
+                gap:8px;
+            }
+
+            .quick{
+                padding:11px;
+            }
+
+            .section-title{
+                font-size:18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header class="top-header">
+
+    <div class="header-row">
+
+        <button class="menu-btn" type="button">
+            ☰
+        </button>
+
+        <a href="{% url 'home' %}" class="brand">
+            YN <span>INDIA</span>
+            <div class="tagline">
+                Import. Export. Deliver.
+            </div>
+        </a>
+
+        <form class="search-box" method="get" action="{% url 'home' %}">
+            <input
+                type="search"
+                name="q"
+                value="{{ request.GET.q|default:'' }}"
+                placeholder="Search for products, brands & more..."
+                autocomplete="off"
+            >
+            <button class="search-btn" type="submit">
+                🔍
+            </button>
+        </form>
+
+        <div class="header-icons">
+
+            {% if user.is_authenticated %}
+
+                <a href="{% url 'notifications' %}" class="icon-btn">
+                    🔔
+                    <span class="badge">!</span>
+                </a>
+
+                <a href="{% url 'my_orders' %}" class="icon-btn">
+                    🛒
+                </a>
+
+            {% else %}
+
+                <a href="{% url 'login' %}" class="icon-btn">
+                    👤
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+<!-- =========================
+     USER SUMMARY
+========================= -->
+
+{% if user.is_authenticated %}
+
+<section class="user-card">
+
+    <div class="user-main">
+
+        <div class="avatar">
+            👤
+        </div>
+
+        <div>
+            <div class="welcome">
+                Welcome back,
+            </div>
+
+            <div class="username">
+                {{ user.get_full_name|default:user.username }}
+            </div>
+
+            <div class="ref">
+                {{ user.referral_id }}
+            </div>
+        </div>
+
+    </div>
+
+
+    <a href="{% url 'wallet_view' %}" class="summary-item">
+
+        <div class="summary-title">
+            💰 BONUS BALANCE
+        </div>
+
+        <div class="summary-value bonus-value">
+            ₹{{ user.wallet_balance|default:"0.00" }}
+        </div>
+
+        <div class="summary-link">
+            View Details →
+        </div>
+
+    </a>
+
+
+    <a href="{% url 'mlm_commission' %}" class="summary-item">
+
+        <div class="summary-title">
+            ⭐ YN COMMISSION
+        </div>
+
+        <div class="summary-value">
+            View
+        </div>
+
+        <div class="summary-link">
+            Commission Details →
+        </div>
+
+    </a>
+
+
+    <a href="{% url 'direct_team' %}" class="summary-item">
+
+        <div class="summary-title">
+            👥 DIRECT TEAM
+        </div>
+
+        <div class="summary-value">
+            {{ user.upline|yesno:"✓,0" }}
+        </div>
+
+        <div class="summary-link">
+            View Team →
+        </div>
+
+    </a>
+
+</section>
+
+{% endif %}
+
+
+<!-- =========================
+     CATEGORIES
+========================= -->
+
+<section class="categories">
+
+    <a href="{% url 'home' %}" class="category">
+        <div class="category-icon">📱</div>
+        <div class="category-name">Electronics</div>
+    </a>
+
+    <a href="{% url 'home' %}" class="category">
+        <div class="category-icon">👕</div>
+        <div class="category-name">Fashion</div>
+    </a>
+
+    <a href="{% url 'home' %}" class="category">
+        <div class="category-icon">🏠</div>
+        <div class="category-name">Home & Living</div>
+    </a>
+
+    <a href="{% url 'home' %}" class="category">
+        <div class="category-icon">💄</div>
+        <div class="category-name">Beauty</div>
+    </a>
+
+    <a href="{% url 'home' %}" class="category">
+        <div class="category-icon">💎</div>
+        <div class="category-name">Jewellery</div>
+    </a>
+
+    <a href="{% url 'home' %}" class="category">
+        <div class="category-icon">🏀</div>
+        <div class="category-name">Sports</div>
+    </a>
+
+    <a href="{% url 'home' %}" class="category">
+        <div class="category-icon">📚</div>
+        <div class="category-name">Books</div>
+    </a>
+
+    <a href="{% url 'home' %}" class="category">
+        <div class="category-icon">⊞</div>
+        <div class="category-name">More</div>
+    </a>
+
+</section>
+
+
+<!-- =========================
+     HERO
+========================= -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <div class="hero-label">
+            ✓ WELCOME TO YN INDIA
+        </div>
+
+        <h1>
+            BEST QUALITY<br>
+            <span>BEST PRICES</span>
+        </h1>
+
+        <p>
+            Shop products from the growing
+            YN INDIA marketplace.
+            Quality products at competitive prices.
+        </p>
+
+        <a href="#products" class="hero-btn">
+            SHOP NOW →
+        </a>
+
+    </div>
+
+    <div class="hero-art">
+        🛒📦
+    </div>
+
+</section>
+
+
+<!-- =========================
+     SERVICES
+========================= -->
+
+<section class="services">
+
+    <div class="service">
+        <div class="service-icon">🚚</div>
+        <div>
+            <div class="service-title">Fast Delivery</div>
+            <div class="service-text">Pan India Delivery</div>
+        </div>
+    </div>
+
+    <div class="service">
+        <div class="service-icon">🔒</div>
+        <div>
+            <div class="service-title">Safe & Secure</div>
+            <div class="service-text">Secure Shopping</div>
+        </div>
+    </div>
+
+    <div class="service">
+        <div class="service-icon">↩️</div>
+        <div>
+            <div class="service-title">Easy Returns</div>
+            <div class="service-text">Customer Friendly</div>
+        </div>
+    </div>
+
+    <div class="service">
+        <div class="service-icon">🎧</div>
+        <div>
+            <div class="service-title">24/7 Support</div>
+            <div class="service-text">We're Here To Help</div>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- =========================
+     PRODUCTS
+========================= -->
+
+<div class="section-head" id="products">
+
+    <div class="section-title">
+        🔥 Top Deals of the Day
+    </div>
+
+    <a href="#products" class="view-all">
+        View All →
+    </a>
+
+</div>
+
+
+<section class="products">
+
+{% if products %}
+
+    {% for product in products %}
+
+    <article class="product">
+
+        <a href="{% url 'product_detail' product.pk %}">
+
+            <div class="product-image">
+
+                {% if product.image %}
+
+                    <img
+                        src="{{ product.image.url }}"
+                        alt="{{ product.title }}"
+                        loading="lazy"
+                    >
+
+                {% else %}
+
+                    <div style="font-size:70px;">
+                        📦
+                    </div>
+
+                {% endif %}
+
+                <div class="discount">
+                    YN DEAL
+                </div>
+
+            </div>
+
+        </a>
+
+
+        <div class="product-body">
+
+            <div class="product-title">
+                {{ product.title }}
+            </div>
+
+            <div class="product-price">
+                ₹{{ product.price }}
+            </div>
+
+            <div class="delivery">
+                🚚 Delivery Available
+            </div>
+
+            <a
+                href="{% url 'product_detail' product.pk %}"
+                class="product-btn"
+            >
+                View Product →
+            </a>
+
+        </div>
+
+    </article>
+
+    {% endfor %}
+
+{% else %}
+
+    <div class="empty">
+        <div style="font-size:50px;">🛍️</div>
+
+        <h3 style="margin-top:10px;">
+            Products Coming Soon
+        </h3>
+
+        <p style="margin-top:7px;">
+            New products will appear here.
+        </p>
+    </div>
+
+{% endif %}
+
+</section>
+
+
+<!-- =========================
+     QUICK ACTIONS
+========================= -->
+
+{% if user.is_authenticated %}
+
+<section class="quick-actions">
+
+    <a href="{% url 'my_orders' %}" class="quick">
+        <div class="quick-icon">📦</div>
+        <div>
+            <div class="quick-title">My Orders</div>
+            <div class="quick-text">Track & View</div>
+        </div>
+    </a>
+
+
+    <a href="{% url 'wallet_view' %}" class="quick">
+        <div class="quick-icon">💰</div>
+        <div>
+            <div class="quick-title">Bonus Balance</div>
+            <div class="quick-text">View Balance</div>
+        </div>
+    </a>
+
+
+    <a href="{% url 'profile' %}" class="quick">
+        <div class="quick-icon">❤️</div>
+        <div>
+            <div class="quick-title">My Profile</div>
+            <div class="quick-text">Account Details</div>
+        </div>
+    </a>
+
+
+    <a href="{% url 'mlm_tree' %}" class="quick">
+        <div class="quick-icon">👥</div>
+        <div>
+            <div class="quick-title">My Network</div>
+            <div class="quick-text">Team & Network</div>
+        </div>
+    </a>
+
+
+    <a href="{% url 'customer_support' %}" class="quick">
+        <div class="quick-icon">🎧</div>
+        <div>
+            <div class="quick-title">Support</div>
+            <div class="quick-text">Help Center</div>
+        </div>
+    </a>
+
+</section>
+
+{% endif %}
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    <h2>
+        🛒 YN <span style="color:#ffc400;">INDIA</span>
+    </h2>
+
+    <p>
+        Import. Export. Deliver.
+    </p>
+
+    <p>
+        © {% now "Y" %} YN INDIA. All rights reserved.
+    </p>
+
+</footer>
+
+</main>
+
+
+<!-- =========================
+     BOTTOM NAVIGATION
+========================= -->
+
+<nav class="bottom-nav">
+
+    <a href="{% url 'home' %}" class="bottom-item active">
+        <span class="bottom-icon">🏠</span>
+        Home
+    </a>
+
+
+    <a href="#products" class="bottom-item">
+        <span class="bottom-icon">▦</span>
+        Categories
+    </a>
+
+
+    {% if user.is_authenticated %}
+
+        <a href="{% url 'my_orders' %}" class="bottom-item">
+            <span class="bottom-icon">📦</span>
+            My Orders
+        </a>
+
+        <a href="{% url 'wallet_view' %}" class="bottom-item">
+            <span class="bottom-icon">💰</span>
+            Bonus Balance
+        </a>
+
+        <a href="{% url 'profile' %}" class="bottom-item">
+            <span class="bottom-icon">👤</span>
+            Account
+        </a>
+
+    {% else %}
+
+        <a href="{% url 'login' %}" class="bottom-item">
+            <span class="bottom-icon">🔐</span>
+            Login
+        </a>
+
+        <a href="{% url 'register' %}" class="bottom-item">
+            <span class="bottom-icon">📝</span>
+            Register
+        </a>
+
+    {% endif %}
+
+</nav>
+
+</body>
+</html>

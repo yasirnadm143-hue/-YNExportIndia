@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cash on Delivery - YN Export India</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top left, rgba(40,116,240,0.18), transparent 35%),
+                radial-gradient(circle at bottom right, rgba(255,159,0,0.15), transparent 35%),
+                linear-gradient(135deg, #eef5ff, #f8fbff 50%, #fff8ed);
+            color: #333;
+            padding: 20px 12px 40px;
+        }
+
+        .header {
+            max-width: 560px;
+            margin: 0 auto 18px;
+            background: linear-gradient(135deg, #2874f0, #1251b8);
+            color: white;
+            padding: 17px 20px;
+            border-radius: 14px;
+            box-shadow: 0 8px 25px rgba(18,81,184,0.25);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: white;
+            color: #2874f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 17px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+
+        .brand h1 {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .brand p {
+            font-size: 10px;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        .secure {
+            font-size: 11px;
+            background: rgba(255,255,255,0.16);
+            padding: 7px 9px;
+            border-radius: 20px;
+        }
+
+        .container {
+            max-width: 560px;
+            margin: auto;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.96);
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 8px 30px rgba(25,70,120,0.12);
+            border: 1px solid rgba(40,116,240,0.08);
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .title-icon {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto 10px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff9f00, #fb641b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 6px 15px rgba(251,100,27,0.25);
+        }
+
+        .title h2 {
+            color: #1251b8;
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .title p {
+            color: #777;
+            font-size: 13px;
+        }
+
+        .product-box {
+            background: linear-gradient(135deg, #f4f8ff, #ffffff);
+            border: 1px solid #dbe8ff;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 15px;
+        }
+
+        .product-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 6px 0;
+            font-size: 14px;
+        }
+
+        .product-row strong {
+            color: #1251b8;
+        }
+
+        .cod-box {
+            background: linear-gradient(135deg, #e9f9ed, #f8fff9);
+            border: 1px solid #9bd6a6;
+            border-left: 5px solid #2e7d32;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 20px;
+        }
+
+        .cod-title {
+            color: #2e7d32;
+            font-weight: 800;
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .cod-text {
+            color: #555;
+            font-size: 12px;
+            line-height: 19px;
+        }
+
+        .section-title {
+            color: #1251b8;
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            padding-left: 8px;
+            border-left: 4px solid #ff9f00;
+        }
+
+        .form-group {
+            margin-bottom: 13px;
+        }
+
+        label {
+            display: block;
+            color: #444;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d2d8e0;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+            background: #fbfcff;
+            transition: 0.2s;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #2874f0;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(40,116,240,0.10);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 85px;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .payment-method {
+            background: #fff8e8;
+            border: 1px solid #ffd27a;
+            border-radius: 10px;
+            padding: 13px;
+            margin: 18px 0;
+        }
+
+        .payment-label {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: #e65100;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .payment-label input {
+            width: auto;
+            accent-color: #fb641b;
+        }
+
+        .payment-note {
+            margin-top: 6px;
+            margin-left: 27px;
+            color: #777;
+            font-size: 11px;
+        }
+
+        .order-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #fb641b, #ff8c00);
+            color: white;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(251,100,27,0.25);
+            transition: 0.2s;
+        }
+
+        .order-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(251,100,27,0.32);
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 17px;
+            color: #2874f0;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .footer-note {
+            text-align: center;
+            color: #888;
+            font-size: 10px;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 12px 8px 30px;
+            }
+
+            .header {
+                padding: 14px;
+                border-radius: 12px;
+            }
+
+            .brand h1 {
+                font-size: 16px;
+            }
+
+            .secure {
+                font-size: 9px;
+            }
+
+            .card {
+                padding: 17px;
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="brand">
+
+        <div class="logo">
+            YN
+        </div>
+
+        <div>
+            <h1>YN Export India</h1>
+            <p>Global B2B & E-Commerce Platform</p>
+        </div>
+
+    </div>
+
+    <div class="secure">
+        🔒 Secure Order
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <div class="card">
+
+        <div class="title">
+
+            <div class="title-icon">
+                📦
+            </div>
+
+            <h2>Complete Your Order</h2>
+
+            <p>Enter your delivery details below</p>
+
+        </div>
+
+
+        <div class="product-box">
+
+            <div class="product-row">
+                <span>Product</span>
+                <strong>{{ product.title }}</strong>
+            </div>
+
+            <div class="product-row">
+                <span>Price</span>
+                <strong>₹ {{ product.price }}</strong>
+            </div>
+
+        </div>
+
+
+        <div class="cod-box">
+
+            <div class="cod-title">
+                💵 Cash on Delivery Available
+            </div>
+
+            <div class="cod-text">
+                अभी online payment की जरूरत नहीं है।
+                आपका payment product delivery के समय Cash on Delivery
+                के माध्यम से लिया जाएगा।
+            </div>
+
+        </div>
+
+
+        <div class="section-title">
+            📍 Delivery Information
+        </div>
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <div class="form-group">
+
+                <label>Full Name</label>
+
+                <input
+                    type="text"
+                    name="full_name"
+                    required
+                    placeholder="Enter your full name"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Mobile Number</label>
+
+                <input
+                    type="tel"
+                    name="mobile_number"
+                    required
+                    pattern="[0-9]{10}"
+                    maxlength="10"
+                    placeholder="Enter 10-digit mobile number"
+                >
+
+            </div>
+
+
+            <div class="two-column">
+
+                <div class="form-group">
+
+                    <label>Pincode</label>
+
+                    <input
+                        type="text"
+                        name="pincode"
+                        required
+                        pattern="[0-9]{6}"
+                        maxlength="6"
+                        placeholder="6-digit pincode"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>State</label>
+
+                    <input
+                        type="text"
+                        name="state"
+                        required
+                        placeholder="State"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>District / City</label>
+
+                <input
+                    type="text"
+                    name="district"
+                    required
+                    placeholder="District / City"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Full Address</label>
+
+                <textarea
+                    name="address"
+                    required
+                    placeholder="House No, Street, Area, Landmark..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Quantity</label>
+
+                <input
+                    type="number"
+                    name="quantity"
+                    value="1"
+                    min="1"
+                    required
+                >
+
+            </div>
+
+
+            <div class="payment-method">
+
+                <label class="payment-label">
+
+                    <input
+                        type="radio"
+                        name="payment_method"
+                        value="COD"
+                        checked
+                    >
+
+                    💵 Cash on Delivery (COD)
+
+                </label>
+
+                <div class="payment-note">
+                    Pay when your order is delivered.
+                </div>
+
+            </div>
+
+
+            <button type="submit" class="order-btn">
+                🛒 Place COD Order
+            </button>
+
+        </form>
+
+
+        <a
+            href="{% url 'product_detail' product.id %}"
+            class="back"
+        >
+            ← Back to Product
+        </a>
+
+
+        <div class="footer-note">
+            © YN Export India • Safe & Secure Shopping
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

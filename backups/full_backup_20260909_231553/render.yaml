@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: ynexportindia
+    runtime: python
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: ./start.sh

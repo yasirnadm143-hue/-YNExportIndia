@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bonus Balance</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .bonus balance-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            margin: 0 0 10px;
+            font-size: 16px;
+        }
+
+        .amount {
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .transactions {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f1f1;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+
+        @media (max-width: 700px) {
+            .bonus balance-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Bonus Balance</h1>
+
+    <div class="bonus balance-cards">
+
+        <div class="card">
+            <h3>Available Bonus Balance</h3>
+            <div class="amount">
+                ₹{{ bonus balance.balance|floatformat:2 }}
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Total Bonus Earned</h3>
+            <div class="amount">
+                ₹{{ bonus balance.total_earned|floatformat:2 }}
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Total Bonus Used</h3>
+            <div class="amount">
+                ₹{{ bonus balance.total_withdrawn|floatformat:2 }}
+            </div>
+        </div>
+
+    </div>
+
+    <div class="transactions">
+
+        <h2>Bonus History</h2>
+
+        {% if transactions %}
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Balance After</th>
+                    <th>Order</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            {% for transaction in transactions %}
+
+                <tr>
+                    <td>
+                        {{ transaction.created_at|date:"d M Y, h:i A" }}
+                    </td>
+
+                    <td>
+                        {{ transaction.get_transaction_type_display }}
+                    </td>
+
+                    <td>
+                        ₹{{ transaction.amount|floatformat:2 }}
+                    </td>
+
+                    <td>
+                        ₹{{ transaction.balance_after|floatformat:2 }}
+                    </td>
+
+                    <td>
+                        {% if transaction.order %}
+                            #{{ transaction.order.id }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ transaction.description|default:"-" }}
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+        </table>
+
+        {% else %}
+
+        <div class="empty">
+            No bonus transactions yet.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

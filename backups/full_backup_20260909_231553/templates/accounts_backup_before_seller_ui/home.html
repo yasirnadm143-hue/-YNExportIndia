@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#063b9e">
+
+<title>YN INDIA | Import. Export. Deliver.</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --blue:#063b9e;
+    --blue2:#1261e8;
+    --dark:#061d52;
+    --yellow:#ffc400;
+    --bg:#f4f6fa;
+    --white:#fff;
+    --text:#101828;
+    --muted:#667085;
+    --green:#159447;
+    --red:#ef3340;
+    --border:#e4e7ec;
+    --shadow:0 8px 28px rgba(16,24,40,.09);
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding-bottom:88px;
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+button,
+input{
+    font-family:inherit;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:linear-gradient(135deg,#031b52,#063b9e,#1261e8);
+    color:#fff;
+    box-shadow:0 5px 25px rgba(0,0,0,.18);
+}
+
+.header-top{
+    max-width:1280px;
+    margin:auto;
+    min-height:82px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:12px 18px;
+}
+
+.menu-button{
+    width:48px;
+    height:48px;
+    border:0;
+    background:rgba(255,255,255,.10);
+    border-radius:14px;
+    color:white;
+    font-size:28px;
+    cursor:pointer;
+}
+
+.logo-area{
+    min-width:210px;
+}
+
+.logo{
+    font-size:31px;
+    font-weight:900;
+    letter-spacing:-1.5px;
+}
+
+.logo span{
+    color:var(--yellow);
+}
+
+.tagline{
+    font-size:12px;
+    font-weight:bold;
+    color:#dbeafe;
+    margin-top:3px;
+}
+
+.header-actions{
+    margin-left:auto;
+    display:flex;
+    gap:9px;
+}
+
+.circle-button{
+    width:47px;
+    height:47px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.25);
+    background:rgba(255,255,255,.10);
+    color:white;
+    font-size:22px;
+    cursor:pointer;
+    position:relative;
+}
+
+.badge{
+    position:absolute;
+    top:-4px;
+    right:-3px;
+    background:var(--red);
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    font-size:11px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+/* SEARCH */
+
+.search-wrapper{
+    max-width:1280px;
+    margin:auto;
+    padding:0 18px 15px;
+}
+
+.search{
+    width:100%;
+    min-height:54px;
+    background:white;
+    border-radius:16px;
+    display:flex;
+    overflow:hidden;
+    box-shadow:0 4px 18px rgba(0,0,0,.13);
+}
+
+.search input{
+    flex:1;
+    border:0;
+    outline:none;
+    padding:0 18px;
+    font-size:17px;
+    color:#111;
+}
+
+.search button{
+    width:65px;
+    border:0;
+    background:var(--blue2);
+    color:white;
+    font-size:23px;
+    cursor:pointer;
+}
+
+/* =========================
+   SIDE MENU
+========================= */
+
+.overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.48);
+    z-index:1998;
+    display:none;
+}
+
+.overlay.show{
+    display:block;
+}
+
+.side-menu{
+    position:fixed;
+    top:0;
+    left:-310px;
+    width:290px;
+    height:100%;
+    background:white;
+    z-index:1999;
+    box-shadow:8px 0 30px rgba(0,0,0,.22);
+    transition:.28s ease;
+    overflow-y:auto;
+}
+
+.side-menu.open{
+    left:0;
+}
+
+.menu-head{
+    background:linear-gradient(135deg,#031b52,#1261e8);
+    color:white;
+    padding:25px 20px;
+}
+
+.menu-logo{
+    font-size:28px;
+    font-weight:900;
+}
+
+.menu-logo span{
+    color:var(--yellow);
+}
+
+.close-menu{
+    float:right;
+    border:0;
+    background:transparent;
+    color:white;
+    font-size:27px;
+    cursor:pointer;
+}
+
+.menu-user{
+    margin-top:22px;
+    font-size:14px;
+    opacity:.9;
+}
+
+.menu-links{
+    padding:12px;
+}
+
+.menu-link{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:15px 14px;
+    border-radius:12px;
+    font-weight:bold;
+    color:#172033;
+    margin-bottom:4px;
+}
+
+.menu-link:hover{
+    background:#eef4ff;
+    color:var(--blue2);
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.container{
+    max-width:1280px;
+    margin:auto;
+    padding:20px 18px;
+}
+
+/* =========================
+   USER CARD
+========================= */
+
+.user-card{
+    background:white;
+    border-radius:22px;
+    padding:20px;
+    box-shadow:var(--shadow);
+    border:1px solid var(--border);
+    display:grid;
+    grid-template-columns:1.4fr 1fr 1fr 1fr;
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.user-main{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.avatar{
+    width:65px;
+    height:65px;
+    flex-shrink:0;
+    border-radius:50%;
+    background:linear-gradient(135deg,#dbeafe,#bfdbfe);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:31px;
+}
+
+.welcome{
+    color:var(--muted);
+    font-size:14px;
+}
+
+.username{
+    color:var(--dark);
+    font-size:20px;
+    font-weight:900;
+    margin-top:3px;
+}
+
+.referral{
+    color:var(--blue2);
+    font-size:13px;
+    font-weight:bold;
+    margin-top:4px;
+}
+
+.summary{
+    border-left:1px solid var(--border);
+    padding:8px 16px;
+}
+
+.summary-title{
+    color:#667085;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.summary-value{
+    margin-top:6px;
+    font-size:22px;
+    font-weight:900;
+    color:var(--dark);
+}
+
+.summary-link{
+    display:block;
+    margin-top:5px;
+    color:var(--blue2);
+    font-size:12px;
+    font-weight:bold;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+    min-height:270px;
+    border-radius:25px;
+    padding:34px;
+    background:
+        radial-gradient(circle at 90% 20%,rgba(255,196,0,.35),transparent 28%),
+        linear-gradient(135deg,#04216a,#0759d8,#079b88);
+    color:white;
+    position:relative;
+    overflow:hidden;
+    margin-bottom:25px;
+    box-shadow:var(--shadow);
+}
+
+.hero:after{
+    content:"";
+    position:absolute;
+    width:260px;
+    height:260px;
+    right:-90px;
+    bottom:-120px;
+    border:40px solid rgba(255,255,255,.08);
+    border-radius:50%;
+}
+
+.hero-badge{
+    display:inline-block;
+    border:1px solid rgba(255,255,255,.45);
+    border-radius:30px;
+    padding:9px 16px;
+    font-weight:bold;
+    font-size:13px;
+}
+
+.hero h1{
+    max-width:700px;
+    font-size:42px;
+    line-height:1.08;
+    margin-top:22px;
+    font-weight:900;
+}
+
+.hero h1 span{
+    color:var(--yellow);
+}
+
+.hero p{
+    max-width:650px;
+    margin-top:14px;
+    font-size:17px;
+    line-height:1.55;
+    color:#e8f0ff;
+}
+
+.hero-buttons{
+    margin-top:22px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.hero-btn{
+    padding:13px 21px;
+    border-radius:12px;
+    font-weight:bold;
+    display:inline-block;
+}
+
+.hero-btn.primary{
+    background:var(--yellow);
+    color:#172033;
+}
+
+.hero-btn.secondary{
+    border:1px solid rgba(255,255,255,.45);
+    color:white;
+}
+
+/* =========================
+   CATEGORIES
+========================= */
+
+.section{
+    margin-top:25px;
+}
+
+.section-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+}
+
+.section-title h2{
+    font-size:25px;
+    font-weight:900;
+}
+
+.category-row{
+    display:flex;
+    gap:12px;
+    overflow-x:auto;
+    padding-bottom:8px;
+    scrollbar-width:none;
+}
+
+.category-row::-webkit-scrollbar{
+    display:none;
+}
+
+.category{
+    min-width:105px;
+    background:white;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:13px 10px;
+    text-align:center;
+    cursor:pointer;
+    box-shadow:0 3px 12px rgba(0,0,0,.05);
+}
+
+.category.active{
+    border:2px solid var(--blue2);
+    background:#eef5ff;
+}
+
+.category-icon{
+    width:53px;
+    height:53px;
+    border-radius:50%;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#edf4ff;
+    font-size:27px;
+}
+
+.category-name{
+    margin-top:9px;
+    font-size:13px;
+    font-weight:800;
+}
+
+/* =========================
+   PRODUCT GRID
+========================= */
+
+.products{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+}
+
+.product-card{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:19px;
+    overflow:hidden;
+    box-shadow:0 5px 18px rgba(16,24,40,.07);
+    transition:.2s ease;
+}
+
+.product-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 12px 30px rgba(16,24,40,.13);
+}
+
+.product-image{
+    width:100%;
+    height:225px;
+    object-fit:cover;
+    display:block;
+    background:#f2f4f7;
+}
+
+.product-info{
+    padding:15px;
+}
+
+.product-category{
+    color:var(--green);
+    font-size:11px;
+    font-weight:800;
+    text-transform:uppercase;
+}
+
+.product-title{
+    margin-top:7px;
+    font-size:17px;
+    font-weight:900;
+    line-height:1.25;
+}
+
+.product-description{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:7px;
+    line-height:1.4;
+    min-height:34px;
+}
+
+.price{
+    color:#e45112;
+    font-size:22px;
+    font-weight:900;
+    margin-top:11px;
+}
+
+.delivery{
+    color:var(--green);
+    font-size:12px;
+    font-weight:bold;
+    margin-top:7px;
+}
+
+.product-btn{
+    display:block;
+    width:100%;
+    margin-top:13px;
+    padding:12px;
+    background:var(--blue2);
+    color:white;
+    text-align:center;
+    border-radius:11px;
+    font-weight:900;
+}
+
+.empty{
+    background:white;
+    padding:35px;
+    border-radius:18px;
+    text-align:center;
+    color:var(--muted);
+}
+
+/* =========================
+   QUICK ACTIONS
+========================= */
+
+.quick-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+
+.quick{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:19px;
+    padding:19px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+    box-shadow:0 4px 16px rgba(0,0,0,.05);
+}
+
+.quick-icon{
+    width:57px;
+    height:57px;
+    border-radius:50%;
+    background:#edf4ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    flex-shrink:0;
+}
+
+.quick-title{
+    font-weight:900;
+    font-size:16px;
+}
+
+.quick-text{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:4px;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer{
+    max-width:1250px;
+    margin:35px auto 20px;
+    background:linear-gradient(135deg,#03194b,#062d80);
+    color:white;
+    border-radius:22px;
+    padding:35px 20px;
+    text-align:center;
+}
+
+.footer-logo{
+    font-size:29px;
+    font-weight:900;
+}
+
+.footer-logo span{
+    color:var(--yellow);
+}
+
+.footer p{
+    color:#cbd5e1;
+    margin-top:8px;
+}
+
+/* =========================
+   BOTTOM NAV
+========================= */
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:78px;
+    background:#03194b;
+    z-index:1500;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    box-shadow:0 -5px 20px rgba(0,0,0,.20);
+}
+
+.bottom-item{
+    color:#dbeafe;
+    text-align:center;
+    font-size:11px;
+    font-weight:bold;
+    min-width:64px;
+    cursor:pointer;
+}
+
+.bottom-icon{
+    font-size:25px;
+    display:block;
+    margin-bottom:3px;
+}
+
+.bottom-item.active{
+    color:white;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:900px){
+
+    .header-top{
+        min-height:75px;
+        padding:10px 13px;
+    }
+
+    .logo-area{
+        min-width:0;
+        flex:1;
+    }
+
+    .logo{
+        font-size:27px;
+    }
+
+    .tagline{
+        font-size:10px;
+    }
+
+    .header-actions{
+        gap:6px;
+    }
+
+    .circle-button{
+        width:42px;
+        height:42px;
+        font-size:19px;
+    }
+
+    .user-card{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .user-main{
+        grid-column:1/-1;
+    }
+
+    .summary{
+        border-left:0;
+        border-top:1px solid var(--border);
+        padding-top:13px;
+    }
+
+    .hero{
+        min-height:300px;
+        padding:25px 21px;
+    }
+
+    .hero h1{
+        font-size:32px;
+    }
+
+    .products{
+        grid-template-columns:repeat(2,1fr);
+        gap:12px;
+    }
+
+    .product-image{
+        height:185px;
+    }
+
+    .quick-grid{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:560px){
+
+    body{
+        padding-bottom:82px;
+    }
+
+    .container{
+        padding:13px;
+    }
+
+    .menu-button{
+        width:43px;
+        height:43px;
+    }
+
+    .logo{
+        font-size:24px;
+    }
+
+    .tagline{
+        font-size:9px;
+    }
+
+    .search-wrapper{
+        padding:0 13px 12px;
+    }
+
+    .search{
+        min-height:51px;
+        border-radius:14px;
+    }
+
+    .search input{
+        font-size:15px;
+    }
+
+    .user-card{
+        padding:15px;
+        border-radius:19px;
+    }
+
+    .avatar{
+        width:55px;
+        height:55px;
+        font-size:25px;
+    }
+
+    .username{
+        font-size:17px;
+    }
+
+    .summary-value{
+        font-size:19px;
+    }
+
+    .hero{
+        border-radius:20px;
+        min-height:320px;
+    }
+
+    .hero h1{
+        font-size:31px;
+    }
+
+    .hero p{
+        font-size:15px;
+    }
+
+    .products{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .product-image{
+        height:155px;
+    }
+
+    .product-info{
+        padding:11px;
+    }
+
+    .product-title{
+        font-size:14px;
+    }
+
+    .product-description{
+        font-size:11px;
+    }
+
+    .price{
+        font-size:18px;
+    }
+
+    .product-btn{
+        font-size:12px;
+        padding:10px 5px;
+    }
+
+    .quick-grid{
+        grid-template-columns:1fr;
+    }
+
+    .footer{
+        border-radius:18px;
+        margin:30px 13px 15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+
+<header class="header">
+
+    <div class="header-top">
+
+        <button class="menu-button" id="menuButton" type="button"
+                aria-label="Open menu">
+            ☰
+        </button>
+
+        <div class="logo-area">
+            <div class="logo">
+                🛒 YN <span>INDIA</span>
+            </div>
+
+            <div class="tagline">
+                Import. Export. Deliver.
+            </div>
+        </div>
+
+        <div class="header-actions">
+
+            <a href="{% url 'notifications' %}"
+               class="circle-button"
+               aria-label="Notifications">
+                🔔
+                {% if user.is_authenticated %}
+                <span class="badge">!</span>
+                {% endif %}
+            </a>
+
+
+        </div>
+
+    </div>
+
+    <div class="search-wrapper">
+        <form class="search" id="searchForm" onsubmit="return false;">
+
+            <input
+                id="productSearch"
+                type="search"
+                placeholder="Search products, brands & more..."
+                autocomplete="off"
+            >
+
+            <button type="submit" aria-label="Search">
+                🔍
+            </button>
+
+        </form>
+    </div>
+
+</header>
+
+
+<!-- ================= SIDE MENU ================= -->
+
+<div class="overlay" id="overlay"></div>
+
+<aside class="side-menu" id="sideMenu">
+
+    <div class="menu-head">
+
+        <button class="close-menu" id="closeMenu" type="button">
+            ×
+        </button>
+
+        <div class="menu-logo">
+            YN <span>INDIA</span>
+        </div>
+
+        <div class="menu-user">
+            {% if user.is_authenticated %}
+                Welcome, <strong>{{ user.username }}</strong>
+            {% else %}
+                Welcome to YN INDIA
+            {% endif %}
+        </div>
+
+    </div>
+
+    <div class="menu-links">
+
+        <a class="menu-link" href="{% url 'home' %}">
+            🏠 Home
+        </a>
+
+        {% if user.is_authenticated %}
+
+        <a class="menu-link" href="{% url 'dashboard' %}">
+            📊 Dashboard
+        </a>
+
+        {% if user.is_staff %}
+        <div class="menu-section-title">🏪 SELLER CENTER</div>
+
+        <a class="menu-link" href="{% url 'seller_dashboard' %}">
+            🏪 Seller Dashboard
+        </a>
+
+        <a class="menu-link" href="{% url 'seller_products' %}">
+            📦 My Products
+        </a>
+
+        <a class="menu-link" href="{% url 'upload_product' %}">
+            ➕ Add Product
+        </a>
+        {% endif %}
+
+        <a class="menu-link" href="{% url 'my_orders' %}">
+            📦 My Orders
+        </a>
+
+        <a class="menu-link" href="{% url 'wallet_view' %}">
+            💰 Bonus Balance
+        </a>
+
+        <a class="menu-link" href="{% url 'mlm_tree' %}">
+            👥 My Network
+        </a>
+
+        <a class="menu-link" href="{% url 'mlm_commission_history' %}">
+            ⭐ YN Commission
+        </a>
+
+        <a class="menu-link" href="{% url 'profile' %}">
+            👤 My Profile
+        </a>
+
+        <a class="menu-link" href="{% url 'notifications' %}">
+            🔔 Notifications
+        </a>
+
+        <a class="menu-link" href="{% url 'customer_support' %}">
+            🎧 Support
+        </a>
+
+        <a class="menu-link" href="{% url 'user_settings' %}">
+            ⚙️ Settings
+        </a>
+
+        {% else %}
+
+        <a class="menu-link" href="{% url 'login' %}">
+            🔐 Login
+        </a>
+
+        <a class="menu-link" href="{% url 'register' %}">
+            📝 Register
+        </a>
+
+        {% endif %}
+
+    </div>
+
+</aside>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="container">
+
+{% if user.is_authenticated %}
+
+    <!-- USER SUMMARY -->
+
+    <section class="user-card">
+
+        <div class="user-main">
+
+            <div class="avatar">
+                👤
+            </div>
+
+            <div>
+                <div class="welcome">
+                    Welcome back,
+                </div>
+
+                <div class="username">
+                    {{ user.username }}
+                </div>
+
+                <div class="referral">
+                    {{ user.referral_id }}
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="summary">
+
+            <div class="summary-title">
+                💰 BONUS BALANCE
+            </div>
+
+            <div class="summary-value">
+                ₹{{ user.wallet_balance|default:"0.00" }}
+            </div>
+
+            <a class="summary-link" href="{% url 'wallet_view' %}">
+                View Details →
+            </a>
+
+        </div>
+
+
+        <div class="summary">
+
+            <div class="summary-title">
+                ⭐ YN COMMISSION
+            </div>
+
+            <div class="summary-value">
+                View
+            </div>
+
+            <a class="summary-link"
+               href="{% url 'mlm_commission_history' %}">
+                Commission Details →
+            </a>
+
+        </div>
+
+
+        <div class="summary">
+
+            <div class="summary-title">
+                👥 MY NETWORK
+            </div>
+
+            <div class="summary-value">
+                Team
+            </div>
+
+            <a class="summary-link"
+               href="{% url 'mlm_tree' %}">
+                View Network →
+            </a>
+
+        </div>
+
+    </section>
+
+{% endif %}
+
+
+<!-- ================= HERO ================= -->
+
+<section class="hero">
+
+    <div class="hero-badge">
+        ✓ WELCOME TO YN INDIA
+    </div>
+
+    <h1>
+        Best Quality.
+        <span>Best Deals.</span>
+        One Marketplace.
+    </h1>
+
+    <p>
+        Discover products from YN INDIA.
+        Shop quality products at competitive prices
+        with a simple and reliable shopping experience.
+    </p>
+
+    <div class="hero-buttons">
+
+        <a href="#products" class="hero-btn primary">
+            Shop Now →
+        </a>
+
+        {% if user.is_authenticated %}
+        <a href="{% url 'my_orders' %}"
+           class="hero-btn secondary">
+            📦 My Orders
+        </a>
+        {% else %}
+        <a href="{% url 'register' %}"
+           class="hero-btn secondary">
+            Create Account
+        </a>
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- ================= CATEGORIES ================= -->
+
+<section class="section" id="categories">
+
+    <div class="section-title">
+        <h2>🛍️ Categories</h2>
+    </div>
+
+    <div class="category-row">
+
+        <div class="category active"
+             data-category="all">
+            <div class="category-icon">🛍️</div>
+            <div class="category-name">All</div>
+        </div>
+
+        <div class="category"
+             data-category="electronics">
+            <div class="category-icon">📱</div>
+            <div class="category-name">Electronics</div>
+        </div>
+
+        <div class="category"
+             data-category="fashion">
+            <div class="category-icon">👕</div>
+            <div class="category-name">Fashion</div>
+        </div>
+
+        <div class="category"
+             data-category="home">
+            <div class="category-icon">🏠</div>
+            <div class="category-name">Home</div>
+        </div>
+
+        <div class="category"
+             data-category="beauty">
+            <div class="category-icon">💄</div>
+            <div class="category-name">Beauty</div>
+        </div>
+
+        <div class="category"
+             data-category="other">
+            <div class="category-icon">📦</div>
+            <div class="category-name">More</div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= PRODUCTS ================= -->
+
+<section class="section" id="products">
+
+    <div class="section-title">
+
+        <h2>🔥 Latest Products</h2>
+
+    </div>
+
+
+    <div class="products" id="productGrid">
+
+        {% for product in products %}
+
+        <article
+            class="product-card"
+            data-title="{{ product.title|lower }}"
+            data-category="{{ product.category.name|default:'other'|lower }}"
+        >
+
+            {% if product.image %}
+
+                <img
+                    class="product-image"
+                    src="{{ product.image.url }}"
+                    alt="{{ product.title }}"
+                    loading="lazy"
+                >
+
+            {% else %}
+
+                <div
+                    class="product-image"
+                    style="display:flex;align-items:center;justify-content:center;font-size:55px;">
+                    📦
+                </div>
+
+            {% endif %}
+
+
+            <div class="product-info">
+
+                <div class="product-category">
+                    {{ product.category.name|default:"YN INDIA" }}
+                </div>
+
+                <div class="product-title">
+                    {{ product.title }}
+                </div>
+
+                <div class="product-description">
+                    {{ product.description|truncatechars:75 }}
+                </div>
+
+                <div class="price">
+                    ₹{{ product.price }}
+                </div>
+
+                <div class="delivery">
+                    🚚 Delivery Available
+                </div>
+
+                <a
+                    class="product-btn"
+                    href="{% url 'product_detail' product.pk %}">
+                    View Product →
+                </a>
+
+            </div>
+
+        </article>
+
+        {% empty %}
+
+        <div class="empty" style="grid-column:1/-1;">
+            <div style="font-size:50px;">📦</div>
+            <h3 style="margin-top:10px;">
+                No products available
+            </h3>
+            <p style="margin-top:7px;">
+                Products will appear here when they are uploaded.
+            </p>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <div
+        id="noSearchResult"
+        class="empty"
+        style="display:none;margin-top:15px;">
+        <div style="font-size:45px;">🔍</div>
+        <h3>No product found</h3>
+        <p style="margin-top:7px;">
+            Try another product name or category.
+        </p>
+    </div>
+
+</section>
+
+
+<!-- ================= QUICK ACTIONS ================= -->
+
+<section class="section">
+
+    <div class="section-title">
+        <h2>⚡ Quick Access</h2>
+    </div>
+
+    <div class="quick-grid">
+
+        {% if user.is_authenticated %}
+
+        <a class="quick" href="{% url 'my_orders' %}">
+            <div class="quick-icon">📦</div>
+            <div>
+                <div class="quick-title">My Orders</div>
+                <div class="quick-text">Track & view orders</div>
+            </div>
+        </a>
+
+        <a class="quick" href="{% url 'wallet_view' %}">
+            <div class="quick-icon">💰</div>
+            <div>
+                <div class="quick-title">Bonus Balance</div>
+                <div class="quick-text">View balance</div>
+            </div>
+        </a>
+
+        <a class="quick" href="{% url 'profile' %}">
+            <div class="quick-icon">👤</div>
+            <div>
+                <div class="quick-title">My Profile</div>
+                <div class="quick-text">Account details</div>
+            </div>
+        </a>
+
+        <a class="quick" href="{% url 'mlm_tree' %}">
+            <div class="quick-icon">👥</div>
+            <div>
+                <div class="quick-title">My Network</div>
+                <div class="quick-text">Team & network</div>
+            </div>
+        </a>
+
+        <a class="quick" href="{% url 'customer_support' %}">
+            <div class="quick-icon">🎧</div>
+            <div>
+                <div class="quick-title">Support</div>
+                <div class="quick-text">Help Center</div>
+            </div>
+        </a>
+
+        <a class="quick" href="{% url 'notifications' %}">
+            <div class="quick-icon">🔔</div>
+            <div>
+                <div class="quick-title">Notifications</div>
+                <div class="quick-text">Updates & alerts</div>
+            </div>
+        </a>
+
+        {% else %}
+
+        <a class="quick" href="{% url 'login' %}">
+            <div class="quick-icon">🔐</div>
+            <div>
+                <div class="quick-title">Login</div>
+                <div class="quick-text">Access your account</div>
+            </div>
+        </a>
+
+        <a class="quick" href="{% url 'register' %}">
+            <div class="quick-icon">📝</div>
+            <div>
+                <div class="quick-title">Register</div>
+                <div class="quick-text">Create your account</div>
+            </div>
+        </a>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="footer">
+
+    <div class="footer-logo">
+        🛒 YN <span>INDIA</span>
+    </div>
+
+    <p>
+        Import. Export. Deliver.
+    </p>
+
+    <p>
+        © 2026 YN INDIA. All rights reserved.
+    </p>
+
+</footer>
+
+</main>
+
+
+<!-- ================= BOTTOM NAV ================= -->
+
+<nav class="bottom-nav">
+
+    <a class="bottom-item active" href="{% url 'home' %}">
+        <span class="bottom-icon">🏠</span>
+        Home
+    </a>
+
+    <a class="bottom-item" href="#categories">
+        <span class="bottom-icon">▦</span>
+        Categories
+    </a>
+
+    {% if user.is_authenticated %}
+
+    <a class="bottom-item" href="{% url 'my_orders' %}">
+        <span class="bottom-icon">📦</span>
+        My Orders
+    </a>
+
+    <a class="bottom-item" href="{% url 'wallet_view' %}">
+        <span class="bottom-icon">💰</span>
+        Bonus
+    </a>
+
+    <a class="bottom-item" href="{% url 'profile' %}">
+        <span class="bottom-icon">👤</span>
+        Account
+    </a>
+
+    {% else %}
+
+    <a class="bottom-item" href="{% url 'login' %}">
+        <span class="bottom-icon">🔐</span>
+        Login
+    </a>
+
+    <a class="bottom-item" href="{% url 'register' %}">
+        <span class="bottom-icon">📝</span>
+        Register
+    </a>
+
+    {% endif %}
+
+</nav>
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+(function(){
+
+    const menuButton =
+        document.getElementById("menuButton");
+
+
+
+    const closeMenu =
+        document.getElementById("closeMenu");
+
+    const sideMenu =
+        document.getElementById("sideMenu");
+
+    const overlay =
+        document.getElementById("overlay");
+
+
+    function openMenu(){
+
+        sideMenu.classList.add("open");
+        overlay.classList.add("show");
+
+        document.body.style.overflow = "hidden";
+    }
+
+
+    function closeSideMenu(){
+
+        sideMenu.classList.remove("open");
+        overlay.classList.remove("show");
+
+        document.body.style.overflow = "";
+    }
+
+
+    if(menuButton){
+        menuButton.addEventListener(
+            "click",
+            openMenu
+        );
+    }
+
+
+
+
+
+    if(closeMenu){
+        closeMenu.addEventListener(
+            "click",
+            closeSideMenu
+        );
+    }
+
+
+    if(overlay){
+        overlay.addEventListener(
+            "click",
+            closeSideMenu
+        );
+    }
+
+
+    document.addEventListener(
+        "keydown",
+        function(event){
+
+            if(event.key === "Escape"){
+                closeSideMenu();
+            }
+
+        }
+    );
+
+
+    /* =========================
+       PRODUCT SEARCH
+    ========================= */
+
+    const search =
+        document.getElementById("productSearch");
+
+    const cards =
+        document.querySelectorAll(".product-card");
+
+    const noResult =
+        document.getElementById("noSearchResult");
+
+
+    function filterProducts(){
+
+        const query =
+            (search.value || "")
+            .trim()
+            .toLowerCase();
+
+        let visible = 0;
+
+
+        cards.forEach(function(card){
+
+            const title =
+                card.dataset.title || "";
+
+            const category =
+                card.dataset.category || "";
+
+            const match =
+                !query ||
+                title.includes(query) ||
+                category.includes(query);
+
+            card.style.display =
+                match ? "" : "none";
+
+            if(match){
+                visible++;
+            }
+
+        });
+
+
+        if(noResult){
+
+            noResult.style.display =
+                (cards.length > 0 && visible === 0)
+                ? "block"
+                : "none";
+
+        }
+
+    }
+
+
+    if(search){
+
+        search.addEventListener(
+            "input",
+            filterProducts
+        );
+
+    }
+
+
+    /* =========================
+       CATEGORY FILTER
+    ========================= */
+
+    const categories =
+        document.querySelectorAll(".category");
+
+
+    categories.forEach(function(categoryButton){
+
+        categoryButton.addEventListener(
+            "click",
+            function(){
+
+                categories.forEach(function(item){
+                    item.classList.remove("active");
+                });
+
+                categoryButton.classList.add("active");
+
+                const selected =
+                    categoryButton.dataset.category;
+
+
+                cards.forEach(function(card){
+
+                    const category =
+                        (card.dataset.category || "")
+                        .toLowerCase();
+
+                    if(
+                        selected === "all" ||
+                        category.includes(selected)
+                    ){
+                        card.style.display = "";
+                    }else{
+                        card.style.display = "none";
+                    }
+
+                });
+
+                if(noResult){
+
+                    let visible = 0;
+
+                    cards.forEach(function(card){
+
+                        if(
+                            card.style.display !== "none"
+                        ){
+                            visible++;
+                        }
+
+                    });
+
+                    noResult.style.display =
+                        (cards.length > 0 && visible === 0)
+                        ? "block"
+                        : "none";
+
+                }
+
+                document
+                    .getElementById("products")
+                    .scrollIntoView({
+                        behavior:"smooth",
+                        block:"start"
+                    });
+
+            }
+        );
+
+    });
+
+
+})();
+
+</script>
+
+</body>
+</html>

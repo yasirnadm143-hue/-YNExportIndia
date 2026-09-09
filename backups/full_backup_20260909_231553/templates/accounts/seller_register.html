@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block title %}Seller Registration | YN Commerce India{% endblock %}
+
+{% block extra_css %}
+<style>
+.seller-registration{
+    max-width:760px;
+    margin:0 auto;
+}
+
+.seller-registration h1{
+    font-size:32px;
+    font-weight:900;
+    color:#061d52;
+    margin-bottom:8px;
+}
+
+.seller-registration > p{
+    color:#667085;
+    margin-bottom:25px;
+}
+
+.seller-registration form{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+.seller-registration .field{
+    margin-bottom:17px;
+}
+
+.seller-registration label{
+    display:block;
+    font-weight:700;
+    color:#344054;
+    margin-bottom:7px;
+}
+
+.seller-registration input,
+.seller-registration select,
+.seller-registration textarea{
+    width:100%;
+    padding:14px 15px;
+    border:1px solid #d0d5dd;
+    border-radius:13px;
+    font-size:15px;
+    background:#fff;
+    transition:.2s ease;
+}
+
+.seller-registration input:focus,
+.seller-registration select:focus,
+.seller-registration textarea:focus{
+    outline:none;
+    border-color:#1261e8;
+    box-shadow:0 0 0 4px rgba(18,97,232,.10);
+}
+
+/* =========================
+   PREMIUM REGISTER BUTTON
+========================= */
+
+.seller-register-btn{
+    position:relative;
+    width:100%;
+    min-height:58px;
+    margin-top:12px;
+    border:0;
+    border-radius:16px;
+    background:linear-gradient(135deg,#031b52 0%,#063b9e 48%,#1261e8 100%);
+    color:#fff;
+    font-size:17px;
+    font-weight:900;
+    letter-spacing:.2px;
+    cursor:pointer;
+    box-shadow:
+        0 10px 24px rgba(6,59,158,.28),
+        inset 0 1px 0 rgba(255,255,255,.22);
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        opacity .18s ease;
+    overflow:hidden;
+}
+
+.seller-register-btn::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-120%;
+    width:70%;
+    height:100%;
+    background:linear-gradient(
+        100deg,
+        transparent,
+        rgba(255,255,255,.22),
+        transparent
+    );
+    transform:skewX(-20deg);
+    transition:left .6s ease;
+}
+
+.seller-register-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:
+        0 14px 30px rgba(6,59,158,.35),
+        inset 0 1px 0 rgba(255,255,255,.25);
+}
+
+.seller-register-btn:hover::before{
+    left:140%;
+}
+
+.seller-register-btn:active{
+    transform:scale(.985);
+}
+
+.seller-register-btn:disabled{
+    opacity:.72;
+    cursor:not-allowed;
+    transform:none;
+}
+
+.register-btn-content{
+    position:relative;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+}
+
+.register-btn-icon{
+    width:30px;
+    height:30px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:rgba(255,255,255,.14);
+    font-size:17px;
+}
+
+.register-spinner{
+    width:19px;
+    height:19px;
+    border:3px solid rgba(255,255,255,.35);
+    border-top-color:#fff;
+    border-radius:50%;
+    animation:registerSpin .7s linear infinite;
+}
+
+@keyframes registerSpin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+@media(max-width:600px){
+
+    .seller-registration h1{
+        font-size:26px;
+    }
+
+    .seller-register-btn{
+        min-height:60px;
+        font-size:16px;
+        border-radius:15px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="seller-registration">
+
+    <h1>Seller Registration</h1>
+
+    <p>
+        Complete your seller verification details to start selling on
+        <strong>YN Commerce India</strong>.
+    </p>
+
+    <form method="post" enctype="multipart/form-data" id="sellerRegistrationForm">
+
+        {% csrf_token %}
+
+        {{ form.non_field_errors }}
+
+        {% for field in form %}
+
+            <div class="field">
+
+                {{ field.label_tag }}
+
+                {{ field }}
+
+                {% if field.help_text %}
+                    <small>{{ field.help_text }}</small>
+                {% endif %}
+
+                {% if field.errors %}
+                    <div class="error">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+        <button
+            type="submit"
+            class="seller-register-btn"
+            id="sellerRegisterButton"
+        >
+            <span class="register-btn-content" id="registerButtonContent">
+                <span class="register-btn-icon">✓</span>
+                <span>Register as Seller</span>
+            </span>
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function(){
+
+    const form = document.getElementById("sellerRegistrationForm");
+    const button = document.getElementById("sellerRegisterButton");
+    const content = document.getElementById("registerButtonContent");
+
+    if(!form || !button || !content){
+        return;
+    }
+
+    form.addEventListener("submit", function(){
+
+        if(button.disabled){
+            return;
+        }
+
+        button.disabled = true;
+
+        content.innerHTML = `
+            <span class="register-spinner"></span>
+            <span>Registering Seller...</span>
+        `;
+
+    });
+
+})();
+</script>
+{% endblock %}

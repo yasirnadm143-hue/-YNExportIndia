@@ -121,6 +121,18 @@ def home_view(request):
 
     products = Product.objects.all()
 
+    print("===== HOME PRODUCT DEBUG =====")
+    print("HOME PRODUCT COUNT:", products.count())
+    print(
+        "HOME PRODUCT IDS:",
+        list(products.values_list("id", flat=True))
+    )
+    print(
+        "HOME PRODUCT TITLES:",
+        list(products.values_list("title", flat=True))
+    )
+    print("==============================")
+
     if query:
         # Normalize the search text
         words = [

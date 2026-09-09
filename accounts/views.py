@@ -801,12 +801,6 @@ def user_settings(request):
 # BONUS BALANCE
 # ==========================
 
-@login_required
-def bonus_balance_view(request):
-    return render(
-        request,
-        "accounts/bonus_balance.html"
-    )
 
 
 # ==========================
@@ -1700,101 +1694,12 @@ def logout_view(request):
 # SELLER DASHBOARD
 # ==========================
 
-@login_required
-def seller_dashboard(request):
-    seller = SellerProfile.objects.filter(
-        user=request.user
-    ).first()
-
-    if not seller:
-        return redirect("seller_register")
-
-    if seller.status != "APPROVED":
-        return redirect("seller_pending")
-
-
-    if not request.user.is_staff:
-        messages.error(
-            request,
-            "Seller access is not enabled for this account."
-        )
-        return redirect("home")
-
-    from django.db.models import Count, Sum
-
-    products = Product.objects.filter(
-        owner=request.user
-    )
-
-    total_products = products.count()
-
-    active_products = products.count()
-
-    seller_orders = Order.objects.filter(
-        product__owner=request.user
-    )
-
-    total_orders = seller_orders.count()
-
-    delivered_orders = seller_orders.filter(
-        status="DELIVERED"
-    ).count()
-
-    pending_orders = seller_orders.filter(
-        status="PENDING"
-    ).count()
-
-    total_sales = seller_orders.filter(
-        status="DELIVERED"
-    ).aggregate(
-        total=Sum("total_amount")
-    )["total"] or 0
-
-    return render(
-        request,
-        "accounts/seller_dashboard.html",
-        {
-            "user": request.user,
-            "total_products": total_products,
-            "active_products": active_products,
-            "total_orders": total_orders,
-            "delivered_orders": delivered_orders,
-            "pending_orders": pending_orders,
-            "total_sales": total_sales,
-        }
-    )
 
 
 # ==========================
 # SELLER PRODUCTS
 # ==========================
 
-@login_required
-def seller_products(request):
-
-    if not request.user.is_staff:
-        messages.error(
-            request,
-            "Seller access is not enabled for this account."
-        )
-        return redirect("home")
-
-    products = Product.objects.filter(
-        owner=request.user
-    ).select_related(
-        "category",
-        "subcategory",
-        "brand",
-    ).order_by("-id")
-
-    return render(
-        request,
-        "accounts/seller_products.html",
-        {
-            "user": request.user,
-            "products": products,
-        }
-    )
 
 
 # ==========================
@@ -1808,47 +1713,6 @@ from .forms import SellerRegistrationForm
 from .models import SellerProfile
 
 
-@login_required
-def seller_register_view(request):
-
-    existing_profile = SellerProfile.objects.filter(
-        user=request.user
-    ).first()
-
-    if existing_profile:
-        return redirect("seller_dashboard")
-
-    if request.method == "POST":
-        form = SellerRegistrationForm(
-            request.POST,
-            request.FILES
-        )
-
-        if form.is_valid():
-            seller = form.save(commit=False)
-            seller.user = request.user
-            seller.save()
-
-            messages.success(
-                request,
-                "Seller registration submitted successfully."
-            )
-
-            return redirect("seller_pending")
-
-    else:
-        form = SellerRegistrationForm(
-            initial={
-                "email": request.user.email,
-                "mobile": request.user.phone_number,
-            }
-        )
-
-    return render(
-        request,
-        "accounts/seller_register.html",
-        {"form": form}
-    )
 
 
 @login_required
@@ -2431,55 +2295,7 @@ def bonus_balance_view(request):
     )
 
 
-@login_required
-def seller_products(request):
-    profile = getattr(request.user, "seller_profile", None)
 
-    if not profile or profile.status != "APPROVED":
-        messages.error(request, "Seller account is not approved.")
-        return redirect("seller_dashboard")
-
-    products = Product.objects.filter(
-        owner=request.user
-    ).select_related(
-        "category",
-        "subcategory",
-        "brand",
-    ).order_by("-id")
-
-    return render(
-        request,
-        "accounts/seller_products.html",
-        {
-            "user": request.user,
-            "products": products,
-        }
-    )
-
-@login_required
-def seller_products(request):
-    profile = getattr(request.user, "seller_profile", None)
-
-    if not profile or profile.status != "APPROVED":
-        messages.error(request, "Seller account is not approved.")
-        return redirect("seller_dashboard")
-
-    products = Product.objects.filter(
-        owner=request.user
-    ).select_related(
-        "category",
-        "subcategory",
-        "brand",
-    ).order_by("-id")
-
-    return render(
-        request,
-        "accounts/seller_products.html",
-        {
-            "user": request.user,
-            "products": products,
-        }
-    )
 
 # ============================================================
 # SELLER SYSTEM - FINAL AUTO APPROVAL OVERRIDE

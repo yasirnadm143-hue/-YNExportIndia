@@ -18,6 +18,7 @@ from .models import (
     Notification,
     SupportTicket,
     SupportMessage,
+    Category,
 )
 from .forms import ProductForm, OrderForm
 

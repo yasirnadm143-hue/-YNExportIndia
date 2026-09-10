@@ -1953,41 +1953,6 @@ def cancel_order(request, order_id):
 
 
 @login_required
-def seller_bulk_accept_orders(request):
-    from django.contrib import messages
-    from django.utils import timezone
-
-    if request.method != "POST":
-        return redirect("seller_orders")
-
-    today = timezone.localdate()
-
-    orders = Order.objects.filter(
-        product__owner=request.user,
-        status="PENDING",
-        created_at__date=today,
-    )
-
-    accepted_count = orders.update(
-        status="CONFIRMED",
-        seller_accepted_at=timezone.now(),
-        updated_at=timezone.now(),
-    )
-
-    if accepted_count:
-        messages.success(
-            request,
-            f"{accepted_count} pending order(s) accepted successfully."
-        )
-    else:
-        messages.info(
-            request,
-            "There are no pending orders to accept."
-        )
-
-    return redirect("seller_orders")
-
-
 def seller_accept_order(request, order_id):
     from django.utils import timezone
     from django.contrib import messages
@@ -2582,20 +2547,6 @@ def seller_dashboard(request):
         status="PENDING"
     ).count()
 
-    from django.utils import timezone as _dashboard_timezone
-
-    today = _dashboard_timezone.localdate()
-
-    today_orders = seller_orders.filter(
-        created_at__date=today
-    )
-
-    today_pending_orders = today_orders.filter(
-        status="PENDING"
-    ).count()
-
-    today_orders_count = today_orders.count()
-
     total_sales = seller_orders.filter(
         status="DELIVERED"
     ).aggregate(
@@ -2613,9 +2564,6 @@ def seller_dashboard(request):
             "total_orders": total_orders,
             "delivered_orders": delivered_orders,
             "pending_orders": pending_orders,
-            "today_orders": today_orders,
-            "today_orders_count": today_orders_count,
-            "today_pending_orders": today_pending_orders,
             "total_sales": total_sales,
         }
     )

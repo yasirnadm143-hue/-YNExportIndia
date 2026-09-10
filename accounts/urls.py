@@ -62,6 +62,7 @@ urlpatterns = [
     path("seller/", views.seller_dashboard, name="seller_dashboard"),
     path("seller/products/", views.seller_products, name="seller_products"),
     path("seller/orders/", views.seller_orders, name="seller_orders"),
+    path("seller/orders/bulk-accept/", views.seller_bulk_accept_orders, name="seller_bulk_accept_orders"),
     path("seller/bonus_balance/", views.bonus_balance_view, name="bonus_balance"),
     path("seller/orders/<int:order_id>/accept/", views.seller_accept_order, name="seller_accept_order"),
     path("seller/orders/<int:order_id>/pack/", views.seller_pack_order, name="seller_pack_order"),

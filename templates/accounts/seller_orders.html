@@ -3,202 +3,565 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seller Orders</title>
+    <title>Seller Orders | YN Commerce India</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
             margin: 0;
-            padding: 20px;
+            background: #f5f7fb;
+            color: #172033;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
-        .container {
-            max-width: 1100px;
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: #ffffff;
+            border-bottom: 1px solid #e8ebf2;
+            padding: 14px 16px;
+        }
+
+        .topbar-inner {
+            max-width: 1200px;
             margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
         }
 
-        .top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+        .brand {
+            font-size: 20px;
+            font-weight: 800;
         }
 
         .back {
             text-decoration: none;
+            background: #172033;
+            color: #ffffff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        .page {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px 14px 50px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #111827, #263247);
+            color: #ffffff;
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 16px;
+            box-shadow: 0 12px 35px rgba(17, 24, 39, .12);
+        }
+
+        .hero h1 {
+            margin: 0 0 6px;
+            font-size: 27px;
+        }
+
+        .hero p {
+            margin: 0;
+            opacity: .82;
+        }
+
+        .toolbar {
+            background: #ffffff;
+            border: 1px solid #e7eaf0;
+            border-radius: 18px;
+            padding: 14px;
+            margin-bottom: 18px;
+        }
+
+        .search {
+            width: 100%;
+            padding: 14px 15px;
+            border: 1px solid #d9deea;
+            border-radius: 12px;
+            outline: none;
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .filter-btn {
+            border: 0;
+            border-radius: 12px;
+            padding: 12px;
+            background: #eef1f6;
+            color: #172033;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .filter-btn.active {
+            background: #ff6b00;
+            color: #ffffff;
         }
 
         .order {
-            background: white;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            background: #ffffff;
+            border: 1px solid #e7eaf0;
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 25px rgba(17, 24, 39, .06);
+        }
+
+        .order-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .order-number {
+            font-size: 19px;
+            font-weight: 800;
         }
 
         .status {
             display: inline-block;
-            padding: 7px 12px;
-            border-radius: 20px;
-            background: #eee;
-            font-weight: bold;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: #eef1f6;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .order-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .info {
+            background: #f8f9fc;
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .info-label {
+            display: block;
+            color: #697386;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-weight: 700;
+            line-height: 1.45;
+            word-break: break-word;
         }
 
         .price {
             font-size: 20px;
-            font-weight: bold;
+            font-weight: 900;
+            color: #111827;
+        }
+
+        .actions-wrap {
+            margin-top: 16px;
+            border-top: 1px solid #edf0f5;
+            padding-top: 14px;
+        }
+
+        .actions-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .action {
+            border: 0;
+            border-radius: 11px;
+            padding: 11px 14px;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .primary {
+            background: #ff6b00;
+            color: #ffffff;
+        }
+
+        .dark {
+            background: #172033;
+            color: #ffffff;
+        }
+
+        .green {
+            background: #138a4b;
+            color: #ffffff;
+        }
+
+        .blue {
+            background: #1769aa;
+            color: #ffffff;
+        }
+
+        .red {
+            background: #c62828;
+            color: #ffffff;
+        }
+
+        .light {
+            background: #eef1f6;
+            color: #172033;
         }
 
         .empty {
-            background: white;
-            padding: 30px;
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 40px 20px;
             text-align: center;
-            border-radius: 12px;
+            border: 1px solid #e7eaf0;
+        }
+
+        .empty h2 {
+            margin-top: 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 760px) {
+            .filters {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .order-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .order-head {
+                flex-direction: column;
+            }
+
+            .actions {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .action {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .hero h1 {
+                font-size: 23px;
+            }
+
+            .actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media print {
+            .topbar,
+            .toolbar,
+            .actions-wrap,
+            .hero {
+                display: none !important;
+            }
+
+            body {
+                background: #ffffff;
+            }
+
+            .page {
+                max-width: none;
+                padding: 0;
+            }
+
+            .order {
+                box-shadow: none;
+                break-inside: avoid;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<div class="container">
-
-    <div class="top">
-        <h1>Seller Orders</h1>
-        <a class="back" href="{% url 'seller_dashboard' %}">
-            Seller Dashboard
-        </a>
+<header class="topbar">
+    <div class="topbar-inner">
+        <div class="brand">YN Commerce India</div>
+        <a class="back" href="{% url 'seller_dashboard' %}">Dashboard</a>
     </div>
+</header>
 
-    {% if messages %}
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    {% endif %}
+<main class="page">
+
+    <section class="hero">
+        <h1>Seller Order Command Center</h1>
+        <p>Manage orders, customers, packing, shipping and delivery from one place.</p>
+    </section>
+
+    <section class="toolbar">
+        <input
+            id="orderSearch"
+            class="search"
+            type="search"
+            placeholder="Search order ID, customer, mobile, product or address..."
+            autocomplete="off"
+        >
+
+        <div class="filters">
+            <button class="filter-btn active" type="button" data-filter="ALL">All</button>
+            <button class="filter-btn" type="button" data-filter="TODAY">Today</button>
+            <button class="filter-btn" type="button" data-filter="PENDING">Pending</button>
+            <button class="filter-btn" type="button" data-filter="CONFIRMED">Confirmed</button>
+            <button class="filter-btn" type="button" data-filter="PACKED">Packing</button>
+            <button class="filter-btn" type="button" data-filter="SHIPPED">Shipping</button>
+            <button class="filter-btn" type="button" data-filter="OUT_FOR_DELIVERY">Out for Delivery</button>
+            <button class="filter-btn" type="button" data-filter="DELIVERED">Delivered</button>
+        </div>
+    </section>
 
     {% if orders %}
 
         {% for order in orders %}
 
-            <div class="order">
+        <article
+            class="order order-card"
+            data-status="{{ order.status }}"
+            data-date="{{ order.created_at|date:'Y-m-d' }}"
+        >
 
-                <h2>Order #{{ order.id }}</h2>
+            <div class="order-head">
+                <div>
+                    <div class="order-number">Order #{{ order.id }}</div>
+                    <div style="color:#697386;font-size:13px;margin-top:5px;">
+                        {{ order.created_at }}
+                    </div>
+                </div>
 
-                <p>
-                    <strong>Product:</strong>
-                    {{ order.product.title }}
-                </p>
+                <span class="status">
+                    {{ order.get_status_display }}
+                </span>
+            </div>
 
-                <p>
-                    <strong>Customer:</strong>
-                    {{ order.full_name }}
-                </p>
+            <div class="order-grid">
 
-                <p>
-                    <strong>Mobile:</strong>
-                    {{ order.mobile }}
-                </p>
-
-                <p>
-                    <strong>Address:</strong>
-                    {{ order.address }},
-                    {{ order.district }},
-                    {{ order.state }},
-                    {{ order.pincode }}
-                </p>
-
-                <p class="price">
-                    ₹{{ order.total_amount }}
-                </p>
-
-                <p>
-                    <strong>Status:</strong>
-                    <span class="status">
-                        {{ order.get_status_display }}
+                <div class="info">
+                    <span class="info-label">Product</span>
+                    <span class="info-value">
+                        {{ order.product.title }}
                     </span>
-                </p>
+                </div>
 
-                <p>
-                    <strong>Tracking ID:</strong>
-                    {{ order.tracking_id }}
-                </p>
+                <div class="info">
+                    <span class="info-label">Order Amount</span>
+                    <span class="info-value price">
+                        ₹{{ order.total_amount }}
+                    </span>
+                </div>
 
-                <p>
-                    <strong>Order Date:</strong>
-                    {{ order.created_at }}
-                </p>
+                <div class="info">
+                    <span class="info-label">Customer</span>
+                    <span class="info-value">
+                        {{ order.full_name }}
+                    </span>
+                </div>
+
+                <div class="info">
+                    <span class="info-label">Mobile</span>
+                    <span class="info-value">
+                        {{ order.mobile }}
+                    </span>
+                </div>
+
+                <div class="info">
+                    <span class="info-label">Complete Delivery Address</span>
+                    <span class="info-value">
+                        {{ order.address }}, {{ order.district }},
+                        {{ order.state }}, {{ order.pincode }}
+                    </span>
+                </div>
+
+                <div class="info">
+                    <span class="info-label">Tracking ID</span>
+                    <span class="info-value">
+                        {{ order.tracking_id|default:"Not assigned" }}
+                    </span>
+                </div>
 
             </div>
+
+            <div class="actions-wrap">
+
+                <div class="actions-title">
+                    <span>⚡ Order Actions</span>
+                    <span style="font-size:12px;color:#697386;">
+                        Select an action
+                    </span>
+                </div>
+
+                <div class="actions">
+
+                    {% if order.status == "PENDING" %}
+                    <form method="post" action="{% url 'seller_accept_order' order.id %}">
+                        {% csrf_token %}
+                        <button class="action primary" type="submit">
+                            ✓ Accept
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    {% if order.status == "CONFIRMED" %}
+                    <form method="post" action="{% url 'seller_pack_order' order.id %}">
+                        {% csrf_token %}
+                        <button class="action blue" type="submit">
+                            📦 Pack Order
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    {% if order.status == "PACKED" and not order.label_file %}
+                    <form method="post" action="{% url 'seller_generate_label' order.id %}">
+                        {% csrf_token %}
+                        <button class="action primary" type="submit">
+                            🏷 Generate Label
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    {% if order.label_file %}
+                    <a
+                        class="action light"
+                        href="{% url 'seller_download_label' order.id %}"
+                    >
+                        ⬇ Download Label
+                    </a>
+                    {% endif %}
+
+                    {% if order.status == "PACKED" and order.label_file %}
+                    <form method="post" action="{% url 'seller_ship_order' order.id %}">
+                        {% csrf_token %}
+                        <button class="action blue" type="submit">
+                            🚚 Mark Shipped
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    {% if order.status in "SHIPPED OUT_FOR_DELIVERY" %}
+                    <form method="post" action="{% url 'seller_deliver_order' order.id %}">
+                        {% csrf_token %}
+                        <button class="action green" type="submit">
+                            ✓ Mark Delivered
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    <button
+                        class="action dark"
+                        type="button"
+                        onclick="printOrder({{ order.id }})"
+                    >
+                        🖨 Print
+                    </button>
+
+                </div>
+
+            </div>
+
+        </article>
 
         {% endfor %}
 
     {% else %}
 
-        <div class="empty">
+        <section class="empty">
             <h2>No Orders Yet</h2>
             <p>Orders for your products will appear here.</p>
-        </div>
+        </section>
 
     {% endif %}
 
-</div>
+</main>
+
+<script>
+    const searchInput = document.getElementById("orderSearch");
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    const orderCards = document.querySelectorAll(".order-card");
+
+    let currentFilter = "ALL";
+
+    function applyOrderFilters() {
+        const search = (searchInput.value || "").toLowerCase().trim();
+
+        orderCards.forEach(card => {
+            const text = card.innerText.toLowerCase();
+            const status = card.dataset.status || "";
+            const date = card.dataset.date || "";
+
+            const searchMatch = !search || text.includes(search);
+
+            let filterMatch = true;
+
+            if (currentFilter === "TODAY") {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, "0");
+                const day = String(today.getDate()).padStart(2, "0");
+                filterMatch = date === `${year}-${month}-${day}`;
+            } else if (currentFilter === "PENDING") {
+                filterMatch = status === "PENDING";
+            } else if (currentFilter !== "ALL") {
+                filterMatch = status === currentFilter;
+            }
+
+            card.classList.toggle("hidden", !(searchMatch && filterMatch));
+        });
+    }
+
+    searchInput.addEventListener("input", applyOrderFilters);
+
+    filterButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            filterButtons.forEach(item => item.classList.remove("active"));
+            button.classList.add("active");
+
+            currentFilter = button.dataset.filter;
+            applyOrderFilters();
+        });
+    });
+
+    function printOrder(orderId) {
+        window.print();
+    }
+</script>
 
 </body>
 </html>
-
-
-{% if order.status == "PENDING" %}
-<form method="post" action="{% url 'seller_accept_order' order.id %}">
-    {% csrf_token %}
-    <button type="submit">
-        Accept Order
-    </button>
-</form>
-{% endif %}
-
-
-{% if order.status == "CONFIRMED" %}
-<form method="post" action="{% url 'seller_pack_order' order.id %}">
-    {% csrf_token %}
-    <button type="submit">
-        Pack Order
-    </button>
-</form>
-{% endif %}
-
-
-{% if order.status == "PACKED" and not order.label_file %}
-<form method="post" action="{% url 'seller_generate_label' order.id %}">
-    {% csrf_token %}
-    <button type="submit">
-        Generate Shipping Label
-    </button>
-</form>
-{% endif %}
-
-{% if order.label_file %}
-<a href="{% url 'seller_download_label' order.id %}">
-    Download Shipping Label
-</a>
-{% endif %}
-
-
-{% if order.status == "PACKED" and order.label_file %}
-<form method="post" action="{% url 'seller_ship_order' order.id %}">
-    {% csrf_token %}
-    <button type="submit">
-        Mark as Shipped
-    </button>
-</form>
-{% endif %}
-
-
-{% if order.status in "SHIPPED OUT_FOR_DELIVERY" %}
-<form method="post" action="{% url 'seller_deliver_order' order.id %}">
-    {% csrf_token %}
-    <button type="submit">
-        Mark as Delivered
-    </button>
-</form>
-{% endif %}
-

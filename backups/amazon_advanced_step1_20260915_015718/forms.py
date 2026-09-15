@@ -126,11 +126,6 @@ class ProductForm(forms.ModelForm):
             "title",
             "description",
             "price",
-            "mrp",
-            "discount_percent",
-            "offer_price",
-            "offer_start",
-            "offer_end",
             "image",
         ]
 
@@ -143,82 +138,11 @@ class ProductForm(forms.ModelForm):
                 "rows": 5,
             }),
             "price": forms.NumberInput(attrs={
-                "placeholder": "Regular selling price",
+                "placeholder": "Enter price",
                 "step": "0.01",
                 "min": "0",
             }),
-            "mrp": forms.NumberInput(attrs={
-                "placeholder": "Maximum Retail Price (MRP)",
-                "step": "0.01",
-                "min": "0",
-            }),
-            "discount_percent": forms.NumberInput(attrs={
-                "placeholder": "Discount %",
-                "step": "0.01",
-                "min": "0",
-                "max": "100",
-            }),
-            "offer_price": forms.NumberInput(attrs={
-                "placeholder": "Special Offer Price",
-                "step": "0.01",
-                "min": "0",
-            }),
-            "offer_start": forms.DateTimeInput(
-                attrs={
-                    "type": "datetime-local",
-                }
-            ),
-            "offer_end": forms.DateTimeInput(
-                attrs={
-                    "type": "datetime-local",
-                }
-            ),
         }
-
-
-    def clean(self):
-        cleaned_data = super().clean()
-
-        price = cleaned_data.get("price")
-        mrp = cleaned_data.get("mrp")
-        discount_percent = cleaned_data.get("discount_percent") or 0
-        offer_price = cleaned_data.get("offer_price")
-        offer_start = cleaned_data.get("offer_start")
-        offer_end = cleaned_data.get("offer_end")
-
-        if price is not None and price <= 0:
-            self.add_error("price", "Selling price must be greater than 0.")
-
-        if mrp is not None and mrp <= 0:
-            self.add_error("mrp", "MRP must be greater than 0.")
-
-        if discount_percent < 0 or discount_percent > 100:
-            self.add_error(
-                "discount_percent",
-                "Discount must be between 0% and 100%."
-            )
-
-        if offer_price is not None and offer_price <= 0:
-            self.add_error(
-                "offer_price",
-                "Offer price must be greater than 0."
-            )
-
-        if mrp is not None and offer_price is not None:
-            if offer_price > mrp:
-                self.add_error(
-                    "offer_price",
-                    "Offer price cannot be greater than MRP."
-                )
-
-        if offer_start and offer_end:
-            if offer_end <= offer_start:
-                self.add_error(
-                    "offer_end",
-                    "Offer end time must be after offer start time."
-                )
-
-        return cleaned_data
 
 
 class OrderForm(forms.ModelForm):

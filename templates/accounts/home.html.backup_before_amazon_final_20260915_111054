@@ -911,12 +911,10 @@ input{
     }
 }
 </style>
-
-
-
 </head>
 
 <body>
+
 <!-- =========================
      HEADER
 ========================= -->
@@ -1222,7 +1220,7 @@ input{
             <div class="product-image">
 
                 {% if product.image %}
-                    <img onerror="this.onerror=null;this.src='/static/images/product-placeholder.svg'" src="{{ product.image.url }}" alt="{{ product.title }}">
+                    <img src="{{ product.image.url }}" alt="{{ product.title }}">
                 {% else %}
                     <div class="product-placeholder">📦</div>
                 {% endif %}
@@ -1569,6 +1567,11 @@ input{
         <div class="drawer-section-title">
             SUPPORT
         </div>
+
+        <a href="{% url 'notifications' %}" class="drawer-item">
+            <span class="drawer-icon">🔔</span>
+            <span>Notifications</span>
+        </a>
 
         <a href="{% url 'customer_support' %}" class="drawer-item">
             <span class="drawer-icon">💬</span>
@@ -2100,7 +2103,6 @@ body.drawer-open .side-drawer{
     setInterval(updateOfferCountdowns, 1000);
 })();
 </script>
-
 
 </body>
 </html>

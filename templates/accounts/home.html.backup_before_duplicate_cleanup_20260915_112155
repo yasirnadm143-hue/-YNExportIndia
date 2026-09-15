@@ -911,12 +911,67 @@ input{
     }
 }
 </style>
-
-
-
 </head>
 
 <body>
+<style id="yn-commerce-clean-ui">
+.yn-clean-bar{background:#131921;color:#fff;padding:9px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.yn-clean-brand{font-size:19px;font-weight:800;white-space:nowrap}
+.yn-clean-search{display:flex;flex:1;min-width:220px;max-width:760px;margin:auto}
+.yn-clean-search input{flex:1;height:40px;border:0;padding:0 13px;border-radius:6px 0 0 6px;font-size:15px;outline:0}
+.yn-clean-search button{width:48px;border:0;background:#ffd814;border-radius:0 6px 6px 0;font-size:19px}
+.yn-clean-links{display:flex;gap:5px;overflow:auto;background:#232f3e;padding:7px 10px;white-space:nowrap}
+.yn-clean-links a{color:#fff;text-decoration:none;padding:6px 9px;border-radius:4px;font-weight:600;font-size:13px}
+.yn-clean-links a:hover{background:#37475a}
+@media(max-width:600px){
+.yn-clean-bar{padding:8px;gap:7px}.yn-clean-brand{font-size:16px}.yn-clean-search{order:3;flex-basis:100%;max-width:none}.yn-clean-search input{height:42px}
+.yn-clean-links a{font-size:12px;padding:6px 7px}
+}
+</style>
+<div class="yn-clean-bar">
+<div class="yn-clean-brand">YN Commerce India</div>
+<form class="yn-clean-search" method="get" action="">
+<input name="q" value="{{ request.GET.q|default:'' }}" placeholder="Search products..." aria-label="Search products">
+<button type="submit">🔎</button>
+</form>
+</div>
+<nav class="yn-clean-links">
+<a href="/">🏠 Home</a>
+<a href="#products">🛍️ Products</a>
+<a href="/wishlist/">❤️ Wishlist</a>
+<a href="/cart/">🛒 Cart</a>
+{% if user.is_authenticated %}
+<a href="/my-orders/">📦 My Orders</a>
+{% else %}
+<a href="/login/">👤 Login</a>
+{% endif %}
+</nav>
+
+<div class="yn-amz-wrap">
+<form class="yn-amz-search" method="get" action="">
+<input name="q" value="{{ request.GET.q|default:'' }}" placeholder="Search YN Commerce India products..." autocomplete="off">
+<button type="submit" aria-label="Search">🔎</button>
+</form>
+<nav class="yn-amz-nav">
+<a href="/">🏠 Home</a>
+<a href="#products">🛍️ Products</a>
+<a href="/wishlist/">❤️ Wishlist</a>
+<a href="/cart/">🛒 Cart</a>
+{% if user.is_authenticated %}
+<a href="/my-orders/">📦 Orders</a>
+{% else %}
+<a href="/login/">👤 Login</a>
+{% endif %}
+</nav>
+<div class="yn-amz-strip">
+<div class="yn-amz-box"><b>🚚 Fast Delivery</b><p>Reliable delivery across India</p></div>
+<div class="yn-amz-box"><b>💵 COD Available</b><p>Pay when your order arrives</p></div>
+<div class="yn-amz-box"><b>🏷️ Best Offers</b><p>Save more on selected products</p></div>
+<div class="yn-amz-box"><b>🔒 Secure Shopping</b><p>Safe and trusted checkout</p></div>
+</div>
+</div>
+
+
 <!-- =========================
      HEADER
 ========================= -->
@@ -1570,6 +1625,11 @@ input{
             SUPPORT
         </div>
 
+        <a href="{% url 'notifications' %}" class="drawer-item">
+            <span class="drawer-icon">🔔</span>
+            <span>Notifications</span>
+        </a>
+
         <a href="{% url 'customer_support' %}" class="drawer-item">
             <span class="drawer-icon">💬</span>
             <span>Customer Support</span>
@@ -2104,3 +2164,17 @@ body.drawer-open .side-drawer{
 
 </body>
 </html>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  const seen=new Set();
+  document.querySelectorAll("body *").forEach(el=>{
+    const t=(el.textContent||"").trim().toLowerCase();
+    if(t==="notifications"||t==="🔔 notifications"){
+      const key="yn-notification";
+      if(seen.has(key)) el.style.display="none";
+      else seen.add(key);
+    }
+  });
+});
+</script>

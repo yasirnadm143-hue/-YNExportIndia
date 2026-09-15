@@ -144,7 +144,16 @@ body{
 </div>
 
 <div class="price">
-₹ {{ item.product.price }}
+₹ {{ item.product.current_price|floatformat:2 }}
+
+{% if item.product.is_offer_active and item.product.mrp and item.product.mrp > item.product.current_price %}
+    <small style="color:#777;">
+        <del>₹ {{ item.product.mrp|floatformat:2 }}</del>
+    </small>
+    <small style="color:#198754;font-weight:700;">
+        {{ item.product.calculated_discount_percent|floatformat:0 }}% OFF
+    </small>
+{% endif %}
 </div>
 
 <div class="qty">
@@ -152,7 +161,7 @@ Quantity: {{ item.quantity }}
 </div>
 
 <div>
-₹ {{ item.product.price|floatformat:2 }} × {{ item.quantity }}
+₹ {{ item.product.current_price|floatformat:2 }} × {{ item.quantity }}
 </div>
 
 <form method="POST" action="{% url 'remove_from_cart' item.id %}" style="margin:0;">

@@ -1,405 +1,297 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile - YN Commerce India</title>
 
-    <title>My Profile - YN Commerce India</title>
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            padding: 20px 12px 40px;
-            font-family: Arial, sans-serif;
-            background:
-                radial-gradient(circle at top left, #dcecff 0%, transparent 35%),
-                radial-gradient(circle at bottom right, #d9fff5 0%, transparent 35%),
-                #eef4f9;
-            color: #172033;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 680px;
-            margin: auto;
-        }
-
-        /* HEADER */
-
-        .topbar {
-            background: linear-gradient(135deg, #087bdc, #08a89a);
-            color: white;
-            padding: 22px 24px;
-            border-radius: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 10px 30px rgba(0, 100, 180, .18);
-            margin-bottom: 20px;
-        }
-
-        .brand {
-            font-size: 26px;
-            font-weight: 800;
-        }
-
-        .home-link {
-            color: white;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        /* PROFILE */
-
-        .profile-card {
-            background: rgba(255,255,255,.96);
-            border-radius: 28px;
-            padding: 30px 20px;
-            text-align: center;
-            box-shadow: 0 12px 35px rgba(40,70,100,.10);
-            margin-bottom: 18px;
-        }
-
-        .avatar {
-            width: 120px;
-            height: 120px;
-            margin: auto;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #d9f4ff, #dffaf1);
-            border: 7px solid white;
-            box-shadow: 0 8px 25px rgba(0,120,200,.16);
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            font-size: 62px;
-        }
-
-        .username {
-            margin-top: 18px;
-            font-size: 29px;
-            font-weight: 800;
-            word-break: break-word;
-        }
-
-        .handle {
-            margin-top: 5px;
-            color: #7a8494;
-            font-size: 18px;
-        }
-
-        /* RANK */
-
-        .rank-card {
-            background: linear-gradient(135deg, #ff9f00, #ff5425);
-            color: white;
-            border-radius: 25px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 10px 28px rgba(255,100,20,.20);
-            margin-bottom: 18px;
-        }
-
-        .rank-title {
-            font-size: 17px;
-            font-weight: 800;
-            text-transform: uppercase;
-            opacity: .95;
-        }
-
-        .rank {
-            margin-top: 8px;
-            font-size: 42px;
-            font-weight: 900;
-        }
-
-        /* SECTION */
-
-        .section {
-            background: rgba(255,255,255,.97);
-            border-radius: 26px;
-            padding: 24px 20px;
-            margin-bottom: 18px;
-            box-shadow: 0 10px 30px rgba(30,60,90,.08);
-        }
-
-        .section-title {
-            font-size: 26px;
-            font-weight: 800;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* PERSONAL INFORMATION */
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            padding: 16px 0;
-            border-bottom: 1px solid #edf0f4;
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            color: #707b8d;
-            font-size: 17px;
-            font-weight: 700;
-        }
-
-        .info-value {
-            text-align: right;
-            font-size: 17px;
-            font-weight: 700;
-            word-break: break-word;
-        }
-
-        /* MLM */
-
-        .team-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-bottom: 18px;
-        }
-
-        .team-box {
-            background: #f3f9fd;
-            border-radius: 20px;
-            padding: 20px 10px;
-            text-align: center;
-        }
-
-        .team-number {
-            color: #087bc8;
-            font-size: 40px;
-            font-weight: 900;
-        }
-
-        .team-title {
-            color: #657185;
-            font-size: 16px;
-            font-weight: 700;
-            margin-top: 4px;
-        }
-
-        .upline-box {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 5px;
-            font-size: 17px;
-        }
-
-        .upline-value {
-            font-weight: 800;
-        }
-
-        /* REFERRAL */
-
-        .referral-section {
-            background: linear-gradient(135deg, #e9fbff, #eafff8);
-            text-align: center;
-        }
-
-        .referral-subtitle {
-            color: #718092;
-            font-size: 17px;
-            margin-bottom: 18px;
-        }
-
-        .referral-id {
-            display: inline-block;
-            background: white;
-            color: #087bc8;
-            font-size: 30px;
-            font-weight: 900;
-            padding: 15px 30px;
-            border-radius: 20px;
-            box-shadow: 0 6px 20px rgba(0,120,200,.10);
-            margin-bottom: 18px;
-        }
-
-        .referral-input {
-            width: 100%;
-            padding: 17px;
-            border: 2px solid #dce4eb;
-            border-radius: 16px;
-            background: white;
-            font-size: 15px;
-            color: #667180;
-            outline: none;
-            margin-bottom: 12px;
-        }
-
-        .copy-btn {
-            width: 100%;
-            border: none;
-            padding: 17px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, #00b85c, #08a84c);
-            color: white;
-            font-size: 18px;
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        .copy-btn:active {
-            transform: scale(.98);
-        }
-
-        .copy-message {
-            display: none;
-            margin-top: 12px;
-            color: #079447;
-            font-weight: 800;
-        }
-
-        /* BUTTONS */
-
-        .bottom-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-top: 5px;
-        }
-
-        .bottom-btn {
-            display: block;
-            text-align: center;
-            text-decoration: none;
-            color: white;
-            padding: 17px 10px;
-            border-radius: 18px;
-            font-size: 17px;
-            font-weight: 800;
-        }
-
-        .dashboard-btn {
-            background: #087fd1;
-        }
-
-        .home-btn {
-            background: #687481;
-        }
-
-        @media (max-width: 480px) {
-
-            body {
-                padding: 12px 10px 30px;
-            }
-
-            .topbar {
-                padding: 19px;
-            }
-
-            .brand {
-                font-size: 22px;
-            }
-
-            .username {
-                font-size: 25px;
-            }
-
-            .info-row {
-                flex-direction: column;
-                gap: 5px;
-            }
-
-            .info-value {
-                text-align: left;
-            }
-
-
-
-            .bonus_balance-balance {
-                font-size: 30px;
-            }
-        }
-
-    </style>
+<style>
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f5f6f8;
+    color:#172033;
+}
+.container{
+    width:100%;
+    max-width:900px;
+    margin:auto;
+    padding:18px 14px 40px;
+}
+.topbar{
+    background:#fff;
+    border-bottom:1px solid #e5e7eb;
+    padding:16px 18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    position:sticky;
+    top:0;
+    z-index:20;
+}
+.brand{
+    font-size:21px;
+    font-weight:800;
+    color:#111827;
+}
+.home-link{
+    text-decoration:none;
+    color:#087bc8;
+    font-weight:700;
+}
+.profile-header{
+    margin-top:16px;
+    background:linear-gradient(135deg,#087bc8,#005fa3);
+    color:#fff;
+    border-radius:18px;
+    padding:28px 20px;
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+.avatar{
+    width:92px;
+    height:92px;
+    min-width:92px;
+    border-radius:50%;
+    background:#fff;
+    color:#087bc8;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:45px;
+    border:4px solid rgba(255,255,255,.8);
+}
+.profile-name{
+    font-size:28px;
+    font-weight:800;
+    word-break:break-word;
+}
+.profile-handle{
+    margin-top:6px;
+    opacity:.88;
+}
+.rank-badge{
+    display:inline-block;
+    margin-top:12px;
+    background:rgba(255,255,255,.16);
+    padding:8px 13px;
+    border-radius:20px;
+    font-size:14px;
+    font-weight:700;
+}
+.card{
+    background:#fff;
+    border:1px solid #e7e9ed;
+    border-radius:16px;
+    margin-top:16px;
+    overflow:hidden;
+}
+.card-title{
+    padding:18px 18px 14px;
+    font-size:19px;
+    font-weight:800;
+    border-bottom:1px solid #edf0f3;
+}
+.info-row{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    padding:15px 18px;
+    border-bottom:1px solid #f0f1f3;
+}
+.info-row:last-child{border-bottom:0}
+.label{
+    color:#6b7280;
+    font-size:14px;
+}
+.value{
+    font-weight:700;
+    text-align:right;
+    word-break:break-word;
+}
+.team-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    padding:16px 18px;
+}
+.team-box{
+    background:#f7fafc;
+    border:1px solid #e8edf2;
+    border-radius:14px;
+    padding:18px 10px;
+    text-align:center;
+}
+.team-number{
+    font-size:31px;
+    font-weight:900;
+    color:#087bc8;
+}
+.team-title{
+    margin-top:5px;
+    color:#6b7280;
+    font-size:13px;
+    font-weight:700;
+}
+.upline{
+    margin:0 18px 18px;
+    padding:14px;
+    background:#f8fafc;
+    border-radius:12px;
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+}
+.referral{
+    padding:18px;
+}
+.referral-id{
+    background:#f4f9fd;
+    border:1px dashed #087bc8;
+    color:#087bc8;
+    text-align:center;
+    font-size:25px;
+    font-weight:900;
+    padding:14px;
+    border-radius:12px;
+}
+.referral-input{
+    width:100%;
+    margin-top:12px;
+    padding:13px;
+    border:1px solid #d9dee5;
+    border-radius:10px;
+    background:#f9fafb;
+    color:#4b5563;
+}
+.copy-btn{
+    width:100%;
+    margin-top:10px;
+    padding:13px;
+    border:0;
+    border-radius:10px;
+    background:#087bc8;
+    color:#fff;
+    font-size:15px;
+    font-weight:800;
+    cursor:pointer;
+}
+.copy-message{
+    display:none;
+    text-align:center;
+    margin-top:10px;
+    color:#087a45;
+    font-weight:700;
+}
+.actions{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+    padding:16px 18px 18px;
+}
+.action{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:15px;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    text-decoration:none;
+    color:#172033;
+    background:#fff;
+    font-weight:700;
+}
+.action:hover{
+    background:#f7fafc;
+}
+.action-icon{
+    font-size:21px;
+}
+.bottom{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:16px;
+}
+.bottom a{
+    text-align:center;
+    padding:14px;
+    border-radius:11px;
+    text-decoration:none;
+    font-weight:800;
+}
+.dashboard{
+    background:#087bc8;
+    color:#fff;
+}
+.home{
+    background:#fff;
+    color:#172033;
+    border:1px solid #ddd;
+}
+@media(max-width:600px){
+    .container{padding:10px 10px 30px}
+    .profile-header{
+        padding:22px 16px;
+        border-radius:14px;
+    }
+    .avatar{
+        width:72px;
+        height:72px;
+        min-width:72px;
+        font-size:34px;
+    }
+    .profile-name{font-size:22px}
+    .team-grid{grid-template-columns:1fr 1fr}
+    .info-row{
+        flex-direction:column;
+        gap:5px;
+    }
+    .value{text-align:left}
+    .actions{grid-template-columns:1fr}
+}
+@media(max-width:380px){
+    .team-grid{grid-template-columns:1fr}
+    .bottom{grid-template-columns:1fr}
+}
+</style>
 </head>
 
 <body>
 
+<div class="topbar">
+    <div class="brand">YN Commerce India</div>
+    <a href="{% url 'home' %}" class="home-link">Home</a>
+</div>
+
 <div class="container">
 
-    <!-- TOP BAR -->
+    <div class="profile-header">
+        <div class="avatar">👤</div>
 
-    <div class="topbar">
+        <div>
+            <div class="profile-name">{{ user.username }}</div>
+            <div class="profile-handle">@{{ user.username }}</div>
 
-        <div class="brand">
-            YN Commerce India
+            <div class="rank-badge">
+                🏆 {{ user.rank }}
+            </div>
         </div>
-
-        <a href="{% url 'home' %}" class="home-link">
-            Home
-        </a>
-
     </div>
 
+    <div class="card">
+        <div class="card-title">👤 Personal Information</div>
 
-    <!-- PROFILE -->
-
-    <div class="profile-card">
-
-        <div class="avatar">
-            👤
-        </div>
-
-        <div class="username">
-            {{ user.username }}
-        </div>
-
-        <div class="handle">
-            @{{ user.username }}
-        </div>
-
-    </div>
-
-
-    <!-- RANK -->
-
-    <div class="rank-card">
-
-        <div class="rank-title">
-            Your Current Rank
-        </div>
-
-        <div class="rank">
-            {{ user.rank }}
-        </div>
-
-    </div>
-
-
-    <!-- PERSONAL INFORMATION -->
-
-    <div class="section">
-
-        <div class="section-title">
-            👤 Personal Information
+        <div class="info-row">
+            <div class="label">Username</div>
+            <div class="value">{{ user.username }}</div>
         </div>
 
         <div class="info-row">
-            <div class="info-label">Username</div>
-            <div class="info-value">{{ user.username }}</div>
-        </div>
-
-        <div class="info-row">
-            <div class="info-label">Full Name</div>
-            <div class="info-value">
+            <div class="label">Full Name</div>
+            <div class="value">
                 {% if user.first_name or user.last_name %}
                     {{ user.first_name }} {{ user.last_name }}
                 {% else %}
@@ -409,141 +301,113 @@
         </div>
 
         <div class="info-row">
-            <div class="info-label">Email</div>
-            <div class="info-value">
-                {{ user.email|default:"-" }}
-            </div>
+            <div class="label">Email</div>
+            <div class="value">{{ user.email|default:"-" }}</div>
         </div>
 
         <div class="info-row">
-            <div class="info-label">Mobile</div>
-            <div class="info-value">
-                {{ user.phone_number|default:"-" }}
-            </div>
+            <div class="label">Mobile</div>
+            <div class="value">{{ user.phone_number|default:"-" }}</div>
         </div>
-
     </div>
 
-
-    <!-- MLM INFORMATION -->
-
-    <div class="section">
-
-        <div class="section-title">
-            🌐 My MLM Information
-        </div>
+    <div class="card">
+        <div class="card-title">🌐 My Network</div>
 
         <div class="team-grid">
 
             <div class="team-box">
-
-                <div class="team-number">
-                    {{ direct_team }}
-                </div>
-
-                <div class="team-title">
-                    Direct Team
-                </div>
-
+                <div class="team-number">{{ direct_team }}</div>
+                <div class="team-title">Direct Team</div>
             </div>
 
-
             <div class="team-box">
-
-                <div class="team-number">
-                    {{ total_team }}
-                </div>
-
-                <div class="team-title">
-                    Total Team
-                </div>
-
+                <div class="team-number">{{ total_team }}</div>
+                <div class="team-title">Total Team</div>
             </div>
 
         </div>
 
+        <div class="upline">
+            <span class="label">Upline</span>
 
-        <div class="upline-box">
-
-            <span>
-                Upline
-            </span>
-
-            <span class="upline-value">
-
+            <strong>
                 {% if upline %}
                     {{ upline.username }}
                 {% else %}
                     No Upline
                 {% endif %}
-
-            </span>
-
+            </strong>
         </div>
-
     </div>
 
+    <div class="card">
+        <div class="card-title">👥 Refer & Grow</div>
 
-    <!-- REFER & GROW -->
+        <div class="referral">
 
-    <div class="section referral-section">
+            <div style="color:#6b7280;margin-bottom:12px;">
+                Share your referral link and grow your team.
+            </div>
 
-        <div class="section-title" style="justify-content:center;">
-            👥 Refer & Grow
+            <div class="referral-id">
+                {{ user.referral_id }}
+            </div>
+
+            <input
+                type="text"
+                id="referralLink"
+                class="referral-input"
+                value="{{ referral_link }}"
+                readonly
+            >
+
+            <button class="copy-btn" onclick="copyReferral()">
+                🔗 Copy Referral Link
+            </button>
+
+            <div id="copyMessage" class="copy-message">
+                ✓ Referral link copied!
+            </div>
+
         </div>
-
-        <div class="referral-subtitle">
-            Share your referral link and grow your team
-        </div>
-
-
-        <div class="referral-id">
-            {{ user.referral_id }}
-        </div>
-
-
-        <input
-            type="text"
-            class="referral-input"
-            id="referralLink"
-            value="{{ referral_link }}"
-            readonly
-        >
-
-
-        <button
-            class="copy-btn"
-            onclick="copyReferral()"
-        >
-            🔗 Copy Referral Link
-        </button>
-
-
-        <div
-            class="copy-message"
-            id="copyMessage"
-        >
-            ✓ Referral link copied!
-        </div>
-
     </div>
 
+    <div class="card">
+        <div class="card-title">⚡ Quick Actions</div>
 
-    <!-- BOTTOM BUTTONS -->
+        <div class="actions">
 
-    <div class="bottom-buttons">
+            <a href="{% url 'dashboard' %}" class="action">
+                <span class="action-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
 
-        <a
-            href="{% url 'dashboard' %}"
-            class="bottom-btn dashboard-btn"
-        >
+            <a href="{% url 'my_orders' %}" class="action">
+                <span class="action-icon">📦</span>
+                <span>My Orders</span>
+            </a>
+
+            <a href="{% url 'notifications' %}" class="action">
+                <span class="action-icon">🔔</span>
+                <span>Notifications</span>
+            </a>
+
+            <a href="{% url 'user_settings' %}" class="action">
+                <span class="action-icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+
+        </div>
+    </div>
+
+    <div class="bottom">
+
+        <a href="{% url 'dashboard' %}" class="dashboard">
             📊 Dashboard
         </a>
 
-        <a
-            href="{% url 'home' %}"
-            class="bottom-btn home-btn"
-        >
+        <a href="{% url 'home' %}" class="home">
             🏠 Home
         </a>
 
@@ -551,38 +415,27 @@
 
 </div>
 
-
 <script>
-
-function copyReferral() {
-
-    const input = document.getElementById("referralLink");
-    const message = document.getElementById("copyMessage");
+function copyReferral(){
+    const input=document.getElementById("referralLink");
+    const message=document.getElementById("copyMessage");
 
     navigator.clipboard.writeText(input.value)
-        .then(function() {
-
-            message.style.display = "block";
-
-            setTimeout(function() {
-                message.style.display = "none";
-            }, 2500);
-
-        })
-        .catch(function() {
-
-            input.select();
-            document.execCommand("copy");
-
-            message.style.display = "block";
-
-            setTimeout(function() {
-                message.style.display = "none";
-            }, 2500);
-
-        });
+    .then(function(){
+        message.style.display="block";
+        setTimeout(function(){
+            message.style.display="none";
+        },2500);
+    })
+    .catch(function(){
+        input.select();
+        document.execCommand("copy");
+        message.style.display="block";
+        setTimeout(function(){
+            message.style.display="none";
+        },2500);
+    });
 }
-
 </script>
 
 </body>

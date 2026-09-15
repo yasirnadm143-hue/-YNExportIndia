@@ -2,8 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("wishlist/toggle/<int:pk>/", views.toggle_wishlist, name="toggle_wishlist"),
-    path("wishlist/", views.wishlist_view, name="wishlist"),
 
     path("seller/register/", views.seller_register_view, name="seller_register"),
     path("seller/pending/", views.seller_pending_view, name="seller_pending"),
@@ -77,7 +75,6 @@ urlpatterns = [
     path('upload-product/', views.upload_product, name='upload_product'),
 
     # Product Edit/Delete
-    path('product-image/<int:pk>/delete/', views.delete_product_image, name='delete_product_image'),
     path('edit-product/<int:pk>/', views.edit_product, name='edit_product'),
     path('delete-product/<int:pk>/', views.delete_product, name='delete_product'),
     path(

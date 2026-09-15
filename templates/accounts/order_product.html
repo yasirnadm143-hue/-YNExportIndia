@@ -310,7 +310,7 @@
 
         <div class="product-row">
             <span>Price</span>
-            <span class="product-value">₹ {{ product.price }}</span>
+            <span class="product-value">₹ {{ product.current_price|floatformat:2 }}</span>
         </div>
 
     </div>
@@ -321,9 +321,8 @@
         </div>
 
         <p>
-            आपको अभी कोई online payment करने की जरूरत नहीं है।
-            आपका payment product delivery के समय
-            <b>Cash on Delivery</b> के माध्यम से लिया जाएगा।
+            Pay only when your order is delivered.
+            <b>Cash on Delivery (COD)</b> is available for this order.
         </p>
     </div>
 

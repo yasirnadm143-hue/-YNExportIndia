@@ -298,24 +298,27 @@
                                         Image #{{ image.id }}
                                     </div>
 
-                                    <button
-                                        type="submit"
-                                        name="delete_image"
-                                        value="{{ image.id }}"
-                                        formaction="{% url 'delete_product_image' image.id %}"
-                                        formmethod="POST"
-                                        formnovalidate
-                                        onclick="return confirm('Delete this image?');"
-                                        style="
-                                            width:100%;
-                                            padding:7px;
-                                            margin-top:0;
-                                            background:#d32f2f;
-                                            font-size:12px;
-                                        "
+                                    <form
+                                        method="POST"
+                                        action="{% url 'delete_product_image' image.id %}"
+                                        onsubmit="return confirm(
+                                            'Delete this image?'
+                                        );"
                                     >
-                                        🗑️ Delete
-                                    </button>
+                                        {% csrf_token %}
+                                        <button
+                                            type="submit"
+                                            style="
+                                                width:100%;
+                                                padding:7px;
+                                                margin-top:0;
+                                                background:#d32f2f;
+                                                font-size:12px;
+                                            "
+                                        >
+                                            🗑️ Delete
+                                        </button>
+                                    </form>
                                 </div>
                             {% endfor %}
                         </div>

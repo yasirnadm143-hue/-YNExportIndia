@@ -1,7 +1,7 @@
 from decimal import Decimal, InvalidOperation
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -9,7 +9,6 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_http_methods
-from django.views.decorators.http import require_POST
 import os
 
 from .models import (
@@ -22,7 +21,6 @@ from .models import (
     Category,
     SubCategory,
     Brand,
-    SellerOrderSettlement,
 )
 from .forms import ProductForm, OrderForm
 
@@ -158,7 +156,7 @@ def cart_view(request):
     items = cart.items.select_related("product").all()
 
     total = sum(
-        item.product.current_price * item.quantity
+        item.product.price * item.quantity
         for item in items
     )
 
@@ -1308,35 +1306,7 @@ def edit_product(request, pk):
 
         if form.is_valid():
 
-            product = form.save()
-
-            # ==========================================
-            # ADDITIONAL PRODUCT IMAGES
-            # ==========================================
-            from accounts.models import ProductImage
-
-            new_images = request.FILES.getlist("images")
-
-            if new_images:
-                last_image = (
-                    ProductImage.objects
-                    .filter(product=product)
-                    .order_by("-sort_order", "-id")
-                    .first()
-                )
-
-                next_sort_order = (
-                    last_image.sort_order + 1
-                    if last_image
-                    else 0
-                )
-
-                for index, uploaded_image in enumerate(new_images):
-                    ProductImage.objects.create(
-                        product=product,
-                        image=uploaded_image,
-                        sort_order=next_sort_order + index,
-                    )
+            form.save()
 
             messages.success(
                 request,
@@ -1439,7 +1409,7 @@ def order_product(request, pk):
             # ORDER PAYMENT CALCULATION
             # ==========================
 
-            product_amount = product.current_price
+            product_amount = product.price
             delivery_charge = 45
             shopping_charge = 15
 
@@ -1500,7 +1470,7 @@ def order_product(request, pk):
     # PAYMENT PREVIEW FOR CUSTOMER
     # ==========================
 
-    product_amount = product.current_price
+    product_amount = product.price
     delivery_charge = 45
     shopping_charge = 15
 
@@ -1854,13 +1824,6 @@ def seller_add_product(request):
         title = request.POST.get("title", "").strip()
         description = request.POST.get("description", "").strip()
         price = request.POST.get("price", "").strip()
-
-        mrp = request.POST.get("mrp", "").strip()
-        discount_percent = request.POST.get("discount_percent", "").strip()
-        offer_price = request.POST.get("offer_price", "").strip()
-        offer_start = request.POST.get("offer_start", "").strip()
-        offer_end = request.POST.get("offer_end", "").strip()
-
         category_id = request.POST.get("category")
         subcategory_id = request.POST.get("subcategory")
         brand_id = request.POST.get("brand")
@@ -1879,86 +1842,11 @@ def seller_add_product(request):
             messages.error(request, "Enter a valid product price.")
             return redirect("seller_add_product")
 
-        # ==========================================
-        # ADVANCED OFFER / PRICING
-        # ==========================================
-
-        from django.utils.dateparse import parse_datetime
-        from django.utils import timezone
-
-        def decimal_or_none(value, field_name):
-            if not value:
-                return None
-
-            try:
-                result = Decimal(value)
-            except (InvalidOperation, ValueError):
-                raise ValueError(f"Enter a valid {field_name}.")
-
-            if result < 0:
-                raise ValueError(f"{field_name} cannot be negative.")
-
-            return result
-
-        try:
-            mrp_value = decimal_or_none(mrp, "MRP")
-            discount_value = decimal_or_none(
-                discount_percent,
-                "discount percentage"
-            )
-            offer_price_value = decimal_or_none(
-                offer_price,
-                "offer price"
-            )
-
-            if discount_value is None:
-                discount_value = Decimal("0")
-
-            if discount_value > 100:
-                raise ValueError("Discount percentage cannot exceed 100%.")
-
-            if mrp_value is not None and mrp_value <= 0:
-                raise ValueError("MRP must be greater than 0.")
-
-            if offer_price_value is not None and offer_price_value <= 0:
-                raise ValueError("Offer price must be greater than 0.")
-
-            if (
-                mrp_value is not None
-                and offer_price_value is not None
-                and offer_price_value > mrp_value
-            ):
-                raise ValueError("Offer price cannot be greater than MRP.")
-
-            offer_start_value = parse_datetime(offer_start) if offer_start else None
-            offer_end_value = parse_datetime(offer_end) if offer_end else None
-
-            if offer_start_value and timezone.is_naive(offer_start_value):
-                offer_start_value = timezone.make_aware(offer_start_value)
-
-            if offer_end_value and timezone.is_naive(offer_end_value):
-                offer_end_value = timezone.make_aware(offer_end_value)
-
-            if offer_start_value and offer_end_value:
-                if offer_end_value <= offer_start_value:
-                    raise ValueError(
-                        "Offer end time must be after offer start time."
-                    )
-
-        except ValueError as exc:
-            messages.error(request, str(exc))
-            return redirect("seller_add_product")
-
         product = Product(
             owner=request.user,
             title=title,
             description=description,
             price=price_value,
-            mrp=mrp_value,
-            discount_percent=discount_value,
-            offer_price=offer_price_value,
-            offer_start=offer_start_value,
-            offer_end=offer_end_value,
             image=image,
         )
 
@@ -2404,13 +2292,10 @@ def seller_deliver_order(request, order_id):
         seller = product.owner
 
         # --------------------------------------------------
-        # HISTORICAL ORDER PRODUCT PRICE
+        # PRODUCT PRICE
         # --------------------------------------------------
-        # Always use the amount actually stored on the order.
-        # Do NOT use the live Product.price here because an offer
-        # may expire/change after the customer places the order.
         order_amount = Decimal(
-            str(order.product_amount or "0.00")
+            str(product.price or "0.00")
         ).quantize(
             Decimal("0.01"),
             rounding=ROUND_DOWN
@@ -2499,7 +2384,7 @@ def seller_deliver_order(request, order_id):
         (
             f"Order delivered successfully. "
             f"Seller balance credited ₹{seller_amount:.2f} "
-            f"({seller_rate:.2f}% of the historical order product amount)."
+            f"({seller_rate:.2f}% of product price)."
         )
     )
 
@@ -2740,38 +2625,6 @@ def seller_dashboard(request):
     )
 
 
-
-# ==========================
-# DELETE PRODUCT IMAGE
-# ==========================
-
-@login_required
-@require_http_methods(["POST"])
-def delete_product_image(request, pk):
-    from .models import ProductImage
-
-    image = get_object_or_404(ProductImage, pk=pk)
-    product = image.product
-
-    if not (
-        request.user.is_staff
-        or product.owner == request.user
-    ):
-        messages.error(
-            request,
-            "You are not allowed to delete this product image."
-        )
-        return redirect("home")
-
-    image.delete()
-
-    messages.success(
-        request,
-        "Product image deleted successfully."
-    )
-
-    return redirect("edit_product", pk=product.id)
-
 @_seller_login_required
 def seller_products(request):
 
@@ -2814,61 +2667,3 @@ def seller_products(request):
             "products": products,
         }
     )
-
-
-# ==========================
-# CUSTOMER WISHLIST
-# ==========================
-
-@login_required
-def wishlist_view(request):
-    from .models import Wishlist
-
-    items = (
-        Wishlist.objects
-        .filter(user=request.user)
-        .select_related("product")
-        .prefetch_related("product__images")
-    )
-
-    return render(
-        request,
-        "accounts/wishlist.html",
-        {
-            "wishlist_items": items,
-        },
-    )
-
-
-@login_required
-@require_POST
-def toggle_wishlist(request, pk):
-    from .models import Wishlist, Product
-
-    product = get_object_or_404(Product, pk=pk)
-
-    item = Wishlist.objects.filter(
-        user=request.user,
-        product=product,
-    ).first()
-
-    if item:
-        item.delete()
-        added = False
-        message = "Removed from wishlist."
-    else:
-        Wishlist.objects.create(
-            user=request.user,
-            product=product,
-        )
-        added = True
-        message = "Added to wishlist."
-
-    if request.headers.get("HX-Request") == "true" or request.headers.get("X-Requested-With") == "XMLHttpRequest":
-        return JsonResponse({
-            "success": True,
-            "added": added,
-            "message": message,
-        })
-
-    return redirect("product_detail", pk=pk)

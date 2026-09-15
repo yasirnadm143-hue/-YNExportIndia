@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YN Export India - Add Product</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f4c81, #00b894);
+            min-height: 100vh;
+        }
+
+        .box {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 28px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.25);
+        }
+
+        h2 {
+            text-align: center;
+            color: #0f4c81;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 12px;
+            color: #333;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 13px;
+            margin-top: 7px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 9px;
+            font-size: 15px;
+            background: #fff;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #0f4c81;
+            box-shadow: 0 0 0 2px rgba(15,76,129,.12);
+        }
+
+        .helptext {
+            display: block;
+            font-size: 12px;
+            color: #777;
+            margin-top: -8px;
+            margin-bottom: 12px;
+        }
+
+        .errorlist {
+            color: #b00020;
+            font-size: 13px;
+            margin: 5px 0 10px;
+            padding-left: 18px;
+        }
+
+        .msg {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 9px;
+            margin-bottom: 15px;
+        }
+
+        .section {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .section-title {
+            color: #0f4c81;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #ff6600;
+            color: white;
+            border: none;
+            border-radius: 9px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #e65100;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2>📦 Add Product</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="msg">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            {{ form.non_field_errors }}
+        {% endif %}
+
+        <div class="section">
+            <div class="section-title">🏷️ Product Category</div>
+
+            {{ form.category.label_tag }}
+            {{ form.category }}
+            {{ form.category.errors }}
+
+            {{ form.subcategory.label_tag }}
+            {{ form.subcategory }}
+            {{ form.subcategory.errors }}
+
+            {{ form.brand.label_tag }}
+            {{ form.brand }}
+            {{ form.brand.errors }}
+        </div>
+
+        <div class="section">
+            <div class="section-title">📦 Product Information</div>
+
+            {{ form.title.label_tag }}
+            {{ form.title }}
+            {{ form.title.errors }}
+
+            {{ form.description.label_tag }}
+            {{ form.description }}
+            {{ form.description.errors }}
+
+            {{ form.price.label_tag }}
+            {{ form.price }}
+            {{ form.price.errors }}
+        </div>
+
+        <div class="section">
+            <div class="section-title">🖼️ Product Image</div>
+
+            {{ form.image.label_tag }}
+            {{ form.image }}
+            {{ form.image.errors }}
+        </div>
+
+        <button type="submit">
+            🚀 Publish Product
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

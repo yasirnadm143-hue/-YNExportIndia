@@ -1,7 +1,7 @@
 from decimal import Decimal, InvalidOperation
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -9,7 +9,6 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_http_methods
-from django.views.decorators.http import require_POST
 import os
 
 from .models import (
@@ -22,7 +21,6 @@ from .models import (
     Category,
     SubCategory,
     Brand,
-    SellerOrderSettlement,
 )
 from .forms import ProductForm, OrderForm
 
@@ -158,7 +156,7 @@ def cart_view(request):
     items = cart.items.select_related("product").all()
 
     total = sum(
-        item.product.current_price * item.quantity
+        item.product.price * item.quantity
         for item in items
     )
 
@@ -1439,7 +1437,7 @@ def order_product(request, pk):
             # ORDER PAYMENT CALCULATION
             # ==========================
 
-            product_amount = product.current_price
+            product_amount = product.price
             delivery_charge = 45
             shopping_charge = 15
 
@@ -1500,7 +1498,7 @@ def order_product(request, pk):
     # PAYMENT PREVIEW FOR CUSTOMER
     # ==========================
 
-    product_amount = product.current_price
+    product_amount = product.price
     delivery_charge = 45
     shopping_charge = 15
 
@@ -2404,13 +2402,10 @@ def seller_deliver_order(request, order_id):
         seller = product.owner
 
         # --------------------------------------------------
-        # HISTORICAL ORDER PRODUCT PRICE
+        # PRODUCT PRICE
         # --------------------------------------------------
-        # Always use the amount actually stored on the order.
-        # Do NOT use the live Product.price here because an offer
-        # may expire/change after the customer places the order.
         order_amount = Decimal(
-            str(order.product_amount or "0.00")
+            str(product.price or "0.00")
         ).quantize(
             Decimal("0.01"),
             rounding=ROUND_DOWN
@@ -2499,7 +2494,7 @@ def seller_deliver_order(request, order_id):
         (
             f"Order delivered successfully. "
             f"Seller balance credited ₹{seller_amount:.2f} "
-            f"({seller_rate:.2f}% of the historical order product amount)."
+            f"({seller_rate:.2f}% of product price)."
         )
     )
 
@@ -2740,38 +2735,6 @@ def seller_dashboard(request):
     )
 
 
-
-# ==========================
-# DELETE PRODUCT IMAGE
-# ==========================
-
-@login_required
-@require_http_methods(["POST"])
-def delete_product_image(request, pk):
-    from .models import ProductImage
-
-    image = get_object_or_404(ProductImage, pk=pk)
-    product = image.product
-
-    if not (
-        request.user.is_staff
-        or product.owner == request.user
-    ):
-        messages.error(
-            request,
-            "You are not allowed to delete this product image."
-        )
-        return redirect("home")
-
-    image.delete()
-
-    messages.success(
-        request,
-        "Product image deleted successfully."
-    )
-
-    return redirect("edit_product", pk=product.id)
-
 @_seller_login_required
 def seller_products(request):
 
@@ -2814,61 +2777,3 @@ def seller_products(request):
             "products": products,
         }
     )
-
-
-# ==========================
-# CUSTOMER WISHLIST
-# ==========================
-
-@login_required
-def wishlist_view(request):
-    from .models import Wishlist
-
-    items = (
-        Wishlist.objects
-        .filter(user=request.user)
-        .select_related("product")
-        .prefetch_related("product__images")
-    )
-
-    return render(
-        request,
-        "accounts/wishlist.html",
-        {
-            "wishlist_items": items,
-        },
-    )
-
-
-@login_required
-@require_POST
-def toggle_wishlist(request, pk):
-    from .models import Wishlist, Product
-
-    product = get_object_or_404(Product, pk=pk)
-
-    item = Wishlist.objects.filter(
-        user=request.user,
-        product=product,
-    ).first()
-
-    if item:
-        item.delete()
-        added = False
-        message = "Removed from wishlist."
-    else:
-        Wishlist.objects.create(
-            user=request.user,
-            product=product,
-        )
-        added = True
-        message = "Added to wishlist."
-
-    if request.headers.get("HX-Request") == "true" or request.headers.get("X-Requested-With") == "XMLHttpRequest":
-        return JsonResponse({
-            "success": True,
-            "added": added,
-            "message": message,
-        })
-
-    return redirect("product_detail", pk=pk)

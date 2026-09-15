@@ -911,12 +911,67 @@ input{
     }
 }
 </style>
-
-
-
 </head>
 
 <body>
+<style id="yn-amazon-final-css">
+:root{--yn-blue:#131921;--yn-blue2:#232f3e;--yn-yellow:#ffd814;--yn-orange:#ff9900;--yn-bg:#eaeded;--yn-card:#fff}
+body{background:var(--yn-bg)!important}
+.yn-amz-wrap{max-width:1500px;margin:auto}
+.yn-amz-search{display:flex;gap:0;max-width:850px;margin:12px auto;padding:0 12px}
+.yn-amz-search input{flex:1;min-width:0;height:46px;border:0;padding:0 16px;font-size:16px;border-radius:7px 0 0 7px;outline:0}
+.yn-amz-search button{width:58px;border:0;background:var(--yn-yellow);font-size:21px;border-radius:0 7px 7px 0;cursor:pointer}
+.yn-amz-nav{display:flex;gap:10px;overflow:auto;padding:10px 14px;background:var(--yn-blue2);color:#fff;scrollbar-width:none}
+.yn-amz-nav::-webkit-scrollbar{display:none}
+.yn-amz-nav a{white-space:nowrap;color:#fff;text-decoration:none;padding:7px 10px;border-radius:4px;font-weight:600}
+.yn-amz-nav a:hover{background:#37475a}
+.yn-amz-title{font-size:24px;font-weight:800;margin:22px 14px 12px;color:#111}
+.yn-amz-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 14px}
+.yn-amz-box{background:#fff;padding:16px;border-radius:10px;box-shadow:0 1px 4px #0001}
+.yn-amz-box b{font-size:17px}.yn-amz-box p{margin:7px 0 0;color:#555;font-size:14px}
+.yn-amz-products{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;padding:0 14px 25px}
+.yn-amz-products>*{min-width:0}
+.yn-amz-card{background:#fff;border-radius:10px;padding:12px;box-shadow:0 1px 5px #0001;transition:.18s;position:relative}
+.yn-amz-card:hover{transform:translateY(-2px);box-shadow:0 5px 18px #0002}
+.yn-amz-card img{width:100%;height:210px;object-fit:contain;background:#fff;border-radius:7px}
+.yn-amz-card .yn-price{font-size:22px;font-weight:800;color:#111;margin-top:8px}
+.yn-amz-card .yn-mrp{text-decoration:line-through;color:#777;font-size:13px}
+.yn-amz-card .yn-discount{color:#067d62;font-weight:700;font-size:13px}
+.yn-amz-actions{display:flex;gap:7px;margin-top:9px}
+.yn-amz-actions a,.yn-amz-actions button{flex:1;border:0;border-radius:20px;padding:9px 7px;text-align:center;text-decoration:none;font-weight:700;cursor:pointer;font-size:13px}
+.yn-buy{background:var(--yn-yellow);color:#111}.yn-cart{background:#ffa41c;color:#111}
+.yn-amz-mobile{display:none}
+@media(max-width:1100px){.yn-amz-products{grid-template-columns:repeat(4,1fr)}.yn-amz-card img{height:190px}}
+@media(max-width:800px){.yn-amz-strip{grid-template-columns:repeat(2,1fr)}.yn-amz-products{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.yn-amz-search{margin:8px 8px}.yn-amz-strip{grid-template-columns:1fr 1fr;padding:0 8px}.yn-amz-products{grid-template-columns:repeat(2,1fr);gap:9px;padding:0 8px 80px}.yn-amz-card{padding:8px}.yn-amz-card img{height:150px}.yn-amz-title{font-size:20px;margin-left:8px}.yn-amz-actions{flex-direction:column}.yn-amz-actions a{width:auto}.yn-amz-mobile{display:flex;position:fixed;z-index:9999;bottom:0;left:0;right:0;height:58px;background:#fff;border-top:1px solid #ddd;justify-content:space-around;align-items:center;box-shadow:0 -2px 10px #0002}.yn-amz-mobile a{text-decoration:none;color:#111;text-align:center;font-size:11px;font-weight:700}.yn-amz-mobile span{display:block;font-size:20px}}
+</style>
+
+<!-- YN_AMAZON_FINAL_UI -->
+<div class="yn-amz-wrap">
+<form class="yn-amz-search" method="get" action="">
+<input name="q" value="{{ request.GET.q|default:'' }}" placeholder="Search YN Commerce India products..." autocomplete="off">
+<button type="submit" aria-label="Search">🔎</button>
+</form>
+<nav class="yn-amz-nav">
+<a href="/">🏠 Home</a>
+<a href="#products">🛍️ Products</a>
+<a href="/wishlist/">❤️ Wishlist</a>
+<a href="/cart/">🛒 Cart</a>
+{% if user.is_authenticated %}
+<a href="/orders/">📦 Orders</a>
+{% else %}
+<a href="/login/">👤 Login</a>
+{% endif %}
+</nav>
+<div class="yn-amz-strip">
+<div class="yn-amz-box"><b>🚚 Fast Delivery</b><p>Reliable delivery across India</p></div>
+<div class="yn-amz-box"><b>💵 COD Available</b><p>Pay when your order arrives</p></div>
+<div class="yn-amz-box"><b>🏷️ Best Offers</b><p>Save more on selected products</p></div>
+<div class="yn-amz-box"><b>🔒 Secure Shopping</b><p>Safe and trusted checkout</p></div>
+</div>
+</div>
+
+
 <!-- =========================
      HEADER
 ========================= -->
@@ -1222,7 +1277,7 @@ input{
             <div class="product-image">
 
                 {% if product.image %}
-                    <img onerror="this.onerror=null;this.src='/static/images/product-placeholder.svg'" src="{{ product.image.url }}" alt="{{ product.title }}">
+                    <img src="{{ product.image.url }}" alt="{{ product.title }}">
                 {% else %}
                     <div class="product-placeholder">📦</div>
                 {% endif %}
@@ -1569,6 +1624,11 @@ input{
         <div class="drawer-section-title">
             SUPPORT
         </div>
+
+        <a href="{% url 'notifications' %}" class="drawer-item">
+            <span class="drawer-icon">🔔</span>
+            <span>Notifications</span>
+        </a>
 
         <a href="{% url 'customer_support' %}" class="drawer-item">
             <span class="drawer-icon">💬</span>
@@ -2102,5 +2162,15 @@ body.drawer-open .side-drawer{
 </script>
 
 
+<nav class="yn-amz-mobile">
+<a href="/"><span>🏠</span>Home</a>
+<a href="/wishlist/"><span>❤️</span>Wishlist</a>
+<a href="/cart/"><span>🛒</span>Cart</a>
+{% if user.is_authenticated %}
+<a href="/orders/"><span>📦</span>Orders</a>
+{% else %}
+<a href="/login/"><span>👤</span>Login</a>
+{% endif %}
+</nav>
 </body>
 </html>

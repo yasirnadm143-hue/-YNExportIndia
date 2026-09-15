@@ -84,8 +84,25 @@ body {
 </div>
 
 <div class="row">
-    <div class="label">Price</div>
-    <div class="value">₹{{ order.product.price }}</div>
+    <div class="label">Product Amount</div>
+    <div class="value">₹{{ order.product_amount|floatformat:2 }}</div>
+</div>
+
+<div class="row">
+    <div class="label">Delivery Charge</div>
+    <div class="value">₹{{ order.delivery_charge|floatformat:2 }}</div>
+</div>
+
+<div class="row">
+    <div class="label">Shopping Charge</div>
+    <div class="value">₹{{ order.shopping_charge|floatformat:2 }}</div>
+</div>
+
+<div class="row">
+    <div class="label"><strong>Total Order Amount</strong></div>
+    <div class="value">
+        <strong>₹{{ order.total_amount|floatformat:2 }}</strong>
+    </div>
 </div>
 
 <div class="row">

@@ -51,7 +51,58 @@
         color:green;
         font-size:28px;
         font-weight:bold;
-        margin:15px 0;
+        margin:15px 0 6px;
+    }
+
+    .offer-price{
+        color:#0b8f3c;
+        font-size:32px;
+        font-weight:800;
+    }
+
+    .price-old{
+        color:#777;
+        font-size:16px;
+        margin:4px 0;
+    }
+
+    .price-old del{
+        color:#777;
+    }
+
+    .discount-detail{
+        display:inline-block;
+        background:#198754;
+        color:#fff;
+        padding:5px 9px;
+        border-radius:6px;
+        font-size:13px;
+        font-weight:700;
+        margin:4px 0 8px;
+    }
+
+    .offer-saving{
+        color:#087f23;
+        font-size:15px;
+        font-weight:700;
+        margin:5px 0;
+    }
+
+    .offer-validity{
+        color:#b45309;
+        background:#fff7ed;
+        border:1px solid #fed7aa;
+        border-radius:8px;
+        padding:9px 10px;
+        margin:10px 0 15px;
+        font-size:14px;
+        line-height:20px;
+    }
+
+    .offer-ended{
+        color:#b91c1c;
+        background:#fef2f2;
+        border-color:#fecaca;
     }
 
     .desc{
@@ -120,9 +171,58 @@
 
 <h2>{{ product.title }}</h2>
 
-<div class="price">
-₹ {{ product.price }}
-</div>
+{% if product.is_offer_active and product.offer_price %}
+    <div class="price offer-price">
+        ₹ {{ product.current_price|floatformat:2 }}
+    </div>
+
+    {% if product.mrp and product.mrp > product.current_price %}
+        <div class="price-old">
+            MRP <del>₹ {{ product.mrp|floatformat:2 }}</del>
+        </div>
+
+        <div class="discount-detail">
+            {{ product.calculated_discount_percent|floatformat:0 }}% OFF
+        </div>
+
+        <div class="offer-saving">
+            💰 You Save ₹ {{ product.discount_amount|floatformat:2 }}
+        </div>
+    {% endif %}
+
+    {% if product.offer_end %}
+        <div
+            class="offer-validity offer-countdown"
+            data-offer-end="{{ product.offer_end|date:'c' }}"
+        >
+            ⏰ Offer ends in
+            <strong class="countdown-value">Loading...</strong>
+        </div>
+    {% else %}
+        <div class="offer-validity">
+            ⏰ Limited Time Offer
+        </div>
+    {% endif %}
+
+{% else %}
+    <div class="price">
+        ₹ {{ product.price|floatformat:2 }}
+    </div>
+
+    {% if product.mrp and product.mrp > product.price %}
+        <div class="price-old">
+            MRP <del>₹ {{ product.mrp|floatformat:2 }}</del>
+        </div>
+
+        <div class="discount-detail">
+            {{ product.calculated_discount_percent|floatformat:0 }}% OFF
+        </div>
+
+        <div class="offer-saving">
+            💰 You Save ₹ {{ product.discount_amount|floatformat:2 }}
+        </div>
+    {% endif %}
+{% endif %}
 
 <div class="desc">
 {{ product.description }}
@@ -171,6 +271,49 @@ function toggleZoom() {
             img.classList.remove("zoomed");
         }
     }
+</script>
+
+
+<!-- Product offer countdown -->
+<script>
+(function(){
+    function updateProductOfferCountdown(){
+        document.querySelectorAll(".offer-countdown[data-offer-end]").forEach(function(el){
+            const end = new Date(
+                el.getAttribute("data-offer-end")
+            ).getTime();
+
+            const value = el.querySelector(".countdown-value");
+
+            if(!value || isNaN(end)){
+                return;
+            }
+
+            const distance = end - Date.now();
+
+            if(distance <= 0){
+                value.textContent = "Offer ended";
+                el.classList.add("offer-ended");
+                return;
+            }
+
+            const totalSeconds = Math.floor(distance / 1000);
+            const days = Math.floor(totalSeconds / 86400);
+            const hours = Math.floor((totalSeconds % 86400) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            value.textContent =
+                days + "d " +
+                String(hours).padStart(2, "0") + "h " +
+                String(minutes).padStart(2, "0") + "m " +
+                String(seconds).padStart(2, "0") + "s";
+        });
+    }
+
+    updateProductOfferCountdown();
+    setInterval(updateProductOfferCountdown, 1000);
+})();
 </script>
 
 </body>
